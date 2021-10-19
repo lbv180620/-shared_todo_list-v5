@@ -15,7 +15,7 @@ build:
 launch:
 	mkdir -p scripts/sql scripts/script data && \
 		touch scripts/sql/query.sql scripts/script/set-query.sh && \
-		cp env/.env.example .env \
+		cp env/.env.example .env && \
 		mkdir .vscode && cp env/launch.json .vscode
 	@make publish-redisinsight
 	@make build
