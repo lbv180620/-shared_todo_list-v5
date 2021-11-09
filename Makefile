@@ -1,25 +1,41 @@
+include Makefile.env
+
 up:
 	docker-compose up -d
+build:
+	docker-compose build --no-cache --force-rm
+db-set:
+	docker-compose exec db bash -c 'mkdir /var/lib/mysql/sql && \
+		touch /var/lib/mysql/sql/query.sql && \
+		chown -R mysql:mysql /var/lib/mysql'
+rebuild:
+	@make build
+	@make up
+file-set:
+	mkdir -p scripts/sql scripts/script data && \
+		touch scripts/sql/query.sql scripts/script/set-query.sh && \
+		cp env/.env.example .env && \
+		mkdir .vscode && cp env/launch.json .vscode
+launch:
+	@make file-set
+	@make publish-redisinsight
+	@make build
+	@make up
+	@make db-set
+useradd:
 # web-root
 	docker-compose exec web bash -c ' \
 		useradd -s /bin/bash -m -u $$USER_ID -g $$GROUP_ID $$USER_NAME'
 # db-root
 	docker-compose exec db bash -c ' \
 		useradd -s /bin/bash -m -u $$USER_ID -g $$GROUP_ID $$USER_NAME'
-	docker-compose exec db bash -c 'mkdir /var/lib/mysql/sql && \
-		touch /var/lib/mysql/sql/query.sql && \
-		chown -R mysql:mysql /var/lib/mysql'
-build:
-	docker-compose build --no-cache --force-rm
-# create-project
-launch:
-	mkdir -p scripts/sql scripts/script data && \
-		touch scripts/sql/query.sql scripts/script/set-query.sh && \
-		cp env/.env.example .env && \
-		mkdir .vscode && cp env/launch.json .vscode
-	@make publish-redisinsight
-	@make build
-	@make up
+groupadd:
+# web-root
+	docker-compose exec web bash -c ' \
+		groupadd -g $$GROUP_ID $$GROUP_NAME'
+# db-root
+	docker-compose exec db bash -c ' \
+		groupadd -g $$GROUP_ID $$GROUP_NAME'
 init:
 	docker-compose up -d --build
 	docker-compose exec web composer install
@@ -39,6 +55,9 @@ restart:
 reset:
 	@make down
 	@make up
+rebuild:
+	@make build
+	docker-compose up -d
 destroy:
 	@make chown
 	docker-compose down --rmi all --volumes --remove-orphans
@@ -121,7 +140,7 @@ cp-sql:
 	@make chown-mysql
 # redis
 redis:
-	docker-compose exec redis redis-cli
+	docker-compose exec redis redis-cli --raw
 publish-redisinsight:
 	mkdir -p ./infra/docker/redisinsight/sessions
 	sudo chown 1001 ./infra/docker/redisinsight/sessions
@@ -130,12 +149,12 @@ chown:
 	@make chown-backend
 # chown-web
 chown-backend:
-	sudo chown -R $(USER):staff backend
+	sudo chown -R $(USER):$(GNAME) backend
 chown-work:
 	docker-compose exec web bash -c 'chown -R $$USER_NAME:$$GROUP_NAME /work'
 # chown-db
 chown-data:
-	sudo chown -R $(USER):staff data
+	sudo chown -R $(USER):$(GNAME) data
 chown-mysql:
 	docker-compose exec db bash -c 'chown -R mysql:mysql /var/lib/mysql'
 # git
@@ -154,7 +173,7 @@ unlink:
 rep:
 	env | grep "rep"
 chown-volume:
-	sudo chown -R $(USER):staff ~/.local/share/docker/volumes
+	sudo chown -R $(USER):$(GNAME) ~/.local/share/docker/volumes
 rm-data:
 	@make chown-data
 	rm -rf data
@@ -166,3 +185,6 @@ volume-ls:
 	docker volume ls
 volume-inspect:
 	docker volume inspect $(rep)_db-store
+# phpdotenvを使用する際必要
+cpenv:
+	docker cp ./env/dotenv.env `docker-compose ps -q web`:/work/.env
