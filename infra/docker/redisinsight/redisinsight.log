@@ -1,0 +1,2 @@
+WARNING 2021-11-12 03:16:52,486 django.request Not Found: /api/instance/b49cc4d0-8010-4d1c-8321-da1f12bc684e/value-details/
+WARNING 2021-11-12 03:16:52,521 django.request Not Found: /api/instance/b49cc4d0-8010-4d1c-8321-da1f12bc684e/key-metadata/

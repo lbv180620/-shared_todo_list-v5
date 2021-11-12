@@ -4,8 +4,9 @@ drop table if exists users;
 
 create table if not exists users (
 	id int(11) auto_increment not null primary key comment 'ID',
-	user varchar(50) not null comment 'ログインユーザ名',
-	pass varchar(255) not null comment 'ログインパスワード',
+	user_name varchar(50) not null comment 'ログインユーザ名',
+	email varchar(255) not null unique comment 'メールアドレス',
+	password varchar(255) not null comment 'ログインパスワード',
 	family_name varchar(50) not null comment 'ユーザ姓',
 	first_name varchar(50) not null comment 'ユーザ名',
 	is_admin tinyint(4) not null default 0 comment '管理者権限',
