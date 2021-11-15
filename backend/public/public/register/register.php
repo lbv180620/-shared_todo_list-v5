@@ -23,7 +23,7 @@ if (!empty($_POST)) {
 	 * 文字数制限
 	 * varchar(50)
 	 */
-	if (mb_strlen($user_name) > 50) {
+	if (!empty($user_name) && mb_strlen($user_name) > 50) {
 		$err['user_name'] = Config::MSG_USER_NAME_STRLEN_ERROR;
 	}
 
@@ -39,7 +39,7 @@ if (!empty($_POST)) {
 	 * 文字数制限
 	 * varchar(255)
 	 */
-	if (mb_strlen($email) > 255) {
+	if (!empty($email) && mb_strlen($email) > 255) {
 		$err['email'] = Config::MSG_EMAIL_STRLEN_ERROR;
 	}
 
@@ -51,7 +51,7 @@ if (!empty($_POST)) {
 	 * 文字数制限
 	 * varchar(50)
 	 */
-	if (mb_strlen($family_name) > 50) {
+	if (!empty($family_name) && mb_strlen($family_name) > 50) {
 		$err['family_name'] = Config::MSG_NAME_STRLEN_ERROR;
 	}
 
@@ -63,7 +63,7 @@ if (!empty($_POST)) {
 	 * 文字数制限
 	 * varchar(50)
 	 */
-	if (mb_strlen($first_name) > 50) {
+	if (!empty($first_name) && mb_strlen($first_name) > 50) {
 		$err['first_name'] = Config::MSG_NAME_STRLEN_ERROR;
 	}
 
