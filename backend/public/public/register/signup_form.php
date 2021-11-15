@@ -34,19 +34,24 @@ unset($_SESSION['err']);
 	<div class="container">
 		<div class="row my-2">
 			<div class="col-sm-3"></div>
-			<div class="col-sm-3">
-				<h1></h1>
+			<div class="col-sm-6">
+				<h1>新規登録してください</h1>
 			</div>
 			<div class="col-sm-3"></div>
 		</div>
 
-		<div class="row my-2">
-			<div class="col-sm-3"></div>
-			<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
-				ユーザー名またはパスワードが違います。 <button class="close" data-dismiss="alert">&times;</button>
+		<?php if (isset($err_msg)) : ?>
+			<div class="row my-2">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
+					<button class="close" data-dismiss="alert">&times;</button>
+					<?php foreach ($err_msg as $v) : ?>
+						<p>・<?= $v ?></p>
+					<?php endforeach ?>
+				</div>
+				<div class="col-sm-3"></div>
 			</div>
-			<div class="col-sm-3"></div>
-		</div>
+		<?php endif ?>
 
 		<div class="row my-2">
 			<div class="col-sm-3"></div>
@@ -55,56 +60,27 @@ unset($_SESSION['err']);
 					<div class="form-group">
 						<label for="user_name">ユーザー名</label>
 						<input type="text" class="form-control" id="user_name" name="user_name">
-						<?php if (isset($err_msg['user_name'])) : ?>
-							<div class="alert alert-danger" role="alert">
-								<p><?= $err_msg['user_name'] ?></p>
-							</div>
-						<?php endif ?>
 					</div>
 					<div class="form-group">
 						<label for="email">メールアドレス</label>
 						<input type="text" class="form-control" id="email" name="email">
-						<?php if (isset($err_msg['email'])) : ?>
-							<div class="alert alert-danger" role="alert">
-								<p><?= $err_msg['email'] ?></p>
-							</div>
-						<?php endif ?>
+
 					</div>
 					<div class="form-group">
 						<label for="family_name">お名前(姓)</label>
 						<input type="text" class="form-control" id="family_name" name="family_name">
-						<?php if (isset($err_msg['family_name'])) : ?>
-							<div class="alert alert-danger" role="alert">
-								<p><?= $err_msg['family_name'] ?></p>
-							</div>
-						<?php endif ?>
 					</div>
 					<div class="form-group">
 						<label for="first_name">お名前(名)</label>
 						<input type="text" class="form-control" id="first_name" name="first_name">
-						<?php if (isset($err_msg['first_name'])) : ?>
-							<div class="alert alert-danger" role="alert">
-								<p><?= $err_msg['first_name'] ?></p>
-							</div>
-						<?php endif ?>
 					</div>
 					<div class="form-group">
 						<label for="password">パスワード</label>
 						<input type="password" class="form-control" id="password" name="password">
-						<?php if (isset($err_msg['password'])) : ?>
-							<div class="alert alert-danger" role="alert">
-								<p><?= $err_msg['password'] ?></p>
-							</div>
-						<?php endif ?>
 					</div>
 					<div class="form-group">
 						<label for="password_confirm">パスワード確認</label>
-						<input type="password" class="form-control" id="password_comfirm" name="password_comfirm">
-						<?php if (isset($err_msg['password_confirm'])) : ?>
-							<div class="alert alert-danger" role="alert">
-								<p><?= $err_msg['password_confirm'] ?></p>
-							</div>
-						<?php endif ?>
+						<input type="password" class="form-control" id="password_confirm" name="password_confirm">
 					</div>
 					<button type="submit" class="btn btn-primary">新規登録</button>
 				</form>

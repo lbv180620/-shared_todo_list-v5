@@ -18,8 +18,8 @@
 	<div class="container">
 		<div class="row my-2">
 			<div class="col-sm-3"></div>
-			<div class="col-sm-3">
-				<h1></h1>
+			<div class="col-sm-6">
+				<h1>ログインしてください</h1>
 			</div>
 			<div class="col-sm-3"></div>
 		</div>
