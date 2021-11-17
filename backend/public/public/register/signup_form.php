@@ -3,6 +3,7 @@
 require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
 
 use \App\Utils\SessionUtil;
+use \App\Utils\Common;
 
 // セッション開始
 SessionUtil::sessionStart();
@@ -10,6 +11,10 @@ SessionUtil::sessionStart();
 // 2回目以降はエラーメッセージを初期化
 $err_msg = isset($_SESSION['err']) ? $_SESSION['err'] : null;
 unset($_SESSION['err']);
+
+// リロード後、新規登録情報を初期化
+$register = isset($_SESSION['register']) ? $_SESSION['register'] : null;
+unset($_SESSION['register']);
 
 
 ?>
@@ -46,7 +51,7 @@ unset($_SESSION['err']);
 				<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
 					<button class="close" data-dismiss="alert">&times;</button>
 					<?php foreach ($err_msg as $v) : ?>
-						<p>・<?= $v ?></p>
+						<p>・<?= Common::h($v) ?></p>
 					<?php endforeach ?>
 				</div>
 				<div class="col-sm-3"></div>
@@ -59,20 +64,20 @@ unset($_SESSION['err']);
 				<form action="./register.php" method="post">
 					<div class="form-group">
 						<label for="user_name">ユーザー名</label>
-						<input type="text" class="form-control" id="user_name" name="user_name">
+						<input type="text" class="form-control" id="user_name" name="user_name" value="<?php if (isset($register['user_name'])) echo Common::h($register['user_name']) ?>">
 					</div>
 					<div class="form-group">
 						<label for="email">メールアドレス</label>
-						<input type="text" class="form-control" id="email" name="email">
+						<input type="text" class="form-control" id="email" name="email" value="<?php if (isset($register['email'])) echo Common::h($register['email']) ?>">
 
 					</div>
 					<div class="form-group">
 						<label for="family_name">お名前(姓)</label>
-						<input type="text" class="form-control" id="family_name" name="family_name">
+						<input type="text" class="form-control" id="family_name" name="family_name" value="<?php if (isset($register['family_name'])) echo Common::h($register['family_name']) ?>">
 					</div>
 					<div class="form-group">
 						<label for="first_name">お名前(名)</label>
-						<input type="text" class="form-control" id="first_name" name="first_name">
+						<input type="text" class="form-control" id="first_name" name="first_name" value="<?php if (isset($register['first_name'])) echo Common::h($register['first_name']) ?>">
 					</div>
 					<div class="form-group">
 						<label for="password">パスワード</label>

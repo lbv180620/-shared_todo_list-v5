@@ -20,6 +20,8 @@ class Config
 	const MSG_PDOEXCEPTION_ERROR = "データベース接続に失敗しました。";
 
 	// register.php
+	const MSG_POST_SENDING_FAILURE_ERROR = "送信に失敗しました。";
+
 	const MSG_USER_NAME_ERROR = "ユーザー名を記入してください。";
 	const MSG_EMAIL_ERROR = "メールアドレスを記入してください。";
 	const MSG_FAMILY_NAME_ERROR = "お名前(姓)を記入してください。";
@@ -30,7 +32,8 @@ class Config
 	const MSG_USER_NAME_STRLEN_ERROR = "ユーザー名は50文字以下にしてください。";
 	const MSG_EMAIL_INCORRECT_ERROR = "メールアドレスの形式が正しくありません。";
 	const MSG_EMAIL_STRLEN_ERROR = "メールアドレスは255文字以下にしてください。";
-	const MSG_NAME_STRLEN_ERROR = "お名前は50文字以下にして下さい。";
+	const MSG_FAMILY_NAME_STRLEN_ERROR = "お名前(姓)は50文字以下にして下さい。";
+	const MSG_FIRST_NAME_STRLEN_ERROR = "お名前(名)は50文字以下にして下さい。";
 	const MSG_PASSWORD_REGEX_ERROR = "パスワードは英数字8文字以上255文字以下にして記入してください。";
 	const MSG_PASSWORD_CONFIRM_MISMATCH_ERROR = "確認用パスワードと異なっています。";
 
