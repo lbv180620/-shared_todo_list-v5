@@ -52,7 +52,6 @@ unset($_SESSION['err']['msg']);
 				<div class="row my-2">
 					<div class="col-sm-3"></div>
 					<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
-						申し訳ございません。<br>エラーが発生しました。
 						<p><?= $err_msg ?></p>
 						<form class="mt-4">
 							<input type="button" class="btn btn-danger" value="ログアウト" onclick="location.href='../login/index.html';">

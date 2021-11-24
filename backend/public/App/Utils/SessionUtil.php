@@ -8,6 +8,7 @@ class SessionUtil
 {
 	/**
 	 * セッションをスタートし、セッションIDを更新する
+	 * @static@method sessionStart
 	 * @param void
 	 * @return void
 	 */

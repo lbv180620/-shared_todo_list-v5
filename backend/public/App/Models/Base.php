@@ -14,11 +14,12 @@ require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
  */
 class Base
 {
-	/** @var object PDOクラスインスタンス */
+	/** @static@var object PDOクラスインスタンス */
 	private static $pdo;
 
 	/**
 	 * PDOクラスのインスタンスを生成して返却する
+	 * @static@method getPDOInstance
 	 * @param void
 	 * @return \PDO PDOクラスのインスタンス
 	 */

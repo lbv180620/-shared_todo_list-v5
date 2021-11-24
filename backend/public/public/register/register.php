@@ -137,9 +137,35 @@ try {
 	$dbh = new Users($base);
 
 	/** ユーザ登録処理 @return bool */
-	$ret = Users::addUser($user_name, $email, $family_name, $first_name, $password);
+	$ret = $dbh->addUser($user_name, $email, $password, $family_name, $first_name);
 
 	// 登録に成功したかの確認
+	if (!$ret) {
+		/**
+		 * 同一のメールアドレスのユーザーがすでにいた場合、
+		 * エラーメッセージをセッションに登録して、新規登録画面にリダイレクト
+		 */
+		$_SESSION['err']['msg'] = Config::MSG_USER_DUPLICATE;
+		header('Location: ./signup_form.php', true, 301);
+		exit;
+	}
 
+	/**
+	 * 正常終了したときは、登録情報とエラーメッセージを削除して、ログイン画面にリダイレクトする。
+	 */
+	unset($_SESSION['register']);
+	unset($_SESSION['err']);
+	// ログイン状態で新規登録に成功した場合、今のログイン情報は削除するようにする。
+	// unset($_SESSION['login']);
+
+	header('Location: ../login/login_form.php', true, 301);
+	exit;
 } catch (\PDOException $e) {
+	$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
+	header('Location: ../error/error.php', true, 301);
+	exit;
+} catch (\Exception $e) {
+	$_SESSION['err']['msg'] = Config::MSG_EXCEPTION_ERROR;
+	header('Location: ../error/error.php', true, 301);
+	exit;
 }

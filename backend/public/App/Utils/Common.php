@@ -12,6 +12,7 @@ class Common
 {
 	/**
 	 * XSS対策：エスケープ処理
+	 * @static@method h
 	 * @param string $str 対象の文字列
 	 * @return string 処理された文字列
 	 */
@@ -22,6 +23,7 @@ class Common
 
 	/**
 	 * サニタイズ：POSTまたはGETで送信されて来た連想配列の要素の値をサニタイズする(1次配列のみ)
+	 * @static@method sanitize
 	 * @param array $before POSTまたはGETで送信されて来た連想配列(1次配列)
 	 * @return array $after エスケープ処理が完了した連想配列
 	 */

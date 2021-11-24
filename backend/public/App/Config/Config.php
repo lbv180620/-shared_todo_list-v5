@@ -17,6 +17,7 @@ class Config
 	];
 
 	/** メッセージ関連 */
+	const MSG_EXCEPTION_ERROR = "申し訳ございません。エラーが発生しました。";
 	const MSG_PDOEXCEPTION_ERROR = "データベース接続に失敗しました。";
 
 	// register.php
@@ -36,6 +37,8 @@ class Config
 	const MSG_FIRST_NAME_STRLEN_ERROR = "お名前(名)は50文字以下にして下さい。";
 	const MSG_PASSWORD_REGEX_ERROR = "パスワードは英数字8文字以上255文字以下にして記入してください。";
 	const MSG_PASSWORD_CONFIRM_MISMATCH_ERROR = "確認用パスワードと異なっています。";
+
+	const MSG_USER_DUPLICATE = "既に同じメールアドレスが登録されています。";
 
 	/** ワンタイムトークン */
 }

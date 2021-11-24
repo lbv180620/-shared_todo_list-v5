@@ -11,10 +11,12 @@ use Dotenv\Dotenv;
  */
 class Env
 {
+	/** @static@var $dotenv */
 	private static $dotenv;
 
 	/**
 	 * 環境変数の値を取得する
+	 * @static@method get
 	 * @param string $key 取得した環境変数名
 	 * @return string 環境変数の値
 	 */
