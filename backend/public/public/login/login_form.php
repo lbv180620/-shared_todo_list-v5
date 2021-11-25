@@ -1,3 +1,15 @@
+<?php
+
+require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
+
+use \App\Utils\SessionUtil;
+
+SessionUtil::sessionStart();
+
+$succsess_msg = $_SESSION['succsess']['msg'];
+
+?>
+
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -8,11 +20,18 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<title>ログイン</title>
 	<link rel="stylesheet" href="../css/bootstrap.min.css">
+	<style>
+		.navbar {
+			display: flex;
+			justify-content: space-between;
+		}
+	</style>
 </head>
 
 <body>
 	<nav class="navbar navbar-expand-md navbar-dark bg-primary">
 		<span class="navbar-brand">TODOリスト</span>
+		<a href="../register/signup_form.php" class="btn btn-success">新規登録へ</a>
 	</nav>
 
 	<div class="container">
@@ -46,7 +65,6 @@
 					</div>
 					<button type="submit" class="btn btn-primary">ログイン</button>
 				</form>
-
 			</div>
 			<div class="col-sm-3"></div>
 		</div>

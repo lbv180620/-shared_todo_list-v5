@@ -42,7 +42,7 @@ class Users
 	public function addUser(string $user_name, string $email, string $password, string $family_name, string $first_name): bool
 	{
 		// 同じメールアドレスのユーザーがいないか調べる
-		if (!empty($this->pdo->findUserByEmail($email))) {
+		if (!empty($this->findUserByEmail($email))) {
 			// すでに同じメールアドレスをもつユーザがいる場合、falseを返す
 			$result = false;
 		}

@@ -29,11 +29,18 @@ unset($_SESSION['register']);
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<title>新規登録</title>
 	<link rel="stylesheet" href="../css/bootstrap.min.css">
+	<style>
+		.navbar {
+			display: flex;
+			justify-content: space-between;
+		}
+	</style>
 </head>
 
 <body>
 	<nav class="navbar navbar-expand-md navbar-dark bg-primary">
 		<span class="navbar-brand">TODOリスト</span>
+		<a href="../login/login_form.php" class="btn btn-success">ログインへ</a>
 	</nav>
 
 	<div class="container">

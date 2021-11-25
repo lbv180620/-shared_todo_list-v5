@@ -24,14 +24,14 @@ class Common
 	/**
 	 * サニタイズ：POSTまたはGETで送信されて来た連想配列の要素の値をサニタイズする(1次配列のみ)
 	 * @static@method sanitize
-	 * @param array $before POSTまたはGETで送信されて来た連想配列(1次配列)
-	 * @return array $after エスケープ処理が完了した連想配列
+	 * @param array $post POSTまたはGETで送信されて来た連想配列(1次配列)
+	 * @return array $post エスケープ処理が完了した連想配列
 	 */
-	public static function sanitize(array $before): array
+	public static function sanitize(array $post): array
 	{
-		foreach ($before as $k => $v) {
-			$after[$k] = htmlspecialchars($v, ENT_QUOTES, "UTF-8");
+		foreach ($post as $k => $v) {
+			$post[$k] = htmlspecialchars($v, ENT_QUOTES, "UTF-8");
 		}
-		return $after;
+		return $post;
 	}
 }

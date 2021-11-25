@@ -158,10 +158,13 @@ try {
 	// ログイン状態で新規登録に成功した場合、今のログイン情報は削除するようにする。
 	// unset($_SESSION['login']);
 
+	// 新規登録に成功した旨のメッセージをログイン画面にセッションで渡して、リダイレクト
+	$_SESSION['succsess']['msg'] = Config::MSG_NEW_REGISTRATIONW_REGISTRATION_SUCCESSFUL;
 	header('Location: ../login/login_form.php', true, 301);
 	exit;
 } catch (\PDOException $e) {
-	$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
+	// $_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
+	$_SESSION['err']['msg'] = $e->getMessage();
 	header('Location: ../error/error.php', true, 301);
 	exit;
 } catch (\Exception $e) {
