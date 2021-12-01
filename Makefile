@@ -1,5 +1,7 @@
 include Makefile.env
 
+ps:
+	docker-compose ps
 up:
 	docker-compose up -d
 build:
@@ -8,9 +10,7 @@ db-set:
 	docker-compose exec db bash -c 'mkdir /var/lib/mysql/sql && \
 		touch /var/lib/mysql/sql/query.sql && \
 		chown -R mysql:mysql /var/lib/mysql'
-rebuild:
-	@make build
-	@make up
+
 file-set:
 	mkdir -p scripts/sql scripts/script data && \
 		touch scripts/sql/query.sql scripts/script/set-query.sh && \
@@ -65,8 +65,6 @@ destroy:
 	rm -rf infra/docker/redisinsight .vscode
 destroy-volumes:
 	docker-compose down --volumes --remove-orphans
-ps:
-	docker-compose ps
 # log
 logs:
 	docker-compose logs

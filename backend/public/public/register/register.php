@@ -159,16 +159,18 @@ try {
 	// unset($_SESSION['login']);
 
 	// 新規登録に成功した旨のメッセージをログイン画面にセッションで渡して、リダイレクト
-	$_SESSION['succsess']['msg'] = Config::MSG_NEW_REGISTRATIONW_REGISTRATION_SUCCESSFUL;
+	$_SESSION['success']['msg'] = Config::MSG_NEW_REGISTRATIONW_REGISTRATION_SUCCESSFUL;
+
 	header('Location: ../login/login_form.php', true, 301);
 	exit;
 } catch (\PDOException $e) {
-	// $_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
+	$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
 	$_SESSION['err']['msg'] = $e->getMessage();
 	header('Location: ../error/error.php', true, 301);
 	exit;
 } catch (\Exception $e) {
 	$_SESSION['err']['msg'] = Config::MSG_EXCEPTION_ERROR;
+	// $_SESSION['err']['msg'] = $e->getMessage();
 	header('Location: ../error/error.php', true, 301);
 	exit;
 }

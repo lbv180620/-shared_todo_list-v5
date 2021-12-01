@@ -3,10 +3,13 @@
 require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
 
 use \App\Utils\SessionUtil;
+use \App\Utils\Common;
 
 SessionUtil::sessionStart();
 
-$succsess_msg = $_SESSION['succsess']['msg'];
+# 新規登録成功メッセージの初期化
+$success_msg = isset($_SESSION['success']) ? $_SESSION['success']['msg'] : null;
+unset($_SESSION['success']);
 
 ?>
 
@@ -42,14 +45,24 @@ $succsess_msg = $_SESSION['succsess']['msg'];
 			</div>
 			<div class="col-sm-3"></div>
 		</div>
-
-		<div class="row my-2">
-			<div class="col-sm-3"></div>
-			<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
-				ユーザー名またはパスワードが違います。 <button class="close" data-dismiss="alert">&times;</button>
+		<?php if (isset($err_msg)) : ?>
+			<div class="row my-2">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
+					ユーザー名またはパスワードが違います。 <button class="close" data-dismiss="alert">&times;</button>
+				</div>
+				<div class="col-sm-3"></div>
 			</div>
-			<div class="col-sm-3"></div>
-		</div>
+		<?php elseif (isset($success_msg)) : ?>
+			<div class="row my-2">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-6 alert alert-success alert-dismissble fade show">
+					<button class="close" data-dismiss="alert">&times;</button>
+					<p><?= Common::h($success_msg) ?></p>
+				</div>
+				<div class="col-sm-3"></div>
+			</div>
+		<?php endif ?>
 
 		<div class="row my-2">
 			<div class="col-sm-3"></div>

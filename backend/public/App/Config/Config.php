@@ -40,7 +40,7 @@ class Config
 
 	const MSG_USER_DUPLICATE = "既に同じメールアドレスが登録されています。";
 
-	const MSG_NEW_REGISTRATIONW_REGISTRATION_SUCCESSFUL = "新規登録しました。ログインしてください";
+	const MSG_NEW_REGISTRATIONW_REGISTRATION_SUCCESSFUL = "新規登録しました。ログインしてください。";
 
 	/** ワンタイムトークン */
 }
