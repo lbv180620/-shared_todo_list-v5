@@ -70,7 +70,7 @@ unset($_SESSION['success']);
 				<form action="./login.php" method="post">
 					<div class="form-group">
 						<label for="user">ユーザー名</label>
-						<input type="text" class="form-control" id="user" name="user">
+						<input type="text" class="form-control" id="user" name="user_name">
 					</div>
 					<div class="form-group">
 						<label for="password">パスワード</label>

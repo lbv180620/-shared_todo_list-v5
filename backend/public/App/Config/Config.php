@@ -20,7 +20,7 @@ class Config
 	const MSG_EXCEPTION_ERROR = "申し訳ございません。エラーが発生しました。";
 	const MSG_PDOEXCEPTION_ERROR = "データベース接続に失敗しました。";
 
-	// register.php
+	// register.php login.php
 	const MSG_POST_SENDING_FAILURE_ERROR = "送信に失敗しました。";
 
 	const MSG_USER_NAME_ERROR = "ユーザー名を記入してください。";
@@ -41,6 +41,9 @@ class Config
 	const MSG_USER_DUPLICATE = "既に同じメールアドレスが登録されています。";
 
 	const MSG_NEW_REGISTRATIONW_REGISTRATION_SUCCESSFUL = "新規登録しました。ログインしてください。";
+
+	const MSG_FAILURE_TO_LOGIN = "ログインに失敗しました。";
+	const MSG_LOGIN_SUCCESSFUL = "ログインに成功しました。";
 
 	/** ワンタイムトークン */
 }

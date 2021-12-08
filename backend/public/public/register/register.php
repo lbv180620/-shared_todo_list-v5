@@ -111,8 +111,8 @@ if (!empty($_POST)) {
 	$err['msg'] = Config::MSG_POST_SENDING_FAILURE_ERROR;
 }
 
-// 新規登録情報をサニタイズしてセッションに保存する
-$_SESSION['register'] = Common::sanitize($_POST);
+// 記入情報をサニタイズしてセッションに保存する
+$_SESSION['fill'] = Common::sanitize($_POST);
 
 // エラーメッセージの処理
 /**
@@ -151,12 +151,12 @@ try {
 	}
 
 	/**
-	 * 正常終了したときは、登録情報とエラーメッセージを削除して、ログイン画面にリダイレクトする。
+	 * 正常終了したときは、記入情報とエラーメッセージを削除して、ログイン画面にリダイレクトする。
 	 */
-	unset($_SESSION['register']);
+	unset($_SESSION['fill']);
 	unset($_SESSION['err']);
 	// ログイン状態で新規登録に成功した場合、今のログイン情報は削除するようにする。
-	// unset($_SESSION['login']);
+	unset($_SESSION['login']);
 
 	// 新規登録に成功した旨のメッセージをログイン画面にセッションで渡して、リダイレクト
 	$_SESSION['success']['msg'] = Config::MSG_NEW_REGISTRATIONW_REGISTRATION_SUCCESSFUL;

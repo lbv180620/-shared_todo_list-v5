@@ -13,8 +13,8 @@ $err_msg = isset($_SESSION['err']) ? $_SESSION['err'] : null;
 unset($_SESSION['err']);
 
 // リロード後、新規登録情報を初期化
-$register = isset($_SESSION['register']) ? $_SESSION['register'] : null;
-unset($_SESSION['register']);
+$fill = isset($_SESSION['fill']) ? $_SESSION['fill'] : null;
+unset($_SESSION['fill']);
 
 
 ?>
@@ -68,23 +68,23 @@ unset($_SESSION['register']);
 		<div class="row my-2">
 			<div class="col-sm-3"></div>
 			<div class="col-sm-6">
-				<form action="./register.php" method="post">
+				<form action="./fill.php" method="post">
 					<div class="form-group">
 						<label for="user_name">ユーザー名</label>
-						<input type="text" class="form-control" id="user_name" name="user_name" value="<?php if (isset($register['user_name'])) echo Common::h($register['user_name']) ?>">
+						<input type="text" class="form-control" id="user_name" name="user_name" value="<?php if (isset($fill['user_name'])) echo Common::h($fill['user_name']) ?>">
 					</div>
 					<div class="form-group">
 						<label for="email">メールアドレス</label>
-						<input type="text" class="form-control" id="email" name="email" value="<?php if (isset($register['email'])) echo Common::h($register['email']) ?>">
+						<input type="text" class="form-control" id="email" name="email" value="<?php if (isset($fill['email'])) echo Common::h($fill['email']) ?>">
 
 					</div>
 					<div class="form-group">
 						<label for="family_name">お名前(姓)</label>
-						<input type="text" class="form-control" id="family_name" name="family_name" value="<?php if (isset($register['family_name'])) echo Common::h($register['family_name']) ?>">
+						<input type="text" class="form-control" id="family_name" name="family_name" value="<?php if (isset($fill['family_name'])) echo Common::h($fill['family_name']) ?>">
 					</div>
 					<div class="form-group">
 						<label for="first_name">お名前(名)</label>
-						<input type="text" class="form-control" id="first_name" name="first_name" value="<?php if (isset($register['first_name'])) echo Common::h($register['first_name']) ?>">
+						<input type="text" class="form-control" id="first_name" name="first_name" value="<?php if (isset($fill['first_name'])) echo Common::h($fill['first_name']) ?>">
 					</div>
 					<div class="form-group">
 						<label for="password">パスワード</label>

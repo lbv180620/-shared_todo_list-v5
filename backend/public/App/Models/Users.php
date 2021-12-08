@@ -95,4 +95,14 @@ class Users
 
 		return $rec;
 	}
+
+	/**
+	 * ログイン処理
+	 *
+	 * @param
+	 * @return bool $result
+	 */
+	public function login()
+	{
+	}
 }
