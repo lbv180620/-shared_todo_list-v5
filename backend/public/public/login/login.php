@@ -7,9 +7,12 @@ use App\Models\Base;
 use App\Config\Config;
 use App\Utils\Common;
 use App\Utils\SessionUtil;
+// use App\Utils\Validation;
 
 // セッション開始
 SessionUtil::sessionStart();
+
+// Validation::validateLogin();
 
 // エラーメッセージ
 $err = [];

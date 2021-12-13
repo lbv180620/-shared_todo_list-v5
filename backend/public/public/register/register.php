@@ -15,9 +15,11 @@ use App\Config\Config;
 
 use App\Utils\SessionUtil;
 use App\Utils\Common;
+// use App\Utils\Validation;
 
 SessionUtil::sessionStart();
 
+// Valodation::validateRegister();
 
 // エラーメッセージ
 $err = [];
