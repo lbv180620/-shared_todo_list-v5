@@ -45,6 +45,7 @@ class Users
 		if (!empty($this->findUserByEmail($email))) {
 			// すでに同じメールアドレスをもつユーザがいる場合、falseを返す
 			$result = false;
+			return $result;
 		}
 
 		// パスワードをハッシュ化する
@@ -97,12 +98,49 @@ class Users
 	}
 
 	/**
+	 * メールアドレスとパスワードが一致するユーザーを取得する
+	 *
+	 * @param string $email
+	 * @param string $password
+	 * @return array $user ユーザーの連想配列
+	 */
+	private function getUser(?string $email, ?string $password)
+	{
+		// 同一のメールアドレスのユーザーを探す
+		$user = $this->findUserByEmail($email);
+		// 同一のメールアドレスのユーザーが無かったら、空の配列を返す
+		if (empty($user)) {
+			return [];
+		}
+
+		// パスワードの照合
+		if (password_verify($password, $user['password'])) {
+			// 照合できたら、ユーザ情報を返す
+			return $user;
+		}
+
+		// 照合できなかったら、空の配列を返す
+		return [];
+	}
+
+	/**
 	 * ログイン処理
 	 *
-	 * @param
+	 * @param string $email
+	 * @param string $password
 	 * @return bool $result
 	 */
-	public function login()
+	public function login(?string $email, ?string $password)
 	{
+		// メールアドレスとパスワードが一致するユーザーを取得する
+		$user = $this->getUser($email, $password);
+		if (!empty($user)) {
+			// セッションにユーザ情報を登録
+			$_SESSION['login'] = $user;
+			return true;
+		}
+
+		// メールアドレスとパスワードが一致するユーザを取得できなかった場合、空の配列を返す
+		return false;
 	}
 }

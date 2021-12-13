@@ -16,18 +16,23 @@ $err = [];
 
 // バリデーション
 if (!empty($_POST)) {
-	// user_nameのバリデーション
-	if (!$user_name = filter_input(INPUT_POST, 'user_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
-		$err['user_name'] = Config::MSG_USER_NAME_ERROR;
-		$_POST['user_name'] = "";
+	// emailのバリデーション
+	if (!$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+		$err['email'] = Config::MSG_EMAIL_ERROR;
+		$_POST['email'] = "";
+	}
+	// メールアドレスの形式チェック
+	if (!empty($email) && !$email = filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		$err['email'] = Config::MSG_EMAIL_INCORRECT_ERROR;
+		$_POST['email'] = "";
 	}
 	/**
-	 * 文字制限
-	 * varchar(50)
+	 * 文字数制限
+	 * varchar(255)
 	 */
-	if (!empty($user_name) && mb_strlen($user_name) > 50) {
-		$err['user_name'] = Config::MSG_USER_NAME_STRLEN_ERROR;
-		$_POST['user_name'] = "";
+	if (!empty($email) && mb_strlen($email) > 255) {
+		$err['email'] = Config::MSG_EMAIL_STRLEN_ERROR;
+		$_POST['email'] = "";
 	}
 
 	// passwordのバリデーション
@@ -72,8 +77,8 @@ try {
 
 	// ログイン処理の前に念のためログイン情報を削除
 	unset($_SESSION['login']);
-	/** ログイン処理 @return bool */
-	$ret = $dbh->login();
+	/** ログイン処理 @param string $email @param string $password @return bool */
+	$ret = $dbh->login($email, $password);
 
 	// ログインに成功したかの確認
 	if (!$ret) {
@@ -92,9 +97,9 @@ try {
 	unset($_SESSION['fill']);
 	unset($_SESSION['err']);
 
-	// ログインに成功した旨のメッセージをマイページにセッションで渡して、リダイレクト
+	// ログインに成功した旨のメッセージをtop.phpにセッションで渡して、リダイレクト
 	$_SESSION['success']['msg'] = Config::MSG_LOGIN_SUCCESSFUL;
-	header('Location: ../todo/mypage.php', true, 301);
+	header('Location: ../todo/top.php', true, 301);
 	exit;
 } catch (\PDOException $e) {
 	$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;

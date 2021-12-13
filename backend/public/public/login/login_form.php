@@ -11,6 +11,15 @@ SessionUtil::sessionStart();
 $success_msg = isset($_SESSION['success']) ? $_SESSION['success']['msg'] : null;
 unset($_SESSION['success']);
 
+# ログイン失敗メーセージの初期化
+$err_msg = isset($_SESSION['err']) ? $_SESSION['err'] : null;
+unset($_SESSION['err']);
+
+// リロード後、記入情報を初期化
+$fill = isset($_SESSION['fill']) ? $_SESSION['fill'] : null;
+unset($_SESSION['fill']);
+
+
 ?>
 
 <!DOCTYPE html>
@@ -45,15 +54,21 @@ unset($_SESSION['success']);
 			</div>
 			<div class="col-sm-3"></div>
 		</div>
+		<!-- エラメッセージアラート -->
 		<?php if (isset($err_msg)) : ?>
 			<div class="row my-2">
 				<div class="col-sm-3"></div>
 				<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
-					ユーザー名またはパスワードが違います。 <button class="close" data-dismiss="alert">&times;</button>
+					<button class="close" data-dismiss="alert">&times;</button>
+					<?php foreach ($err_msg as $v) : ?>
+						<p>・<?= Common::h($v) ?></p>
+					<?php endforeach ?>
 				</div>
 				<div class="col-sm-3"></div>
 			</div>
-		<?php elseif (isset($success_msg)) : ?>
+		<?php endif ?>
+		<!-- サクセスメッセージアラート -->
+		<?php if (isset($success_msg)) : ?>
 			<div class="row my-2">
 				<div class="col-sm-3"></div>
 				<div class="col-sm-6 alert alert-success alert-dismissble fade show">
@@ -69,8 +84,8 @@ unset($_SESSION['success']);
 			<div class="col-sm-6">
 				<form action="./login.php" method="post">
 					<div class="form-group">
-						<label for="user">ユーザー名</label>
-						<input type="text" class="form-control" id="user" name="user_name">
+						<label for="email">メールアドレス</label>
+						<input type="text" class="form-control" id="email" name="email">
 					</div>
 					<div class="form-group">
 						<label for="password">パスワード</label>

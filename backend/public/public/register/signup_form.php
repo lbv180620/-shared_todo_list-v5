@@ -12,7 +12,7 @@ SessionUtil::sessionStart();
 $err_msg = isset($_SESSION['err']) ? $_SESSION['err'] : null;
 unset($_SESSION['err']);
 
-// リロード後、新規登録情報を初期化
+// リロード後、記入情報を初期化
 $fill = isset($_SESSION['fill']) ? $_SESSION['fill'] : null;
 unset($_SESSION['fill']);
 
@@ -68,7 +68,7 @@ unset($_SESSION['fill']);
 		<div class="row my-2">
 			<div class="col-sm-3"></div>
 			<div class="col-sm-6">
-				<form action="./fill.php" method="post">
+				<form action="./register.php" method="post">
 					<div class="form-group">
 						<label for="user_name">ユーザー名</label>
 						<input type="text" class="form-control" id="user_name" name="user_name" value="<?php if (isset($fill['user_name'])) echo Common::h($fill['user_name']) ?>">
