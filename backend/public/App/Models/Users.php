@@ -24,23 +24,20 @@ class Users
 		$this->pdo = $pdo;
 	}
 
-	public function getPDO()
-	{
-		return $this->pdo;
-	}
-
 	/**
 	 * ユーザを新規登録する
 	 * @method addUser
-	 * @param string $user_name
-	 * @param string $email
-	 * @param string $password
-	 * @param string $family_name
-	 * @param string $first_name
+	 * @param array $post
 	 * @return bool
 	 */
-	public function addUser(string $user_name, string $email, string $password, string $family_name, string $first_name): bool
+	public function addUser(array $post): bool
 	{
+		$user_name = $post['user_name'];
+		$family_name = $post['family_name'];
+		$first_name = $post['first_name'];
+		$email = $post['email'];
+		$password = $post['password'];
+
 		// 同じメールアドレスのユーザーがいないか調べる
 		if (!empty($this->findUserByEmail($email))) {
 			// すでに同じメールアドレスをもつユーザがいる場合、falseを返す
@@ -56,17 +53,25 @@ class Users
 		$sql .= "VALUES";
 		$sql .= "(:user_name, :email, :password, :family_name, :first_name)";
 
-		$stmt = $this->pdo->prepare($sql);
+		// データ変更ありなので、トランザクション処理
+		$this->pdo->beginTransaction();
+		try {
+			$stmt = $this->pdo->prepare($sql);
 
-		$stmt->bindValue(':user_name', $user_name, \PDO::PARAM_STR);
-		$stmt->bindValue(':email', $email, \PDO::PARAM_STR);
-		$stmt->bindValue(':password', $password, \PDO::PARAM_STR);
-		$stmt->bindValue(':family_name', $family_name, \PDO::PARAM_STR);
-		$stmt->bindValue(':first_name', $first_name, \PDO::PARAM_STR);
+			$stmt->bindValue(':user_name', $user_name, \PDO::PARAM_STR);
+			$stmt->bindValue(':email', $email, \PDO::PARAM_STR);
+			$stmt->bindValue(':password', $password, \PDO::PARAM_STR);
+			$stmt->bindValue(':family_name', $family_name, \PDO::PARAM_STR);
+			$stmt->bindValue(':first_name', $first_name, \PDO::PARAM_STR);
 
-		$result = $stmt->execute();
+			$stmt->execute();
+			$result = $this->pdo->commit();
 
-		return $result;
+			return $result;
+		} catch (\PDOException $e) {
+			$this->pdo->rollBack();
+			return $result;
+		}
 	}
 
 	/**
@@ -126,12 +131,13 @@ class Users
 	/**
 	 * ログイン処理
 	 *
-	 * @param string $email
-	 * @param string $password
+	 * @param arrsy $post
 	 * @return bool $result
 	 */
-	public function login(?string $email, ?string $password)
+	public function login(?array $post)
 	{
+		$email = $post['email'];
+		$password = $post['password'];
 		// メールアドレスとパスワードが一致するユーザーを取得する
 		$user = $this->getUser($email, $password);
 		if (!empty($user)) {

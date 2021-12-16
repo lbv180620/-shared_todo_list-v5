@@ -7,54 +7,30 @@ use App\Models\Base;
 use App\Config\Config;
 use App\Utils\Common;
 use App\Utils\SessionUtil;
-// use App\Utils\Validation;
+use App\Utils\Validation;
 
 // セッション開始
 SessionUtil::sessionStart();
+// サニタイズ
+$post = Common::sanitize($_POST);
 
-// Validation::validateLogin();
-
-// エラーメッセージ
-$err = [];
-
-// バリデーション
-if (!empty($_POST)) {
-	// emailのバリデーション
-	if (!$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
-		$err['email'] = Config::MSG_EMAIL_ERROR;
-		$_POST['email'] = "";
-	}
-	// メールアドレスの形式チェック
-	if (!empty($email) && !$email = filter_var($email, FILTER_VALIDATE_EMAIL)) {
-		$err['email'] = Config::MSG_EMAIL_INCORRECT_ERROR;
-		$_POST['email'] = "";
-	}
-	/**
-	 * 文字数制限
-	 * varchar(255)
-	 */
-	if (!empty($email) && mb_strlen($email) > 255) {
-		$err['email'] = Config::MSG_EMAIL_STRLEN_ERROR;
-		$_POST['email'] = "";
-	}
-
-	// passwordのバリデーション
-	if (!$password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
-		$err['password'] = Config::MSG_PASSWORD_ERROR;
-	}
-
-	// 正規表現
-	/**
-	 *"/\A[a-z\d]{8,100}+\z/i"
-	 *英小文字数字で8文字以上255文字以下の範囲で1回続く(大文字小文字は区別しない)パスワード
-	 */
-	if (!empty($password) && !preg_match("/\A[a-z\d]{8,255}+\z/i", $password)) {
-		$err['password'] = Config::MSG_PASSWORD_REGEX_ERROR;
-	}
+// ワンタイムトークンチェック
+// 「フォームからトークンから送信されていない」または「トークンが一致しない」場合
+// ログインフォームにリダイレクト
+if (!isset($post['token']) || !Common::isValidToken($post['token'])) {
+	$_SESSION['err']['msg'] = Config::MSG_INVALID_PROCESS;
+	header('Location: ./login_form', true, 301);
+	exit;
 }
 
-// 記入情報をサニタイズして保存
-$_SESSION['fill'] = Common::sanitize($_POST);
+// バリデーション
+$result = Validation::validateFormRequesut($_POST);
+
+// 記入情報をサニタイズしてセッションに保存する
+$fill = $result['fill'];
+if (count($fill)) {
+	$_SESSION['fill'] = Common::sanitize($fill);
+}
 
 // エラーメッセージの処理
 /**
@@ -62,16 +38,19 @@ $_SESSION['fill'] = Common::sanitize($_POST);
  * エラーメッセージをセッションに登録し、
  * 元のフォームへリダイレクト
  */
+$err = $result['err'];
 if (count($err) > 0) {
 	$_SESSION['err'] = $err;
 	header('Location: ./login_form.php', true, 301);
 	exit;
 }
 
+
 /**
  * エラーメッセージがない場合、
  * ログイン処理を行う
  */
+
 
 try {
 	// DB接続処理
@@ -81,7 +60,8 @@ try {
 	// ログイン処理の前に念のためログイン情報を削除
 	unset($_SESSION['login']);
 	/** ログイン処理 @param string $email @param string $password @return bool */
-	$ret = $dbh->login($email, $password);
+	/** ログイン処理 @param array $post @return bool */
+	$ret = $dbh->login($post);
 
 	// ログインに成功したかの確認
 	if (!$ret) {

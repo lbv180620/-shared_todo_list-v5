@@ -16,6 +16,8 @@ unset($_SESSION['err']);
 $fill = isset($_SESSION['fill']) ? $_SESSION['fill'] : null;
 unset($_SESSION['fill']);
 
+// ワンタイムトークン生成
+$token = Common::generateToken();
 
 ?>
 
@@ -69,6 +71,8 @@ unset($_SESSION['fill']);
 			<div class="col-sm-3"></div>
 			<div class="col-sm-6">
 				<form action="./register.php" method="post">
+					<!-- トークン送信 -->
+					<input type="hidden" name="token" value="<?= $token ?>">
 					<div class="form-group">
 						<label for="user_name">ユーザー名</label>
 						<input type="text" class="form-control" id="user_name" name="user_name" value="<?php if (isset($fill['user_name'])) echo Common::h($fill['user_name']) ?>">

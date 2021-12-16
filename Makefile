@@ -160,6 +160,8 @@ git:
 	git add .
 	git commit -m $(msg)
 	git push origin
+g:
+	@make git
 git-msg:
 	env | grep "msg"
 # link

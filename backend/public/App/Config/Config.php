@@ -46,4 +46,9 @@ class Config
 	const MSG_LOGIN_SUCCESSFUL = "ログインに成功しました。";
 
 	/** ワンタイムトークン */
+	/** @var int openssl_random_pseudo_bytes()で使用する文字列の長さ */
+	const RAMDOM_PSEUDO_STRING_LENGTH = 32;
+
+	/** @var string ワンタイムトークンが一致しないとき */
+	const MSG_INVALID_PROCESS = '不正な処理が行われました。';
 }

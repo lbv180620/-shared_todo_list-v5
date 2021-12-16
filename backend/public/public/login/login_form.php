@@ -85,7 +85,7 @@ unset($_SESSION['fill']);
 				<form action="./login.php" method="post">
 					<div class="form-group">
 						<label for="email">メールアドレス</label>
-						<input type="text" class="form-control" id="email" name="email">
+						<input type="text" class="form-control" id="email" name="email" value="<?php if (isset($fill['email'])) echo Common::h($fill['email']) ?>">
 					</div>
 					<div class="form-group">
 						<label for="password">パスワード</label>
