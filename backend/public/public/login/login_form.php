@@ -1,17 +1,25 @@
 <?php
 
+/** guest */
+
 require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
 
-use \App\Utils\SessionUtil;
-use \App\Utils\Common;
+use App\Utils\SessionUtil;
+use App\Utils\Common;
 
 SessionUtil::sessionStart();
 
-# 新規登録成功メッセージの初期化
+// ログインチェック
+if (!Common::isGuestUser()) {
+	header('Location: ../todo/top.php', true, 301);
+	exit;
+}
+
+# 成功メッセージの初期化
 $success_msg = isset($_SESSION['success']) ? $_SESSION['success']['msg'] : null;
 unset($_SESSION['success']);
 
-# ログイン失敗メーセージの初期化
+# 失敗メーセージの初期化
 $err_msg = isset($_SESSION['err']) ? $_SESSION['err'] : null;
 unset($_SESSION['err']);
 
@@ -19,6 +27,8 @@ unset($_SESSION['err']);
 $fill = isset($_SESSION['fill']) ? $_SESSION['fill'] : null;
 unset($_SESSION['fill']);
 
+// ワンタイムトークン生成
+$token = Common::generateToken();
 
 ?>
 
@@ -82,7 +92,10 @@ unset($_SESSION['fill']);
 		<div class="row my-2">
 			<div class="col-sm-3"></div>
 			<div class="col-sm-6">
-				<form action="./login.php" method="post">
+				<!-- フォーム -->
+				<form action="./login.php" method="post" onsubmit="return checkSubmit() ">
+					<!-- トークン送信 -->
+					<input type="hidden" name="token" value="<?= $token ?>">
 					<div class="form-group">
 						<label for="email">メールアドレス</label>
 						<input type="text" class="form-control" id="email" name="email" value="<?php if (isset($fill['email'])) echo Common::h($fill['email']) ?>">
@@ -98,6 +111,16 @@ unset($_SESSION['fill']);
 		</div>
 
 	</div>
+
+	<script>
+		function checkSubmit() {
+			if (window.confirm('ログインしますかしますか?')) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	</script>
 
 	<!-- 必要なJavascriptを読み込む -->
 	<script src="../js/jquery-3.4.1.min.js"></script>

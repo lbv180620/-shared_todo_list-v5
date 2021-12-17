@@ -149,4 +149,24 @@ class Users
 		// メールアドレスとパスワードが一致するユーザを取得できなかった場合、空の配列を返す
 		return false;
 	}
+
+	/**
+	 * ログアウト処理
+	 *
+	 * @return bool
+	 */
+	public static function logout(): bool
+	{
+		// ログインユーザー情報を削除して、ログアウト処理とする
+		unset($_SESSION['login']);
+
+		// 念のためにセッションに保存した他の情報も削除する
+		unset($_SESSION['fill']);
+		unset($_SESSION['err']);
+		unset($_SESSION['success']);
+
+		// さらに念のために全消し
+		$_SESSION = array();
+		return session_destroy();
+	}
 }

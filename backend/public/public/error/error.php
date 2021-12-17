@@ -1,5 +1,7 @@
 <?php
 
+/** guest | auth */
+
 require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
 
 use App\Utils\SessionUtil;
@@ -7,15 +9,10 @@ use App\Utils\SessionUtil;
 // セッション開始
 SessionUtil::sessionStart();
 
-// エラーメッセージが無い場合、ログインフォームへリダイレクト
-if (!isset($_SESSION['err']['msg'])) {
-	header('Location: ../login/login_form.php');
-	exit;
-}
-
 // エラーメッセージの初期化
 $err_msg = $_SESSION['err']['msg'];
-unset($_SESSION['err']['msg']);
+$err_flg = $_SESSION['err']['flg'];
+unset($_SESSION['err']);
 
 ?>
 
@@ -29,18 +26,29 @@ unset($_SESSION['err']['msg']);
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<title>エラーメッセージ</title>
 	<link rel="stylesheet" href="../css/bootstrap.min.css">
+	<style>
+		.navbar {
+			display: flex;
+			justify-content: space-between;
+		}
+	</style>
 </head>
 
 <body>
 	<nav class="navbar navbar-expand-md navbar-dark bg-primary">
 		<span class="navbar-brand">TODOリスト</span>
+		<?php if (isset($_SESSION['login'])) : ?>
+			<a href="../login/login_form.php" class="btn btn-success">ログインへ</a>
+		<?php else : ?>
+			<a href="../register/signup_form.php" class="btn btn-success">新規登録へ</a>
+		<?php endif ?>
 	</nav>
 
 	<div class="container">
 		<div class="row my-2">
 			<div class="col-sm-3"></div>
-			<div class="col-sm-3">
-				<h1></h1>
+			<div class="col-sm-6">
+				<h1>エラーが発生しました。</h1>
 			</div>
 			<div class="col-sm-3"></div>
 		</div>
@@ -53,10 +61,11 @@ unset($_SESSION['err']['msg']);
 					<div class="col-sm-3"></div>
 					<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
 						<p><?= $err_msg ?></p>
-						<form class="mt-4">
-							<input type="button" class="btn btn-danger" value="ログアウト" onclick="location.href='../login/index.html';">
-						</form>
-
+						<?php if (!isset($err_flg) || $err_flg !== 1) : ?>
+							<form class="mt-4">
+								<input type="button" class="btn btn-danger" value="ログアウト" onclick="location.href='../login/logout.php';">
+							</form>
+						<?php endif ?>
 					</div>
 					<div class="col-sm-3"></div>
 				</div>

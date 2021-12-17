@@ -19,7 +19,7 @@ $post = Common::sanitize($_POST);
 // ログインフォームにリダイレクト
 if (!isset($post['token']) || !Common::isValidToken($post['token'])) {
 	$_SESSION['err']['msg'] = Config::MSG_INVALID_PROCESS;
-	header('Location: ./login_form', true, 301);
+	header('Location: ./login_form.php', true, 301);
 	exit;
 }
 

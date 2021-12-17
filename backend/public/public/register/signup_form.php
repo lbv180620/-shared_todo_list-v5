@@ -1,12 +1,20 @@
 <?php
 
+/** guest | auth */
+
 require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
 
-use \App\Utils\SessionUtil;
-use \App\Utils\Common;
+use App\Utils\SessionUtil;
+use App\Utils\Common;
 
 // セッション開始
 SessionUtil::sessionStart();
+
+// ログインチェック
+if (!Common::isGuestUser()) {
+	header('Location: ../todo/top.php', true, 301);
+	exit;
+}
 
 // 2回目以降はエラーメッセージを初期化
 $err_msg = isset($_SESSION['err']) ? $_SESSION['err'] : null;
@@ -70,7 +78,8 @@ $token = Common::generateToken();
 		<div class="row my-2">
 			<div class="col-sm-3"></div>
 			<div class="col-sm-6">
-				<form action="./register.php" method="post">
+				<!-- フォーム -->
+				<form action="./register.php" method="post" onsubmit="return checkSubmit()">
 					<!-- トークン送信 -->
 					<input type="hidden" name="token" value="<?= $token ?>">
 					<div class="form-group">
@@ -106,6 +115,16 @@ $token = Common::generateToken();
 		</div>
 
 	</div>
+
+	<script>
+		function checkSubmit() {
+			if (window.confirm('新規登録しますか?')) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	</script>
 
 	<!-- 必要なJavascriptを読み込む -->
 	<script src="../js/jquery-3.4.1.min.js"></script>

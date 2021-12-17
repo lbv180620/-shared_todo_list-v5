@@ -1,11 +1,19 @@
 <?php
 
+/** auth */
+
 require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
 
-use \App\Utils\SessionUtil;
-use \App\Utils\Common;
+use App\Utils\SessionUtil;
+use App\Utils\Common;
 
 SessionUtil::sessionStart();
+
+// ログインチェック
+if (!Common::isAuthUser()) {
+	header('Location: ../login/login_form.php', true, 301);
+	exit;
+}
 
 # ログイン成功メッセージの初期化
 $success_msg = isset($_SESSION['success']) ? $_SESSION['success']['msg'] : null;
@@ -61,10 +69,19 @@ unset($_SESSION['success']);
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						テスト花子さん
 					</a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<!-- <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="../login/logout.php">ログアウト</a>
-					</div>
+						<li><a class="dropdown-item" href="../login/logout.php">ログアウト</a></li>
+					</ul> -->
+					<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<li><a class="dropdown-item" href="#">Action</a></li>
+						<li><a class="dropdown-item" href="#">Another action</a></li>
+						<li>
+							<form action="../login/logout.php" method="post" onsubmit="return checkSubmit()" style="display: inline;">
+								<button type="submit" class="btn btn-danger dropdown-item">ログアウト</button>
+							</form>
+						</li>
+					</ul>
 				</li>
 			</ul>
 			<form class="form-inline my-2 my-lg-0" action="./" method="get">
@@ -239,6 +256,16 @@ unset($_SESSION['success']);
 
 	</div>
 	<!-- コンテナ ここまで -->
+
+	<script>
+		function checkSubmit() {
+			if (window.confirm('ログアウトしますか?')) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	</script>
 
 	<!-- 必要なJavascriptを読み込む -->
 	<script src="../js/jquery-3.4.1.min.js"></script>

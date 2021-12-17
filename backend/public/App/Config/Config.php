@@ -45,6 +45,8 @@ class Config
 	const MSG_FAILURE_TO_LOGIN = "ログインに失敗しました。";
 	const MSG_LOGIN_SUCCESSFUL = "ログインに成功しました。";
 
+	const MSG_LOGOUT_FAILURE = 'ログアウトに失敗しました。';
+
 	/** ワンタイムトークン */
 	/** @var int openssl_random_pseudo_bytes()で使用する文字列の長さ */
 	const RAMDOM_PSEUDO_STRING_LENGTH = 32;

@@ -78,4 +78,28 @@ class Common
 		}
 		return true;
 	}
+
+	/**
+	 * Guestユーザかどうか
+	 *
+	 * @return bool
+	 */
+	public static function isGuestUser()
+	{
+		if (!isset($_SESSION['login'])) return true;
+
+		return false;
+	}
+
+	/**
+	 * Authユーザかどうか
+	 *
+	 * @return bool
+	 */
+	public static function isAuthUser()
+	{
+		if (isset($_SESSION['login'])) return true;
+
+		return false;
+	}
 }
