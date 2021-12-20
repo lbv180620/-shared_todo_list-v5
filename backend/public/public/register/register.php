@@ -31,7 +31,7 @@ $post = Common::sanitize($_POST);
 // ログインフォームにリダイレクト
 if (!isset($post['token']) || !Common::isValidToken($post['token'])) {
 	$_SESSION['err']['msg'] = Config::MSG_INVALID_PROCESS;
-	Logger::errorLog(Config::MSG_INVALID_PROCESS);
+	Logger::errorLog(Config::MSG_INVALID_PROCESS, ['file' => __FILE__, 'line' => __LINE__]);
 	header('Location: ../login/login_form.php', true, 301);
 	exit;
 }
@@ -80,7 +80,7 @@ try {
 		 * エラーメッセージをセッションに登録して、新規登録画面にリダイレクト
 		 */
 		$_SESSION['err']['msg'] = Config::MSG_USER_DUPLICATE;
-		Logger::errorLog(Config::MSG_USER_DUPLICATE);
+		Logger::errorLog(Config::MSG_USER_DUPLICATE, ['file' => __FILE__, 'line' => __LINE__]);
 		header('Location: ./signup_form.php', true, 301);
 		exit;
 	}
@@ -100,12 +100,12 @@ try {
 	exit;
 } catch (\PDOException $e) {
 	$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
-	Logger::errorLog(Config::MSG_PDOEXCEPTION_ERROR);
+	Logger::errorLog(Config::MSG_PDOEXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
 	header('Location: ../error/error.php', true, 301);
 	exit;
 } catch (\Exception $e) {
 	$_SESSION['err']['msg'] = Config::MSG_EXCEPTION_ERROR;
-	Logger::errorLog(Config::MSG_EXCEPTION_ERROR);
+	Logger::errorLog(Config::MSG_EXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
 	header('Location: ../error/error.php', true, 301);
 	exit;
 }

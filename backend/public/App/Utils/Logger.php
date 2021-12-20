@@ -49,43 +49,59 @@ class Logger extends \Monolog\Logger
 	 *
 	 * @param string $msg ログメッセージ
 	 */
-	public static function emergencyLog($msg)
+	public static function emergencyLog($msg, array $context = [])
 	{
-		self::getInstance()->emergency($msg);
+		if (Config::IS_LOGFILE) {
+			self::getInstance()->emergency($msg, $context);
+		}
 	}
 
-	public static function alertLog($msg)
+	public static function alertLog($msg, array $context = [])
 	{
-		self::getInstance()->alert($msg);
+		if (Config::IS_LOGFILE) {
+			self::getInstance()->alert($msg, $context);
+		}
 	}
 
-	public static function criticalLog($msg)
+	public static function criticalLog($msg, array $context = [])
 	{
-		self::getInstance()->critical($msg);
+		if (Config::IS_LOGFILE) {
+			self::getInstance()->critical($msg, $context);
+		}
 	}
 
-	public static function errorLog($msg)
+	public static function errorLog($msg, array $context = [])
 	{
-		self::getInstance()->error($msg);
+		if (Config::IS_LOGFILE) {
+			self::getInstance()->error($msg, $context);
+		}
 	}
 
-	public static function warningLog($msg)
+	public static function warningLog($msg, array $context = [])
 	{
-		self::getInstance()->warning($msg);
+		if (Config::IS_LOGFILE) {
+			self::getInstance()->warning($msg, $context);
+		}
 	}
 
-	public static function noticeLog($msg)
+	public static function noticeLog($msg, array $context = [])
 	{
-		self::getInstance()->notice($msg);
+		if (Config::IS_LOGFILE) {
+			self::getInstance()->notice($msg, $context);
+		}
 	}
 
-	public static function infoLog($msg)
+	public static function infoLog($msg, array $context = [])
 	{
-		self::getInstance()->info($msg);
+		if (Config::IS_LOGFILE) {
+			self::getInstance()->info($msg, $context);
+		}
 	}
 
-	public static function debugLog($msg)
+	public static function debugLog($msg, array $context = [])
 	{
-		self::getInstance()->debug($msg);
+		if (Config::IS_LOGFILE) {
+			self::getInstance()->debug($msg, $context);
+		}
 	}
 }

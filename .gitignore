@@ -86,3 +86,5 @@ sample/
 share/
 vagrant_data/
 
+# ログ
+logs.d
