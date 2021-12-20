@@ -18,6 +18,7 @@ use App\Config\Config;
 use App\Utils\SessionUtil;
 use App\Utils\Common;
 use App\Utils\Validation;
+use App\Utils\Logger;
 
 // セッション開始
 SessionUtil::sessionStart();
@@ -30,6 +31,7 @@ $post = Common::sanitize($_POST);
 // ログインフォームにリダイレクト
 if (!isset($post['token']) || !Common::isValidToken($post['token'])) {
 	$_SESSION['err']['msg'] = Config::MSG_INVALID_PROCESS;
+	Logger::errorLog(Config::MSG_INVALID_PROCESS);
 	header('Location: ../login/login_form.php', true, 301);
 	exit;
 }
@@ -78,6 +80,7 @@ try {
 		 * エラーメッセージをセッションに登録して、新規登録画面にリダイレクト
 		 */
 		$_SESSION['err']['msg'] = Config::MSG_USER_DUPLICATE;
+		Logger::errorLog(Config::MSG_USER_DUPLICATE);
 		header('Location: ./signup_form.php', true, 301);
 		exit;
 	}
@@ -97,12 +100,12 @@ try {
 	exit;
 } catch (\PDOException $e) {
 	$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
-	$_SESSION['err']['msg'] = $e->getMessage();
+	Logger::errorLog(Config::MSG_PDOEXCEPTION_ERROR);
 	header('Location: ../error/error.php', true, 301);
 	exit;
 } catch (\Exception $e) {
 	$_SESSION['err']['msg'] = Config::MSG_EXCEPTION_ERROR;
-	// $_SESSION['err']['msg'] = $e->getMessage();
+	Logger::errorLog(Config::MSG_EXCEPTION_ERROR);
 	header('Location: ../error/error.php', true, 301);
 	exit;
 }

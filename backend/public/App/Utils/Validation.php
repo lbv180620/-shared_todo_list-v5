@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Utils;
 
 use App\Config\Config;
+use App\Utils\Logger;
 
 /**
  * 検証クラス
@@ -12,6 +13,8 @@ use App\Config\Config;
  */
 class Validation
 {
+
+
 	/**
 	 * フォームリクエストを検証してエラーメッセージとリクエスト情報の入った連想配列を返す
 	 *
@@ -35,6 +38,7 @@ class Validation
 				if (!filter_input(INPUT_POST, 'user_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
 					$err['user_name'] = Config::MSG_USER_NAME_ERROR;
 					$post['user_name'] = "";
+					Logger::errorLog(Config::MSG_USER_NAME_ERROR);
 				}
 				/**
 				 * 文字数制限
@@ -43,6 +47,7 @@ class Validation
 				if (!empty($user_name) && mb_strlen($user_name) > 50) {
 					$err['user_name'] = Config::MSG_USER_NAME_STRLEN_ERROR;
 					$post['user_name'] = "";
+					Logger::errorLog(Config::MSG_USER_NAME_STRLEN_ERROR);
 				}
 			}
 
@@ -52,11 +57,13 @@ class Validation
 				if (!filter_input(INPUT_POST, 'email', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
 					$err['email'] = Config::MSG_EMAIL_ERROR;
 					$post['email'] = "";
+					Logger::errorLog(Config::MSG_EMAIL_ERROR);
 				}
 				// メールアドレスの形式チェック
 				if (!empty($email) && !$email = filter_var($email, FILTER_VALIDATE_EMAIL)) {
 					$err['email'] = Config::MSG_EMAIL_INCORRECT_ERROR;
 					$post['email'] = "";
+					Logger::errorLog(Config::MSG_EMAIL_INCORRECT_ERROR);
 				}
 				/**
 				 * 文字数制限
@@ -65,6 +72,7 @@ class Validation
 				if (!empty($email) && mb_strlen($email) > 255) {
 					$err['email'] = Config::MSG_EMAIL_STRLEN_ERROR;
 					$post['email'] = "";
+					Logger::errorLog(Config::MSG_EMAIL_STRLEN_ERROR);
 				}
 			}
 
@@ -74,6 +82,7 @@ class Validation
 				if (!filter_input(INPUT_POST, 'family_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
 					$err['family_name'] = Config::MSG_FAMILY_NAME_ERROR;
 					$post['family_name'] = "";
+					Logger::errorLog(Config::MSG_FAMILY_NAME_ERROR);
 				}
 				/**
 				 * 文字数制限
@@ -82,6 +91,7 @@ class Validation
 				if (!empty($family_name) && mb_strlen($family_name) > 50) {
 					$err['family_name'] = Config::MSG_FAMILY_NAME_STRLEN_ERROR;
 					$post['family_name'] = "";
+					Logger::errorLog(Config::MSG_FAMILY_NAME_STRLEN_ERROR);
 				}
 			}
 
@@ -91,6 +101,7 @@ class Validation
 				if (!filter_input(INPUT_POST, 'first_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
 					$err['first_name'] = Config::MSG_FIRST_NAME_ERROR;
 					$post['first_name'] = "";
+					Logger::errorLog(Config::MSG_FIRST_NAME_ERROR);
 				}
 				/**
 				 * 文字数制限
@@ -99,6 +110,7 @@ class Validation
 				if (!empty($first_name) && mb_strlen($first_name) > 50) {
 					$err['first_name'] = Config::MSG_FIRST_NAME_STRLEN_ERROR;
 					$post['first_name'] = "";
+					Logger::errorLog(Config::MSG_FIRST_NAME_STRLEN_ERROR);
 				}
 			}
 
@@ -107,6 +119,7 @@ class Validation
 				// passwordのバリデーション
 				if (!filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
 					$err['password'] = Config::MSG_PASSWORD_ERROR;
+					Logger::errorLog(Config::MSG_PASSWORD_ERROR);
 				}
 
 				// 正規表現
@@ -116,6 +129,7 @@ class Validation
 				 */
 				if (!empty($password) && !preg_match("/\A[a-z\d]{8,255}+\z/i", $password)) {
 					$err['password'] = Config::MSG_PASSWORD_REGEX_ERROR;
+					Logger::errorLog(Config::MSG_PASSWORD_REGEX_ERROR);
 				}
 			}
 
@@ -124,13 +138,16 @@ class Validation
 				// password_confirmのバリデーション
 				if (!filter_input(INPUT_POST, 'password_confirm', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
 					$err['password_confirm'] = Config::MSG_PASSWORD_CONFIRM_ERROR;
+					Logger::errorLog(Config::MSG_PASSWORD_CONFIRM_ERROR);
 				}
 				if (!empty($password) && !empty($password_confirm) && $password !== $password_confirm) {
 					$err['password_confirm'] = Config::MSG_PASSWORD_CONFIRM_MISMATCH_ERROR;
+					Logger::errorLog(Config::MSG_PASSWORD_CONFIRM_MISMATCH_ERROR);
 				}
 			}
 		} else {
 			$err['msg'] = Config::MSG_POST_SENDING_FAILURE_ERROR;
+			Logger::errorLog(Config::MSG_POST_SENDING_FAILURE_ERROR);
 		}
 
 		// エラーメッセージ情報

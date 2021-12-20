@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Config;
 
+require dirname(__DIR__, 3) . '/vendor/autoload.php';
+
+use Monolog\Logger;
+
 class Config
 {
 	/** DB関連 */
@@ -53,4 +57,13 @@ class Config
 
 	/** @var string ワンタイムトークンが一致しないとき */
 	const MSG_INVALID_PROCESS = '不正な処理が行われました。';
+
+	/** ロギング設定 */
+	const DEFAULT_CHANNEL_NAME = 'App';
+	const DEFAULT_LOG_LEVEL = Logger::WARNING;
+	const DEFAULT_LOG_DIRNAME = __DIR__ . '/logs/';
+	const DEFAULT_LOG_FILENAME = 'message.log';
+	const DEFAULT_LOG_FILEPATH = self::DEFAULT_LOG_DIRNAME . self::DEFAULT_LOG_FILENAME;
+	const SIMPLE_FORMAT = '[%datetime%] %level_name%: %message%' . PHP_EOL;
+	const SIMPLE_DATE_FORMAT = "Y年n月d日 H:i:s";
 }

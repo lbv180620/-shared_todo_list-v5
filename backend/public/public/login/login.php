@@ -8,6 +8,7 @@ use App\Config\Config;
 use App\Utils\Common;
 use App\Utils\SessionUtil;
 use App\Utils\Validation;
+use App\Utils\Logger;
 
 // セッション開始
 SessionUtil::sessionStart();
@@ -19,6 +20,7 @@ $post = Common::sanitize($_POST);
 // ログインフォームにリダイレクト
 if (!isset($post['token']) || !Common::isValidToken($post['token'])) {
 	$_SESSION['err']['msg'] = Config::MSG_INVALID_PROCESS;
+	Logger::errorLog(Config::MSG_INVALID_PROCESS);
 	header('Location: ./login_form.php', true, 301);
 	exit;
 }
@@ -70,6 +72,7 @@ try {
 		 * エラーメッセージを表示させる
 		 */
 		$_SESSION['err']['msg'] = Config::MSG_FAILURE_TO_LOGIN;
+		Logger::errorLog(Config::MSG_FAILURE_TO_LOGIN);
 		header('Location: ./login_form.php', true, 301);
 		exit;
 	}
@@ -86,11 +89,12 @@ try {
 	exit;
 } catch (\PDOException $e) {
 	$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
+	Logger::errorLog(Config::MSG_PDOEXCEPTION_ERROR);
 	header('Location: ../error/error.php', true, 301);
 	exit;
 } catch (\Exception $e) {
 	$_SESSION['err']['msg'] = Config::MSG_EXCEPTION_ERROR;
-	// $_SESSION['err']['msg'] = $e->getMessage();
+	Logger::errorLog(Config::MSG_EXCEPTION_ERROR);
 	header('Location: ../error/error.php', true, 301);
 	exit;
 }
