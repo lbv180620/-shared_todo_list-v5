@@ -169,4 +169,54 @@ class Users
 		$_SESSION = array();
 		return session_destroy();
 	}
+
+	/**
+	 * すべてのユーザ情報を全件取得
+	 *
+	 * @return array ユーザのレコードの配列
+	 */
+	public function getUserAll()
+	{
+		$sql = "SELECT id, user_name, password, family_name, first_name, is_admin
+				FROM users
+				WHERE is_deleted=0
+				ORDER BY id";
+
+		$stmt = $this->pdo->prepare($sql);
+		$stmt->execute();
+
+		return $stmt->fetchAll();
+	}
+
+	/**
+	 * 指定IDのユーザが存在するかどうか調べる
+	 *
+	 * @param int $id ユーザID
+	 * @return bool ユーザが存在するとき：true、ユーザが存在しないとき：false
+	 */
+	public function isExistsUser($id)
+	{
+		// $idが数字でなかったら、falseを返却
+		if (!is_numeric($id)) {
+			return false;
+		}
+
+		// $idが0以下はありえないので、falseを返却
+		if ($id <= 0) {
+			return false;
+		}
+
+		$sql = "SELECT COUNT(id) AS num FROM users WHERE is_deleted=0";
+
+		$stmt = $this->pdo->prepare($sql);
+		$stmt->execute();
+		$ret = $stmt->fetch();
+
+		// レコードの数が0だったらfalseを返却
+		if ($ret['num'] == 0) {
+			return false;
+		}
+
+		return true;
+	}
 }

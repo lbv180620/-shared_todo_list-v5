@@ -10,6 +10,9 @@ use App\Config\Config;
 
 require dirname(__FILE__, 4) . '/vendor/autoload.php';
 
+/**
+ * ロギング
+ */
 class Logger extends \Monolog\Logger
 {
 
@@ -105,3 +108,8 @@ class Logger extends \Monolog\Logger
 		}
 	}
 }
+
+/**
+ * ファイルサイズ問題
+ * 古いログ削除問題
+ */

@@ -51,6 +51,12 @@ class Config
 
 	const MSG_LOGOUT_FAILURE = 'ログアウトに失敗しました。';
 
+	// entry.php
+	const MSG_ITEM_NAME_ERROR = "項目名を入力してください。";
+	const MSG_ITEM_NAME_STRLEN_ERROR = "項目名は100文字以下にしてください。";
+	const MSG_USER_ID_ERROR = "担当者を選択してください。";
+	const MSG_NOT_EXISTS_USER_ID_ERROR = "指定の担当者は存在しません。";
+
 	/** ワンタイムトークン */
 	/** @var int openssl_random_pseudo_bytes()で使用する文字列の長さ */
 	const RAMDOM_PSEUDO_STRING_LENGTH = 32;

@@ -95,7 +95,7 @@ $token = Common::generateToken();
 				<!-- フォーム -->
 				<form action="./login.php" method="post" onsubmit="return checkSubmit() ">
 					<!-- トークン送信 -->
-					<input type="hidden" name="token" value="<?= $token ?>">
+					<input type="hidden" name="token" value="<?= Common::h($token) ?>">
 					<div class="form-group">
 						<label for="email">メールアドレス</label>
 						<input type="text" class="form-control" id="email" name="email" value="<?php if (isset($fill['email'])) echo Common::h($fill['email']) ?>">

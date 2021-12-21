@@ -15,6 +15,9 @@ if (!Common::isAuthUser()) {
 	exit;
 }
 
+// ログイン情報取得
+$login = isset($_SESSION['login']) ? $_SESSION['login'] : null;
+
 # ログイン成功メッセージの初期化
 $success_msg = isset($_SESSION['success']) ? $_SESSION['success']['msg'] : null;
 unset($_SESSION['success']);
@@ -60,16 +63,16 @@ unset($_SESSION['success']);
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item active">
-					<a class="nav-link" href="./">作業一覧 <span class="sr-only">(current)</span></a>
+					<a class="nav-link" href="./top.php">作業一覧 <span class="sr-only">(current)</span></a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="./entry.php">作業登録</a>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						テスト花子さん
+						<?= Common::h($login['user_name']) ?>さん
 					</a>
-					<!-- <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<!-- <ul class="dropdown-menu" aria-labelledby="さんnavbarDropdown">
 						<div class="dropdown-divider"></div>
 						<li><a class="dropdown-item" href="../login/logout.php">ログアウト</a></li>
 					</ul> -->
@@ -95,6 +98,7 @@ unset($_SESSION['success']);
 	<!-- コンテナ -->
 	<div class="container">
 
+		<!-- サクセスメッセージアラート -->
 		<?php if (isset($success_msg)) : ?>
 			<div class="row my-2">
 				<div class="col-sm-3"></div>
@@ -109,11 +113,17 @@ unset($_SESSION['success']);
 		<table class="table table-striped table-hover table-sm my-2">
 			<thead>
 				<tr>
+					<!-- item_name -->
 					<th scope="col">項目名</th>
+					<!-- family_name + first_name -->
 					<th scope="col">担当者</th>
+					<!-- registration_date -->
 					<th scope="col">登録日</th>
+					<!-- expiration_date -->
 					<th scope="col">期限日</th>
+					<!-- finished_date -->
 					<th scope="col">完了日</th>
+					<!-- ボタン -->
 					<th scope="col">操作</th>
 				</tr>
 			</thead>

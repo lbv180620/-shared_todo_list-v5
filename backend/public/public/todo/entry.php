@@ -1,3 +1,50 @@
+<?php
+
+/** auth */
+
+require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
+
+use App\Utils\SessionUtil;
+use App\Utils\Common;
+use App\Models\Base;
+use App\Models\Users;
+
+SessionUtil::sessionStart();
+
+// ログインチェック
+if (!Common::isAuthUser()) {
+	header('Location: ../login/login_form.php', true, 301);
+	exit;
+}
+
+// ログインユーザ情報取得
+$login = isset($_SESSION['login']) ? $_SESSION['login'] : null;
+
+// 担当者（ユーザー）のレコードを全件取得
+try {
+	// DB接続
+	$base = Base::getPDOInstance();
+	$dbh = new Users($base);
+	$users = $dbh->getUserAll();
+} catch (\PDOException $e) {
+
+	$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
+	Logger::errorLog(Config::MSG_PDOEXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+	header('Location: ../error/error.php', true, 301);
+	exit;
+} catch (\Exception $e) {
+
+	$_SESSION['err']['msg'] = Config::MSG_EXCEPTION_ERROR;
+	Logger::errorLog(Config::MSG_EXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+	header('Location: ../error/error.php', true, 301);
+	exit;
+}
+
+// ワンタイムトークン生成
+$token = Common::generateToken();
+
+?>
+
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -21,14 +68,14 @@
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item">
-					<a class="nav-link" href="./">作業一覧</a>
+					<a class="nav-link" href="./top.php">作業一覧</a>
 				</li>
 				<li class="nav-item active">
 					<a class="nav-link" href="./entry.php">作業登録 <span class="sr-only">(current)</span></a>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						テスト花子さん
+						<?= Common::h($login['user_name']) ?>さん
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<div class="dropdown-divider"></div>
@@ -69,7 +116,10 @@
 			<div class="row my-2">
 				<div class="col-sm-3"></div>
 				<div class="col-sm-6">
-					<form action="./entry_action.php" method="post">
+					<!-- フォーム -->
+					<form action="./entry_action.php" method="post" onsubmit="return checkSubmit() ">
+						<!-- トークン送信 -->
+						<input type="hidden" name="token" value="<?= Common::h($token) ?>">
 						<div class="form-group">
 							<label for="item_name">項目名</label>
 							<input type="text" class="form-control" id="item_name" name="item_name">
@@ -78,22 +128,25 @@
 							<label for="user_id">担当者</label>
 							<select name="user_id" id="user_id" class="form-control">
 								<option value="">--選択してください--</option>
-								<option value="1">テスト花子</option>
-								<option value="2">テスト太郎</option>
-								<option value="3">さかがみただし</option>
+								<?php foreach ($users as $user) : ?>
+									<!-- selected問題 -->
+									<option value="<?= Common::h($user['id']) ?>"><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
+								<?php endforeach ?>
 							</select>
 						</div>
 						<div class="form-group">
-							<label for="expire_date">期限</label>
-							<input type="date" class="form-control" id="expire_date" name="expire_date">
+							<label for="expiration_date">期限</label>
+							<input type="date" class="form-control" id="expiration_date" name="expiration_date">
 						</div>
 						<div class="form-group form-check">
-							<input type="checkbox" class="form-check-input" id="finished" name="finished">
+							<!-- checked問題 -->
+							<input type="checkbox" class="form-check-input" id="finished" name="finished" value="1">
 							<label for="finished">完了</label>
 						</div>
 
 						<input type="submit" value="登録" class="btn btn-primary">
-						<input type="button" value="キャンセル" class="btn btn-outline-primary" onclick="location.href='./';">
+						<input type="reset" value="入力内容の初期化" class="btn btn-outline-primary">
+						<input type="button" value="キャンセル" class="btn btn-outline-primary" onclick="location.href='./top.php';">
 					</form>
 				</div>
 				<div class="col-sm-3"></div>
@@ -102,6 +155,16 @@
 
 		</div>
 		<!-- コンテナ ここまで -->
+
+		<script>
+			function checkSubmit() {
+				if (window.confirm('作業を登録しますか?')) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		</script>
 
 		<!-- 必要なJavascriptを読み込む -->
 		<script src="../js/jquery-3.4.1.min.js"></script>

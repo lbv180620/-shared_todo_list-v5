@@ -1,3 +1,25 @@
+<?php
+
+/** auth */
+
+require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
+
+use App\Utils\SessionUtil;
+use App\Utils\Common;
+
+SessionUtil::sessionStart();
+
+// ログインチェック
+if (!Common::isAuthUser()) {
+	header('Location: ../login/login_form.php', true, 301);
+	exit;
+}
+
+// ログイン情報取得
+$login = isset($_SESSION['login']) ? $_SESSION['login'] : null;
+
+?>
+
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -21,14 +43,14 @@
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item">
-					<a class="nav-link" href="./">作業一覧</a>
+					<a class="nav-link" href="./top.php">作業一覧</a>
 				</li>
 				<li class="nav-item active">
 					<a class="nav-link" href="./entry.php">作業登録 <span class="sr-only">(current)</span></a>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						テスト花子さん
+						<?= Common::h($login['user_name']) ?>さん
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<div class="dropdown-divider"></div>
