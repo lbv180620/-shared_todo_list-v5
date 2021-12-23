@@ -174,8 +174,8 @@ $token = Common::generateToken();
 						</select>
 					</div>
 					<div class="form-group">
-						<label for="expire_date">期限</label>
-						<input type="date" class="form-control" id="expire_date" name="expire_date" value="<?= Common::h($item['expiration_date']) ?>">
+						<label for="expiration_date">期限</label>
+						<input type="date" class="form-control" id="expiration_date" name="expiration_date" value="<?= isset($fill['expiration_date']) ? Common::h($fill['expiration_date']) : Common::h($item['expiration_date']) ?>">
 					</div>
 					<div class="form-group form-check">
 						<input type="checkbox" class="form-check-input" id="finished" name="finished" value="1">
