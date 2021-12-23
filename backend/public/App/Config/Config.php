@@ -24,7 +24,7 @@ class Config
 	const MSG_EXCEPTION_ERROR = "申し訳ございません。エラーが発生しました。";
 	const MSG_PDOEXCEPTION_ERROR = "データベース接続に失敗しました。";
 
-	// register.php login.php
+	// register login
 	const MSG_POST_SENDING_FAILURE_ERROR = "送信に失敗しました。";
 
 	const MSG_USER_NAME_ERROR = "ユーザー名を記入してください。";
@@ -51,15 +51,18 @@ class Config
 
 	const MSG_LOGOUT_FAILURE = 'ログアウトに失敗しました。';
 
-	// entry.php
+	// entry edit
 	const MSG_ITEM_NAME_ERROR = "項目名を入力してください。";
 	const MSG_ITEM_NAME_STRLEN_ERROR = "項目名は100文字以下にしてください。";
 	const MSG_NOT_EXISTS_USER_ID_ERROR = "指定の担当者は存在しません。";
 	const MSG_INVAID_DATE_ERROR = "期限日の日付が正しくありません。";
 	const MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR = "完了のチェックボックスの値が正しくありません。";
-
+	// entry
 	const MSG_TASK_REGISTRATION_SUCCESSFUL = "作業登録しました。";
 	const MSG_TASK_REGISTRATION_FAILURE = "作業登録に失敗しました。";
+	// edit
+	const MSG_TASK_UPDATE_SUCCESSFUL = "作業の更新に成功しました。";
+	const MSG_TASK_UPDATE_FAILURE = "作業の更新に失敗しました。";
 
 	/** ワンタイムトークン */
 	/** @var int openssl_random_pseudo_bytes()で使用する文字列の長さ */

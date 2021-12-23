@@ -157,7 +157,63 @@ class TodoItems
 	 * @param array $data 更新する作業項目の連想配列
 	 * @return bool 成功した場合:TRUE、失敗した場合:FALSE
 	 */
+	public function updateTodoItemById(array $data): bool
+	{
+		$user_id = $data['user_id']; // 担当者ID
+		$item_id = $data['item_id']; // 作業ID
+		$auth_id = $data['auth_id']; // 作成者ID
+		$item_name = $data['item_name']; // 作業項目名
+		$registration_date = $data['registration_date']; // 登録日
+		$expiration_date = $data['expiration_date']; // 期限日
+		$finished_date = $data['finished_date']; // 完了日
+		$is_deleted = $data['is_deleted'];
 
+		// $item_idが存在しなかったら、falseを返却
+		if (!isset($item_id)) {
+			return false;
+		}
+
+		// $item_idが数字でなかったら、falseを返却する。
+		if (!is_numeric($item_id)) {
+			return false;
+		}
+
+		// $item_idが0以下はありえないので、falseを返却
+		if ($item_id <= 0) {
+			return false;
+		}
+
+		// 現状の仕様では「削除フラグ」をアップデートする必要はないが、今後の仕様追加のために実装しておく。
+		$sql = "UPDATE todo_items SET
+				user_id = :user_id,
+				auth_id = :auth_id,
+				item_name = :item_name,
+				registration_date = :registration_date,
+				expiration_date = :expiration_date,
+				finished_date = :finished_date,
+				is_deleted = :is_deleted
+				WHERE id = :id";
+
+		$stmt = $this->pdo->prepare($sql);
+
+		$stmt->bindValue(':user_id', $user_id, \PDO::PARAM_INT);
+		$stmt->bindValue(':auth_id', $auth_id, \PDO::PARAM_INT);
+		$stmt->bindValue(':item_name', $item_name, \PDO::PARAM_STR);
+		$stmt->bindValue(':registration_date', $registration_date, \PDO::PARAM_STR);
+		$stmt->bindValue(':expiration_date', $expiration_date, \PDO::PARAM_STR);
+		$stmt->bindValue(':finished_date', $finished_date, \PDO::PARAM_STR);
+		$stmt->bindValue(':is_deleted', $is_deleted, \PDO::PARAM_INT);
+		$stmt->bindValue(':id', $item_id, \PDO::PARAM_INT);
+
+		$this->pdo->beginTransaction();
+		try {
+			$stmt->execute();
+			return $this->pdo->commit();
+		} catch (\PDOException $e) {
+			$this->pdo->rollBack();
+			return false;
+		}
+	}
 
 	/**
 	 * 指定IDの1件の作業項目を完了にします。

@@ -90,10 +90,15 @@ $token = Common::generateToken();
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						<?= Common::h($login['user_name']) ?>さん
 					</a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="../login/logout.php">ログアウト</a>
-					</div>
+					<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<li>
+							<form action="../login/logout.php" method="post" onsubmit="return checkLogout()" style="display: inline;">
+								<button type="submit" class="btn btn-danger dropdown-item">ログアウト</button>
+							</form>
+						</li>
+						<li><a class="dropdown-item" href="#">退会</a></li>
+						<li><a class="dropdown-item" href="#">Another action</a></li>
+					</ul>
 				</li>
 			</ul>
 			<form class="form-inline my-2 my-lg-0" action="./" method="get">
@@ -177,6 +182,14 @@ $token = Common::generateToken();
 		<script>
 			function checkSubmit() {
 				if (window.confirm('作業を登録しますか?')) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+			function checkLogout() {
+				if (window.confirm('ログアウトしますか?')) {
 					return true;
 				} else {
 					return false;

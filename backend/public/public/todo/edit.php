@@ -100,7 +100,7 @@ $token = Common::generateToken();
 					</a>
 					<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<li>
-							<form action="../login/logout.php" method="post" onsubmit="return checkSubmit()" style="display: inline;">
+							<form action="../login/logout.php" method="post" onsubmit="return checkLogout()" style="display: inline;">
 								<button type="submit" class="btn btn-danger dropdown-item">ログアウト</button>
 							</form>
 						</li>
@@ -151,7 +151,7 @@ $token = Common::generateToken();
 					<!-- トークン送信 -->
 					<input type="hidden" name="token" value="<?= Common::h($token) ?>">
 					<!-- 作業IDを送信 -->
-					<input type="hidden" name="id" value="<?= Common::h($item['id']) ?>">
+					<input type="hidden" name="item_id" value="<?= Common::h($item['id']) ?>">
 					<!-- 作成者IDを送信 -->
 					<input type="hidden" name="auth_id" value="<?= Common::h($login['id']) ?>">
 					<div class="form-group">
@@ -197,6 +197,14 @@ $token = Common::generateToken();
 	<script>
 		function checkSubmit() {
 			if (window.confirm('更新しますか?')) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		function checkLogout() {
+			if (window.confirm('ログアウトしますか?')) {
 				return true;
 			} else {
 				return false;

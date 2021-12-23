@@ -106,7 +106,7 @@ $token = Common::generateToken();
 					</a>
 					<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<li>
-							<form action="../login/logout.php" method="post" onsubmit="return checkSubmit()" style="display: inline;">
+							<form action="../login/logout.php" method="post" onsubmit="return checkLogout()" style="display: inline;">
 								<button type="submit" class="btn btn-danger dropdown-item">ログアウト</button>
 							</form>
 						</li>
@@ -159,7 +159,7 @@ $token = Common::generateToken();
 						<th scope="col">項目名</th>
 						<!-- family_name + first_name -->
 						<th scope="col">担当者</th>
-						<th scope="col">作成者</th>
+						<th scope="col">依頼者</th>
 						<!-- registration_date -->
 						<th scope="col">登録日</th>
 						<!-- expiration_date -->
@@ -241,7 +241,7 @@ $token = Common::generateToken();
 	<!-- コンテナ ここまで -->
 
 	<script>
-		function checkSubmit() {
+		function checkLogout() {
 			if (window.confirm('ログアウトしますか?')) {
 				return true;
 			} else {
