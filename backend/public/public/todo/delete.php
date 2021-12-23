@@ -33,8 +33,9 @@ try {
 	$item = $todoItems_table->getTodoItemByID($item_id);
 
 	// 担当者（ユーザー）のレコードを全件取得
+	$user_id = $item['user_id'];
 	$users_table = new Users($base);
-	$user = $users_table->getUserById();
+	$user = $users_table->getUserById($user_id);
 } catch (\PDOException $e) {
 
 	$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;

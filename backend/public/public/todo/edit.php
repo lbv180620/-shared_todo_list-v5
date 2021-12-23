@@ -153,7 +153,7 @@ $token = Common::generateToken();
 					<!-- 作業IDを送信 -->
 					<input type="hidden" name="item_id" value="<?= Common::h($item['id']) ?>">
 					<!-- 作成者IDを送信 -->
-					<input type="hidden" name="auth_id" value="<?= Common::h($login['id']) ?>">
+					<input type="hidden" name="client_id" value="<?= Common::h($login['id']) ?>">
 					<div class="form-group">
 						<label for="item_name">項目名</label>
 						<input type="text" name="item_name" id="item_name" class="form-control" value="<?= isset($fill['item_name']) ? Common::h($fill['item_name']) : Common::h($item['item_name']) ?>">

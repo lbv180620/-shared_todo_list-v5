@@ -221,12 +221,15 @@ class Users
 	}
 
 	/**
-	 * todo_itemsテーブルのauth_idから、 作成者名を取得する
+	 * 指定したIDに一致したユーザのレコードを1件取得
+	 *
+	 * todo_itemsテーブルのclient_idから、 作成者名を取得する
+	 * user_idから担当者のレコードを取得
 	 *
 	 * @param int $id 作成者ID
 	 * @return array 作成者のレコード
 	 */
-	public function getUserByAuthId(int $id)
+	public function getUserById(int $id)
 	{
 		if (!is_numeric($id)) {
 			return false;

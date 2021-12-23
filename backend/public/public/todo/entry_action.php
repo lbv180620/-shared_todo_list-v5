@@ -64,7 +64,7 @@ try {
 	// データベースに登録する内容を連想配列にする。
 	$data = [
 		'user_id' => $post['user_id'],
-		'auth_id' => $post['auth_id'],
+		'client_id' => $post['client_id'],
 		'item_name' => $post['item_name'],
 		'registration_date' => date('Y-m-d'),
 		'expiration_date' => $post['expiration_date'],

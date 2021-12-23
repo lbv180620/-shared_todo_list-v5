@@ -184,11 +184,11 @@ $token = Common::generateToken();
 						<?php endif ?>
 						<?php
 						// 作成者名の取得
-						$auth_id = $item['auth_id'];
+						$client_id = $item['client_id'];
 						$users_table = new Users($base);
-						$author = $users_table->getUserByAuthId($auth_id);
-						if (!$author) {
-							$author = [];
+						$client = $users_table->getUserById($client_id);
+						if (!$client) {
+							$client = [];
 						}
 						?>
 						<tr <?= $class ?>>
@@ -202,7 +202,7 @@ $token = Common::generateToken();
 							</td>
 							<!-- 作成者 -->
 							<td class="align-middle">
-								<?= isset($author['user_name']) ? Common::h($author['user_name']) : "" ?>
+								<?= isset($client['user_name']) ? Common::h($client['user_name']) : "" ?>
 							</td>
 							<!-- 登録日 -->
 							<td class="align-middle">

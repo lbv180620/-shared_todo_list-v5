@@ -36,7 +36,7 @@ class TodoItems
 		$sql = "SELECT
 				t.id,
 				t.user_id,
-				t.auth_id,
+				t.client_id,
 				u.family_name,
 				u.first_name,
 				t.item_name,
@@ -81,7 +81,7 @@ class TodoItems
 		$sql = "SELECT
 				t.id,
 				t.user_id,
-				t.auth_id,
+				t.client_id,
 				u.family_name,
 				u.first_name,
 				t.item_name,
@@ -110,7 +110,7 @@ class TodoItems
 	{
 
 		$user_id = $data['user_id'];
-		$auth_id = $data['auth_id'];
+		$client_id = $data['client_id'];
 		$item_name = $data['item_name'];
 		$registration_date = $data['registration_date'];
 		$expiration_date = $data['expiration_date'];
@@ -118,14 +118,14 @@ class TodoItems
 
 		$sql = "INSERT INTO todo_items (
 				user_id,
-				auth_id,
+				client_id,
 				item_name,
 				registration_date,
 				expiration_date,
 				finished_date
 				) VALUES (
 				:user_id,
-				:auth_id,
+				:client_id,
 				:item_name,
 				:registration_date,
 				:expiration_date,
@@ -135,7 +135,7 @@ class TodoItems
 		$stmt = $this->pdo->prepare($sql);
 
 		$stmt->bindValue(':user_id', $user_id, \PDO::PARAM_INT);
-		$stmt->bindValue(':auth_id', $auth_id, \PDO::PARAM_INT);
+		$stmt->bindValue(':client_id', $client_id, \PDO::PARAM_INT);
 		$stmt->bindValue(':item_name', $item_name, \PDO::PARAM_STR);
 		$stmt->bindValue(':registration_date', $registration_date, \PDO::PARAM_STR);
 		$stmt->bindValue(':expiration_date', $expiration_date, \PDO::PARAM_STR);
@@ -161,7 +161,7 @@ class TodoItems
 	{
 		$user_id = $data['user_id']; // 担当者ID
 		$item_id = $data['item_id']; // 作業ID
-		$auth_id = $data['auth_id']; // 作成者ID
+		$client_id = $data['client_id']; // 作成者ID
 		$item_name = $data['item_name']; // 作業項目名
 		$registration_date = $data['registration_date']; // 登録日
 		$expiration_date = $data['expiration_date']; // 期限日
@@ -186,7 +186,7 @@ class TodoItems
 		// 現状の仕様では「削除フラグ」をアップデートする必要はないが、今後の仕様追加のために実装しておく。
 		$sql = "UPDATE todo_items SET
 				user_id = :user_id,
-				auth_id = :auth_id,
+				client_id = :client_id,
 				item_name = :item_name,
 				registration_date = :registration_date,
 				expiration_date = :expiration_date,
@@ -197,7 +197,7 @@ class TodoItems
 		$stmt = $this->pdo->prepare($sql);
 
 		$stmt->bindValue(':user_id', $user_id, \PDO::PARAM_INT);
-		$stmt->bindValue(':auth_id', $auth_id, \PDO::PARAM_INT);
+		$stmt->bindValue(':client_id', $client_id, \PDO::PARAM_INT);
 		$stmt->bindValue(':item_name', $item_name, \PDO::PARAM_STR);
 		$stmt->bindValue(':registration_date', $registration_date, \PDO::PARAM_STR);
 		$stmt->bindValue(':expiration_date', $expiration_date, \PDO::PARAM_STR);

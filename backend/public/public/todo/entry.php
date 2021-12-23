@@ -144,7 +144,7 @@ $token = Common::generateToken();
 						<!-- トークン送信 -->
 						<input type="hidden" name="token" value="<?= Common::h($token) ?>">
 						<!-- 作成者IDを送信 -->
-						<input type="hidden" name="auth_id" value="<?= Common::h($login['id']) ?>">
+						<input type="hidden" name="client_id" value="<?= Common::h($login['id']) ?>">
 						<div class="form-group">
 							<label for="item_name">項目名</label>
 							<input type="text" class="form-control" id="item_name" name="item_name" value="<?php if (isset($fill['item_name'])) echo Common::h($fill['item_name']) ?>">
