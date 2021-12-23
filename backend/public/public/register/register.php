@@ -41,7 +41,7 @@ $result = Validation::validateFormRequesut($post);
 
 // 記入情報をサニタイズしてセッションに保存する
 $fill = $result['fill'];
-if (count($fill)) {
+if (!empty($fill)) {
 	$_SESSION['fill'] = Common::sanitize($fill);
 }
 
@@ -94,7 +94,7 @@ try {
 	unset($_SESSION['login']);
 
 	// 新規登録に成功した旨のメッセージをログイン画面にセッションで渡して、リダイレクト
-	$_SESSION['success']['msg'] = Config::MSG_NEW_REGISTRATIONW_REGISTRATION_SUCCESSFUL;
+	$_SESSION['success']['msg'] = Config::MSG_NEW_REGISTRATION_SUCCESSFUL;
 
 	header('Location: ../login/login_form.php', true, 301);
 	exit;

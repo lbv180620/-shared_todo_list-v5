@@ -219,4 +219,27 @@ class Users
 
 		return true;
 	}
+
+	/**
+	 * todo_itemsテーブルのauth_idから、 作成者名を取得する
+	 *
+	 * @param int $id 作成者ID
+	 * @return array 作成者のレコード
+	 */
+	public function getUserByAuthId(int $id)
+	{
+		if (!is_numeric($id)) {
+			return false;
+		}
+
+		if ($id <= 0) {
+			return false;
+		}
+
+		$sql = "SELECT * FROM users WHERE id = :id";
+		$stmt = $this->pdo->prepare($sql);
+		$stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+		$stmt->execute();
+		return $stmt->fetch();
+	}
 }

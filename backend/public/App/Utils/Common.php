@@ -18,8 +18,11 @@ class Common
 	 * @param string $str 対象の文字列
 	 * @return string 処理された文字列
 	 */
-	public static function h(string $str): string
+	public static function h(?string $str): string
 	{
+		if (is_null($str)) {
+			exit;
+		}
 		return htmlspecialchars($str, ENT_QUOTES, "UTF-8");
 	}
 
@@ -32,6 +35,9 @@ class Common
 	public static function sanitize(array $post): array
 	{
 		foreach ($post as $k => $v) {
+			if (is_null($v)) {
+				continue;
+			}
 			$post[$k] = htmlspecialchars($v, ENT_QUOTES, "UTF-8");
 		}
 		return $post;

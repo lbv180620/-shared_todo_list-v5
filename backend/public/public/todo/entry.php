@@ -20,10 +20,11 @@ if (!Common::isAuthUser()) {
 // ログインユーザ情報取得
 $login = isset($_SESSION['login']) ? $_SESSION['login'] : null;
 
-// 担当者（ユーザー）のレコードを全件取得
 try {
-	// DB接続
+
 	$base = Base::getPDOInstance();
+
+	// 担当者（ユーザー）のレコードを全件取得
 	$dbh = new Users($base);
 	$users = $dbh->getUserAll();
 } catch (\PDOException $e) {
@@ -39,6 +40,18 @@ try {
 	header('Location: ../error/error.php', true, 301);
 	exit;
 }
+
+# 成功メッセージの初期化
+$success_msg = isset($_SESSION['success']) ? $_SESSION['success']['msg'] : null;
+unset($_SESSION['success']);
+
+# 失敗メーセージの初期化
+$err_msg = isset($_SESSION['err']) ? $_SESSION['err'] : null;
+unset($_SESSION['err']);
+
+// リロード後、記入情報を初期化
+$fill = isset($_SESSION['fill']) ? $_SESSION['fill'] : null;
+unset($_SESSION['fill']);
 
 // ワンタイムトークン生成
 $token = Common::generateToken();
@@ -102,14 +115,19 @@ $token = Common::generateToken();
 				<div class="col-sm-3"></div>
 			</div>
 
-			<!-- エラーメッセージ -->
-			<div class="row my-2">
-				<div class="col-sm-3"></div>
-				<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
-					担当者を選択してください。 <button class="close" data-dismiss="alert">&times;</button>
+			<!-- エラメッセージアラート -->
+			<?php if (isset($err_msg)) : ?>
+				<div class="row my-2">
+					<div class="col-sm-3"></div>
+					<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
+						<button class="close" data-dismiss="alert">&times;</button>
+						<?php foreach ($err_msg as $v) : ?>
+							<p>・<?= Common::h($v) ?></p>
+						<?php endforeach ?>
+					</div>
+					<div class="col-sm-3"></div>
 				</div>
-				<div class="col-sm-3"></div>
-			</div>
+			<?php endif ?>
 			<!-- エラーメッセージ ここまで -->
 
 			<!-- 入力フォーム -->
@@ -120,32 +138,32 @@ $token = Common::generateToken();
 					<form action="./entry_action.php" method="post" onsubmit="return checkSubmit() ">
 						<!-- トークン送信 -->
 						<input type="hidden" name="token" value="<?= Common::h($token) ?>">
+						<!-- 作成者IDを送信 -->
+						<input type="hidden" name="auth_id" value="<?= Common::h($login['id']) ?>">
 						<div class="form-group">
 							<label for="item_name">項目名</label>
-							<input type="text" class="form-control" id="item_name" name="item_name">
+							<input type="text" class="form-control" id="item_name" name="item_name" value="<?php if (isset($fill['item_name'])) echo Common::h($fill['item_name']) ?>">
 						</div>
 						<div class="form-group">
 							<label for="user_id">担当者</label>
 							<select name="user_id" id="user_id" class="form-control">
 								<option value="">--選択してください--</option>
 								<?php foreach ($users as $user) : ?>
-									<!-- selected問題 -->
-									<option value="<?= Common::h($user['id']) ?>"><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
+									<option value="<?= Common::h($user['id']) ?>" <?= isset($fill['user_id']) && (int)$fill['user_id'] === $user['id'] ? 'selected' : '' ?>><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
 								<?php endforeach ?>
 							</select>
 						</div>
 						<div class="form-group">
 							<label for="expiration_date">期限</label>
-							<input type="date" class="form-control" id="expiration_date" name="expiration_date">
+							<input type="date" class="form-control" id="expiration_date" name="expiration_date" value="<?php if ($fill['expiration_date']) echo Common::h($fill['expiration_date']) ?>">
 						</div>
 						<div class="form-group form-check">
-							<!-- checked問題 -->
-							<input type="checkbox" class="form-check-input" id="finished" name="finished" value="1">
+							<input type="checkbox" class="form-check-input" id="finished" name="finished" value="1" <?= isset($fill['finished']) ? 'checked' : '' ?>>
 							<label for="finished">完了</label>
 						</div>
 
 						<input type="submit" value="登録" class="btn btn-primary">
-						<input type="reset" value="入力内容の初期化" class="btn btn-outline-primary">
+						<input type="reset" value="リセット" class="btn btn-outline-primary">
 						<input type="button" value="キャンセル" class="btn btn-outline-primary" onclick="location.href='./top.php';">
 					</form>
 				</div>

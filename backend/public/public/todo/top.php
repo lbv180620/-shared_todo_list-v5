@@ -6,6 +6,11 @@ require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
 
 use App\Utils\SessionUtil;
 use App\Utils\Common;
+use App\Models\Base;
+use App\Models\TodoItems;
+use App\Models\Users;
+use App\Config\Config;
+use App\Utils\Logger;
 
 SessionUtil::sessionStart();
 
@@ -18,9 +23,36 @@ if (!Common::isAuthUser()) {
 // ログイン情報取得
 $login = isset($_SESSION['login']) ? $_SESSION['login'] : null;
 
-# ログイン成功メッセージの初期化
+# 成功メッセージの初期化
 $success_msg = isset($_SESSION['success']) ? $_SESSION['success']['msg'] : null;
 unset($_SESSION['success']);
+
+# 失敗メーセージの初期化
+$err_msg = isset($_SESSION['err']) ? $_SESSION['err'] : null;
+unset($_SESSION['err']);
+
+try {
+	// DB接続
+	$base = Base::getPDOInstance();
+	$todoItems_table = new TodoItems($base);
+	$items = $todoItems_table->getTodoItemAll();
+} catch (\PDOException $e) {
+
+	$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
+	// $_SESSION['err']['msg'] = $e->getMessage();
+	Logger::errorLog(Config::MSG_PDOEXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+	header('Location: ../error/error.php', true, 301);
+	exit;
+} catch (\Exception $e) {
+
+	$_SESSION['err']['msg'] = Config::MSG_EXCEPTION_ERROR;
+	Logger::errorLog(Config::MSG_EXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+	header('Location: ../error/error.php', true, 301);
+	exit;
+}
+
+// ワンタイムトークン生成
+$token = Common::generateToken();
 
 ?>
 
@@ -72,18 +104,14 @@ unset($_SESSION['success']);
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						<?= Common::h($login['user_name']) ?>さん
 					</a>
-					<!-- <ul class="dropdown-menu" aria-labelledby="さんnavbarDropdown">
-						<div class="dropdown-divider"></div>
-						<li><a class="dropdown-item" href="../login/logout.php">ログアウト</a></li>
-					</ul> -->
 					<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<li><a class="dropdown-item" href="#">Action</a></li>
-						<li><a class="dropdown-item" href="#">Another action</a></li>
 						<li>
 							<form action="../login/logout.php" method="post" onsubmit="return checkSubmit()" style="display: inline;">
 								<button type="submit" class="btn btn-danger dropdown-item">ログアウト</button>
 							</form>
 						</li>
+						<li><a class="dropdown-item" href="#">退会</a></li>
+						<li><a class="dropdown-item" href="#">Another action</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -97,7 +125,19 @@ unset($_SESSION['success']);
 
 	<!-- コンテナ -->
 	<div class="container">
-
+		<!-- エラメッセージアラート -->
+		<?php if (isset($err_msg)) : ?>
+			<div class="row my-2">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
+					<button class="close" data-dismiss="alert">&times;</button>
+					<?php foreach ($err_msg as $v) : ?>
+						<p>・<?= Common::h($v) ?></p>
+					<?php endforeach ?>
+				</div>
+				<div class="col-sm-3"></div>
+			</div>
+		<?php endif ?>
 		<!-- サクセスメッセージアラート -->
 		<?php if (isset($success_msg)) : ?>
 			<div class="row my-2">
@@ -110,158 +150,91 @@ unset($_SESSION['success']);
 			</div>
 		<?php endif ?>
 
-		<table class="table table-striped table-hover table-sm my-2">
-			<thead>
-				<tr>
-					<!-- item_name -->
-					<th scope="col">項目名</th>
-					<!-- family_name + first_name -->
-					<th scope="col">担当者</th>
-					<!-- registration_date -->
-					<th scope="col">登録日</th>
-					<!-- expiration_date -->
-					<th scope="col">期限日</th>
-					<!-- finished_date -->
-					<th scope="col">完了日</th>
-					<!-- ボタン -->
-					<th scope="col">操作</th>
-				</tr>
-			</thead>
+		<?php if (!empty($items)) : ?>
 
-			<tbody>
-				<tr class="text-danger">
-					<td class="align-middle">
-						テストの項目
-					</td>
-					<td class="align-middle">
-						テスト花子 </td>
-					<td class="align-middle">
-						2020-01-13 </td>
-					<td class="align-middle">
-						2020-02-12 </td>
-					<td class="align-middle">
-						未 </td>
-					<td class="align-middle button">
-						<form action="./complete.php" method="post" class="my-sm-1">
-							<input type="hidden" name="item_id" value="1">
-							<button class="btn btn-primary my-0" type="submit">完了</button>
-						</form>
-						<form action="edit.php" method="post" class="my-sm-1">
-							<input type="hidden" name="item_id" value="1">
-							<input class="btn btn-primary my-0" type="submit" value="修正">
-						</form>
-						<form action="delete.php" method="post" class="my-sm-1">
-							<input type="hidden" name="item_id" value="1">
-							<input class="btn btn-primary my-0" type="submit" value="削除">
-						</form>
-					</td>
-				</tr>
-				<tr class="del">
-					<td class="align-middle">
-						テストの項目２ </td>
-					<td class="align-middle">
-						テスト太郎 </td>
-					<td class="align-middle">
-						2020-02-13 </td>
-					<td class="align-middle">
-						2020-02-19 </td>
-					<td class="align-middle">
-						2020-02-13 </td>
-					<td class="align-middle button">
-						<form action="./complete.php" method="post" class="my-sm-1">
-							<input type="hidden" name="item_id" value="2">
-							<button class="btn btn-primary my-0" type="submit">完了</button>
-						</form>
-						<form action="edit.php" method="post" class="my-sm-1">
-							<input type="hidden" name="item_id" value="2">
-							<input class="btn btn-primary my-0" type="submit" value="修正">
-						</form>
-						<form action="delete.php" method="post" class="my-sm-1">
-							<input type="hidden" name="item_id" value="2">
-							<input class="btn btn-primary my-0" type="submit" value="削除">
-						</form>
-					</td>
-				</tr>
-				<tr>
-					<td class="align-middle">
-						テストの項目３ </td>
-					<td class="align-middle">
-						テスト花子 </td>
-					<td class="align-middle">
-						2020-02-13 </td>
-					<td class="align-middle">
-						2020-02-24 </td>
-					<td class="align-middle">
-						未 </td>
-					<td class="align-middle button">
-						<form action="./complete.php" method="post" class="my-sm-1">
-							<input type="hidden" name="item_id" value="3">
-							<button class="btn btn-primary my-0" type="submit">完了</button>
-						</form>
-						<form action="edit.php" method="post" class="my-sm-1">
-							<input type="hidden" name="item_id" value="3">
-							<input class="btn btn-primary my-0" type="submit" value="修正">
-						</form>
-						<form action="delete.php" method="post" class="my-sm-1">
-							<input type="hidden" name="item_id" value="3">
-							<input class="btn btn-primary my-0" type="submit" value="削除">
-						</form>
-					</td>
-				</tr>
-				<tr>
-					<td class="align-middle">
-						テストの項目４ </td>
-					<td class="align-middle">
-						テスト太郎 </td>
-					<td class="align-middle">
-						2020-02-13 </td>
-					<td class="align-middle">
-						2020-03-03 </td>
-					<td class="align-middle">
-						未 </td>
-					<td class="align-middle button">
-						<form action="./complete.php" method="post" class="my-sm-1">
-							<input type="hidden" name="item_id" value="4">
-							<button class="btn btn-primary my-0" type="submit">完了</button>
-						</form>
-						<form action="edit.php" method="post" class="my-sm-1">
-							<input type="hidden" name="item_id" value="4">
-							<input class="btn btn-primary my-0" type="submit" value="修正">
-						</form>
-						<form action="delete.php" method="post" class="my-sm-1">
-							<input type="hidden" name="item_id" value="4">
-							<input class="btn btn-primary my-0" type="submit" value="削除">
-						</form>
-					</td>
-				</tr>
-				<tr>
-					<td class="align-middle">
-						テストの項目５ </td>
-					<td class="align-middle">
-						テスト太郎 </td>
-					<td class="align-middle">
-						2020-02-13 </td>
-					<td class="align-middle">
-						2020-04-01 </td>
-					<td class="align-middle">
-						未 </td>
-					<td class="align-middle button">
-						<form action="./complete.php" method="post" class="my-sm-1">
-							<input type="hidden" name="item_id" value="5">
-							<button class="btn btn-primary my-0" type="submit">完了</button>
-						</form>
-						<form action="edit.php" method="post" class="my-sm-1">
-							<input type="hidden" name="item_id" value="5">
-							<input class="btn btn-primary my-0" type="submit" value="修正">
-						</form>
-						<form action="delete.php" method="post" class="my-sm-1">
-							<input type="hidden" name="item_id" value="5">
-							<input class="btn btn-primary my-0" type="submit" value="削除">
-						</form>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+			<table class="table table-striped table-hover table-bordered table-sm my-2">
+				<thead>
+					<tr>
+						<!-- item_name -->
+						<th scope="col">項目名</th>
+						<!-- family_name + first_name -->
+						<th scope="col">担当者</th>
+						<th scope="col">作成者</th>
+						<!-- registration_date -->
+						<th scope="col">登録日</th>
+						<!-- expiration_date -->
+						<th scope="col">期限日</th>
+						<!-- finished_date -->
+						<th scope="col">完了日</th>
+						<!-- ボタン -->
+						<th scope="col">操作</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<?php foreach ($items as $item) : ?>
+						<?php if ($item['expiration_date'] < date('Y-m-d') && is_null($item['finished_date'])) : ?>
+							<!-- 期限日が今日を過ぎていて、かつ、完了日がnullのとき、期限日を過ぎたレコードの背景色を変える -->
+							<?php $class = 'class="text-danger"' ?>
+						<?php elseif (!is_null($item['finished_date'])) : ?>
+							<!-- 完了日に値があるときは、完了したレコードの文字に打消し線を入れる -->
+							<?php $class = 'class="del"' ?>
+						<?php else : ?>
+							<?php $class = '' ?>
+						<?php endif ?>
+						<?php
+						// 作成者名の取得
+						$auth_id = $item['auth_id'];
+						$users_table = new Users($base);
+						$author = $users_table->getUserByAuthId($auth_id);
+						if (!$author) {
+							$author = [];
+						}
+						?>
+						<tr <?= $class ?>>
+							<!-- 作業項目名 -->
+							<td class="align-middle">
+								<?= Common::h($item['item_name']) ?>
+							</td>
+							<!-- 担当者 -->
+							<td class="align-middle">
+								<?= Common::h($item['family_name']) . " " . Common::h($item['first_name']) ?>
+							</td>
+							<!-- 作成者 -->
+							<td class="align-middle">
+								<?= isset($author['user_name']) ? Common::h($author['user_name']) : "" ?>
+							</td>
+							<!-- 登録日 -->
+							<td class="align-middle">
+								<?= Common::h($item['registration_date']) ?>
+							</td>
+							<!-- 期限日 -->
+							<td class="align-middle">
+								<?= Common::h($item['expiration_date']) ?>
+							</td>
+							<td class="align-middle">
+								<?php if (empty($item['finished_date'])) : ?>
+									未
+								<?php else : ?>
+									<?= Common::h($item['finished_date']) ?>
+								<?php endif ?>
+							</td>
+							<td class="align-middle button">
+								<!-- フォーム -->
+								<form action="./complete_action.php" method="post" class="my-sm-1">
+									<!-- トークン送信 -->
+									<input type="hidden" name="token" value="<?= Common::h($token) ?>">
+									<input type="hidden" name="item_id" value="<?= Common::h($item['id']) ?>">
+									<button class="btn btn-primary my-0" type="submit">完了</button>
+								</form>
+								<a href="./edit.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-success">修正</a>
+								<a href="./delete.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-danger">削除</a>
+							</td>
+						</tr>
+					<?php endforeach ?>
+				</tbody>
+			</table>
+		<?php endif ?>
 
 
 	</div>

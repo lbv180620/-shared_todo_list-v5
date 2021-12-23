@@ -6,6 +6,9 @@ require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
 
 use App\Utils\SessionUtil;
 use App\Utils\Common;
+use App\Models\Base;
+use App\Models\TodoItems;
+use App\Models\Users;
 
 SessionUtil::sessionStart();
 
@@ -17,6 +20,49 @@ if (!Common::isAuthUser()) {
 
 // ログイン情報取得
 $login = isset($_SESSION['login']) ? $_SESSION['login'] : null;
+
+// GET送信の値を取得
+$item_id = $_GET['item_id'];
+
+try {
+
+	$base = Base::getPDOInstance();
+
+	// GET送信で送られてきたIDに合致するtodo_itemsのレコードを1件取得
+	$todoItems_table = new TodoItems($base);
+	$item = $todoItems_table->getTodoItemByID($item_id);
+
+	// 担当者（ユーザー）のレコードを全件取得
+	$users_table = new Users($base);
+	$users = $users_table->getUserAll();
+} catch (\PDOException $e) {
+
+	$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
+	Logger::errorLog(Config::MSG_PDOEXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+	header('Location: ../error/error.php', true, 301);
+	exit;
+} catch (\Exception $e) {
+
+	$_SESSION['err']['msg'] = Config::MSG_EXCEPTION_ERROR;
+	Logger::errorLog(Config::MSG_EXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+	header('Location: ../error/error.php', true, 301);
+	exit;
+}
+
+# 成功メッセージの初期化
+$success_msg = isset($_SESSION['success']) ? $_SESSION['success']['msg'] : null;
+unset($_SESSION['success']);
+
+# 失敗メーセージの初期化
+$err_msg = isset($_SESSION['err']) ? $_SESSION['err'] : null;
+unset($_SESSION['err']);
+
+// リロード後、記入情報を初期化
+$fill = isset($_SESSION['fill']) ? $_SESSION['fill'] : null;
+unset($_SESSION['fill']);
+
+// ワンタイムトークン生成
+$token = Common::generateToken();
 
 ?>
 
@@ -42,20 +88,25 @@ $login = isset($_SESSION['login']) ? $_SESSION['login'] : null;
 
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
-				<li class="nav-item">
-					<a class="nav-link" href="./top.php">作業一覧</a>
+				<li class="nav-item active">
+					<a class="nav-link" href="./top.php">作業一覧 <span class="sr-only">(current)</span></a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="./entry.php">作業登録 <span class="sr-only">(current)</span></a>
+					<a class="nav-link" href="./entry.php">作業登録</a>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						<?= Common::h($login['user_name']) ?>さん
 					</a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="../login/logout.php">ログアウト</a>
-					</div>
+					<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<li>
+							<form action="../login/logout.php" method="post" onsubmit="return checkSubmit()" style="display: inline;">
+								<button type="submit" class="btn btn-danger dropdown-item">ログアウト</button>
+							</form>
+						</li>
+						<li><a class="dropdown-item" href="#">退会</a></li>
+						<li><a class="dropdown-item" href="#">Another action</a></li>
+					</ul>
 				</li>
 			</ul>
 			<form class="form-inline my-2 my-lg-0" action="./" method="get">
@@ -76,36 +127,55 @@ $login = isset($_SESSION['login']) ? $_SESSION['login'] : null;
 			<div class="col-sm-3"></div>
 		</div>
 
-		<!-- エラーメッセージ -->
-		<div class="row my-2">
-			<div class="col-sm-3"></div>
-			<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
-				担当者を選択してください。 <button class="close" data-dismiss="alert">&times;</button>
+		<!-- エラメッセージアラート -->
+		<?php if (isset($err_msg)) : ?>
+			<div class="row my-2">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
+					<button class="close" data-dismiss="alert">&times;</button>
+					<?php foreach ($err_msg as $v) : ?>
+						<p>・<?= Common::h($v) ?></p>
+					<?php endforeach ?>
+				</div>
+				<div class="col-sm-3"></div>
 			</div>
-			<div class="col-sm-3"></div>
-		</div>
+		<?php endif ?>
 		<!-- エラーメッセージ ここまで -->
 
 		<!-- 入力フォーム -->
 		<div class="row my-2">
 			<div class="col-sm-3"></div>
 			<div class="col-sm-6">
-				<form action="./edit_action.php" method="post">
+				<!-- フォーム -->
+				<form action="./edit_action.php" method="post" onsubmit="return checkSubmit() ">
+					<!-- トークン送信 -->
+					<input type="hidden" name="token" value="<?= Common::h($token) ?>">
+					<!-- 作業IDを送信 -->
+					<input type="hidden" name="id" value="<?= Common::h($item['id']) ?>">
+					<!-- 作成者IDを送信 -->
+					<input type="hidden" name="auth_id" value="<?= Common::h($login['id']) ?>">
 					<div class="form-group">
 						<label for="item_name">項目名</label>
-						<input type="text" name="item_name" id="item_name" class="form-control" value="テストの項目３">
+						<input type="text" name="item_name" id="item_name" class="form-control" value="<?= isset($fill['item_name']) ? Common::h($fill['item_name']) : Common::h($item['item_name']) ?>">
 					</div>
 					<div class="form-group">
 						<label for="user_id">担当者</label>
 						<select name="user_id" id="user_id" class="form-control">
 							<option value="">--選択してください--</option>
-							<option value="1" selected>テスト花子</option>
-							<option value="2">テスト太郎</option>
+							<?php foreach ($users as $user) : ?>
+								<?php if (isset($fill['user_id']) && (int)$fill['user_id'] === $user['id']) : ?>
+									<option value="<?= Common::h($user['id']) ?>" selected><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
+								<?php elseif (!isset($fill['user_id']) && $item['user_id'] === $user['id']) : ?>
+									<option value="<?= Common::h($user['id']) ?>" selected><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
+								<?php else : ?>
+									<option value="<?= Common::h($user['id']) ?>"><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
+								<?php endif ?>
+							<?php endforeach ?>
 						</select>
 					</div>
 					<div class="form-group">
 						<label for="expire_date">期限</label>
-						<input type="date" class="form-control" id="expire_date" name="expire_date" value="2020-02-24">
+						<input type="date" class="form-control" id="expire_date" name="expire_date" value="<?= Common::h($item['expiration_date']) ?>">
 					</div>
 					<div class="form-group form-check">
 						<input type="checkbox" class="form-check-input" id="finished" name="finished" value="1">
@@ -113,7 +183,8 @@ $login = isset($_SESSION['login']) ? $_SESSION['login'] : null;
 					</div>
 
 					<input type="submit" value="更新" class="btn btn-primary">
-					<input type="button" value="キャンセル" class="btn btn-outline-primary" onclick="location.href='./';">
+					<!-- <input type="reset" value="リセット" class="btn btn-outline-primary"> -->
+					<input type="button" value="キャンセル" class="btn btn-outline-primary" onclick="location.href='./top.php';">
 				</form>
 			</div>
 			<div class="col-sm-3"></div>
@@ -122,6 +193,16 @@ $login = isset($_SESSION['login']) ? $_SESSION['login'] : null;
 
 	</div>
 	<!-- コンテナ ここまで -->
+
+	<script>
+		function checkSubmit() {
+			if (window.confirm('更新しますか?')) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	</script>
 
 	<!-- 必要なJavascriptを読み込む -->
 	<script src="../js/jquery-3.4.1.min.js"></script>

@@ -30,7 +30,7 @@ $result = Validation::validateFormRequesut($_POST);
 
 // 記入情報をサニタイズしてセッションに保存する
 $fill = $result['fill'];
-if (count($fill)) {
+if (!empty($fill)) {
 	$_SESSION['fill'] = Common::sanitize($fill);
 }
 

@@ -167,37 +167,28 @@ class Validation
 			}
 
 			if (isset($post['user_id'])) {
-				// user_idのバリデーション
-				if (!$user_id = filter_input(INPUT_POST, 'user_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
-					$err['user_id'] = Config::MSG_USER_ID_ERROR;
-					$post['user_id'] = "";
-					Logger::errorLog(Config::MSG_USER_ID_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-				}
 				// 担当者がいるかどうか
-				if (!self::isValidUserId($user_id)) {
+				if (!self::isValidUserId($post['user_id'])) {
 					$err['user_id'] = Config::MSG_NOT_EXISTS_USER_ID_ERROR;
-					$post['user_id'] = "";
 					Logger::errorLog(Config::MSG_NOT_EXISTS_USER_ID_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
 				}
 			}
 
 			if (isset($post['expiration_date'])) {
-				// expiration_dateのバリデーション
-				if (!$expiration_date = filter_input(INPUT_POST, 'expiration_date', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
-					$err['expiration_date'] = Config::MSG_USER_ID_ERROR;
-					$post['expiration_date'] = "";
-					Logger::errorLog(Config::MSG_USER_ID_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-				}
-				// 担当者がいるかどうか
-				if (!self::isValidDate($expiration_date)) {
-					$err['expiration_date'] = Config::MSG_NOT_EXISTS_USER_ID_ERROR;
-					$post['expiration_date'] = "";
-					Logger::errorLog(Config::MSG_NOT_EXISTS_USER_ID_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+				// 正しい日付かどうか判定
+				if (!self::isValidDate($post['expiration_date'])) {
+					$err['expiration_date'] = Config::MSG_INVAID_DATE_ERROR;
+					Logger::errorLog(Config::MSG_INVAID_DATE_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
 				}
 			}
 
 			if (isset($post['finished'])) {
 				// finishedのバリデーション
+				// 0 null "" [] じゃない
+				if (!empty($post['finished']) && $post['finished'] !== 1) {
+					$err['finished'] = Config::MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR;
+					Logger::errorLog(Config::MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+				}
 			}
 		} else {
 			$err['msg'] = Config::MSG_POST_SENDING_FAILURE_ERROR;
@@ -258,5 +249,7 @@ class Validation
 	 */
 	private static function isValidDate($date)
 	{
+		// strtotime()関数を使って、タイムスタンプに変換できるかどうかで正しい日付かどうかを調べる
+		return strtotime($date) === false ? false : true;
 	}
 }

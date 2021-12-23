@@ -11,7 +11,7 @@ SessionUtil::sessionStart();
 
 // エラーメッセージの初期化
 $err_msg = $_SESSION['err']['msg'];
-$err_flg = $_SESSION['err']['flg'];
+$err_flg = isset($_SESSION['err']['flg']) ? $_SESSION['err']['flg'] : null;
 unset($_SESSION['err']);
 
 ?>

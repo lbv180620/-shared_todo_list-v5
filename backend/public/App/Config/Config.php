@@ -44,7 +44,7 @@ class Config
 
 	const MSG_USER_DUPLICATE = "既に同じメールアドレスが登録されています。";
 
-	const MSG_NEW_REGISTRATIONW_REGISTRATION_SUCCESSFUL = "新規登録しました。ログインしてください。";
+	const MSG_NEW_REGISTRATION_SUCCESSFUL = "新規登録しました。ログインしてください。";
 
 	const MSG_FAILURE_TO_LOGIN = "ログインに失敗しました。";
 	const MSG_LOGIN_SUCCESSFUL = "ログインに成功しました。";
@@ -54,8 +54,12 @@ class Config
 	// entry.php
 	const MSG_ITEM_NAME_ERROR = "項目名を入力してください。";
 	const MSG_ITEM_NAME_STRLEN_ERROR = "項目名は100文字以下にしてください。";
-	const MSG_USER_ID_ERROR = "担当者を選択してください。";
 	const MSG_NOT_EXISTS_USER_ID_ERROR = "指定の担当者は存在しません。";
+	const MSG_INVAID_DATE_ERROR = "期限日の日付が正しくありません。";
+	const MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR = "完了のチェックボックスの値が正しくありません。";
+
+	const MSG_TASK_REGISTRATION_SUCCESSFUL = "作業登録しました。";
+	const MSG_TASK_REGISTRATION_FAILURE = "作業登録に失敗しました。";
 
 	/** ワンタイムトークン */
 	/** @var int openssl_random_pseudo_bytes()で使用する文字列の長さ */

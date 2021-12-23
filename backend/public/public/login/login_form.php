@@ -30,6 +30,8 @@ unset($_SESSION['fill']);
 // ワンタイムトークン生成
 $token = Common::generateToken();
 
+// var_dump($_SESSION['login']);
+
 ?>
 
 <!DOCTYPE html>
