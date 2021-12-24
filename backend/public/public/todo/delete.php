@@ -50,17 +50,9 @@ try {
 	exit;
 }
 
-# 成功メッセージの初期化
-$success_msg = isset($_SESSION['success']) ? $_SESSION['success']['msg'] : null;
-unset($_SESSION['success']);
-
 # 失敗メーセージの初期化
 $err_msg = isset($_SESSION['err']) ? $_SESSION['err'] : null;
 unset($_SESSION['err']);
-
-// リロード後、記入情報を初期化
-$fill = isset($_SESSION['fill']) ? $_SESSION['fill'] : null;
-unset($_SESSION['fill']);
 
 // ワンタイムトークン生成
 $token = Common::generateToken();
@@ -129,12 +121,31 @@ $token = Common::generateToken();
 			<div class="col-sm-3"></div>
 		</div>
 
+		<!-- エラメッセージアラート -->
+		<?php if (isset($err_msg)) : ?>
+			<div class="row my-2">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
+					<button class="close" data-dismiss="alert">&times;</button>
+					<?php foreach ($err_msg as $v) : ?>
+						<p>・<?= Common::h($v) ?></p>
+					<?php endforeach ?>
+				</div>
+				<div class="col-sm-3"></div>
+			</div>
+		<?php endif ?>
+		<!-- エラーメッセージ ここまで -->
+
 		<!-- 入力フォーム -->
 		<div class="row my-2">
 			<div class="col-sm-3"></div>
 			<div class="col-sm-6">
 				<!-- フォーム -->
 				<form action="./delete_action.php" method="post">
+					<!-- トークン送信 -->
+					<input type="hidden" name="token" value="<?= Common::h($token) ?>">
+					<!-- 作業IDを送信 -->
+					<input type="hidden" name="item_id" value="<?= Common::h($item['id']) ?>">
 					<div class="form-group">
 						<label for="item_name">項目名</label>
 						<p name="item_name" id="item_name" class="form-control"><?= Common::h($item['item_name']) ?></p>
@@ -144,11 +155,11 @@ $token = Common::generateToken();
 						<p name="user_id" id="user_id" class="form-control"><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></p>
 					</div>
 					<div class="form-group">
-						<label for="expire_date">期限</label>
-						<p class="form-control" id="expire_date" name="expire_date"><?= Common::h($item['expiration_date']) ?></p>
+						<label for="expiration_date">期限</label>
+						<p class="form-control" id="expiration_date" name="expiration_date"><?= Common::h($item['expiration_date']) ?></p>
 					</div>
 					<div class="form-group form-check">
-						<input type="checkbox" class="form-check-input" id="finished" name="finished" value="1" checked disabled>
+						<input type="checkbox" class="form-check-input" id="finished" name="finished" value="1" <?php if (!is_null($item['finished_date'])) echo 'checked' ?> disabled>
 						<label for="finished">完了</label>
 					</div>
 

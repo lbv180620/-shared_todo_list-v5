@@ -17,7 +17,7 @@ $post['finished'] = !empty($post['finished']) ? 1 : null; // "1" -> 1 に変換
 
 
 // リダイレクト先のURL
-$url = "./delete.php?item_id=" . $post['item_id'];
+$url = "./top.php";
 
 // ワンタイムトークンチェック
 // 「フォームからトークンから送信されていない」または「トークンが一致しない」場合
@@ -29,21 +29,20 @@ if (!isset($post['token']) || !Common::isValidToken($post['token'])) {
 	exit;
 }
 
-
 try {
 	// DB接続処理
 	$base = Base::getPDOInstance();
 	$dbh = new TodoItems($base);
 
 	$item_id = $post['item_id'];
-	/** 削除処理 @param int $item_id @return bool */
-	$ret = $dbh->deleteTodoItemById($item_id);
+	/** 完了処理 @param int $item_id @return bool */
+	$ret = $dbh->makeTodoItemComplete($item_id);
 
-	// 削除に成功したかの確認
+	// 完了に成功したかの確認
 	if (!$ret) {
 
-		$_SESSION['err']['msg'] = Config::MSG_TASK_DELETE_FAILURE;
-		Logger::errorLog(Config::MSG_TASK_DELETE_FAILURE, ['file' => __FILE__, 'line' => __LINE__]);
+		$_SESSION['err']['msg'] = Config::MSG_TASK_COMPLETE_FAILURE;
+		Logger::errorLog(Config::MSG_TASK_COMPLETE_FAILURE, ['file' => __FILE__, 'line' => __LINE__]);
 		header('Location: ./top.php', true, 301);
 		exit;
 	}
@@ -55,7 +54,7 @@ try {
 	unset($_SESSION['err']);
 
 	// 修正に成功した旨のメッセージをTOP画面にセッションで渡して、リダイレクト
-	$_SESSION['success']['msg'] = Config::MSG_TASK_DELETE_SUCCESSFUL;
+	$_SESSION['success']['msg'] = Config::MSG_TASK_COMPLETE_SUCCESSFUL;
 
 	header('Location: ./top.php', true, 301);
 	exit;

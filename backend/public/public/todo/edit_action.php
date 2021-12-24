@@ -37,6 +37,7 @@ $result = Validation::validateFormRequesut($post);
 // 記入情報をサニタイズしてセッションに保存する
 $fill = $result['fill'];
 $fill['finished'] = !empty($fill['finished']) ? "1" : null; // 1 -> "1" に変換
+
 if (!empty($fill)) {
 	$_SESSION['fill'] = Common::sanitize($fill);
 }

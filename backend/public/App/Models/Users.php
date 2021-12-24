@@ -171,7 +171,7 @@ class Users
 	}
 
 	/**
-	 * すべてのユーザ情報を全件取得
+	 * 論理削除されていないすべてのユーザ情報を全件取得
 	 *
 	 * @return array ユーザのレコードの配列
 	 */
@@ -189,7 +189,7 @@ class Users
 	}
 
 	/**
-	 * 指定IDのユーザが存在するかどうか調べる
+	 * 論理削除されていない指定IDのユーザが存在するかどうか調べる
 	 *
 	 * @param int $id ユーザID
 	 * @return bool ユーザが存在するとき：true、ユーザが存在しないとき：false
@@ -239,7 +239,9 @@ class Users
 			return false;
 		}
 
-		$sql = "SELECT * FROM users WHERE id = :id";
+		$sql = "SELECT * FROM users
+				WHERE id = :id
+				AND is_deleted = 0";
 		$stmt = $this->pdo->prepare($sql);
 		$stmt->bindValue(':id', $id, \PDO::PARAM_INT);
 		$stmt->execute();

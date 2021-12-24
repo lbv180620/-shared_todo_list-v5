@@ -163,12 +163,10 @@ $token = Common::generateToken();
 						<select name="user_id" id="user_id" class="form-control">
 							<option value="">--選択してください--</option>
 							<?php foreach ($users as $user) : ?>
-								<?php if (isset($fill['user_id']) && (int)$fill['user_id'] === $user['id']) : ?>
-									<option value="<?= Common::h($user['id']) ?>" selected><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
-								<?php elseif (!isset($fill['user_id']) && $item['user_id'] === $user['id']) : ?>
-									<option value="<?= Common::h($user['id']) ?>" selected><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
+								<?php if (!empty($fill)) : ?>
+									<option value="<?= Common::h($user['id']) ?>" <?php if ((int)$fill['user_id'] === $user['id']) echo 'selected' ?>><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
 								<?php else : ?>
-									<option value="<?= Common::h($user['id']) ?>"><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
+									<option value="<?= Common::h($user['id']) ?>" <?php if ($item['user_id'] === $user['id']) echo 'selected' ?>><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
 								<?php endif ?>
 							<?php endforeach ?>
 						</select>
@@ -178,7 +176,13 @@ $token = Common::generateToken();
 						<input type="date" class="form-control" id="expiration_date" name="expiration_date" value="<?= isset($fill['expiration_date']) ? Common::h($fill['expiration_date']) : Common::h($item['expiration_date']) ?>">
 					</div>
 					<div class="form-group form-check">
-						<input type="checkbox" class="form-check-input" id="finished" name="finished" value="1">
+						<?php if (!empty($fill)) : ?>
+							<input type="checkbox" class="form-check-input" id="finished" name="finished" value="1" <?php if (isset($fill['finished']) && (int)$fill['finished'] === 1) echo 'checked' ?>>
+						<?php else : ?>
+							<input type="checkbox" class="form-check-input" id="finished" name="finished" value="1" <?php if (!is_null($item['finished_date'])) echo 'checked' ?>>
+						<?php endif ?>
+
+
 						<label for="finished">完了</label>
 					</div>
 

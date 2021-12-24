@@ -224,6 +224,7 @@ $token = Common::generateToken();
 								<form action="./complete_action.php" method="post" class="my-sm-1">
 									<!-- トークン送信 -->
 									<input type="hidden" name="token" value="<?= Common::h($token) ?>">
+									<!-- 作業ID送信 -->
 									<input type="hidden" name="item_id" value="<?= Common::h($item['id']) ?>">
 									<button class="btn btn-primary my-0" type="submit">完了</button>
 								</form>

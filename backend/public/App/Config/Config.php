@@ -61,8 +61,14 @@ class Config
 	const MSG_TASK_REGISTRATION_SUCCESSFUL = "作業登録しました。";
 	const MSG_TASK_REGISTRATION_FAILURE = "作業登録に失敗しました。";
 	// edit
-	const MSG_TASK_UPDATE_SUCCESSFUL = "作業の更新に成功しました。";
-	const MSG_TASK_UPDATE_FAILURE = "作業の更新に失敗しました。";
+	const MSG_TASK_UPDATE_SUCCESSFUL = "作業を更新しました。";
+	const MSG_TASK_UPDATE_FAILURE = "作業を更新できませんでした。";
+	// delete
+	const MSG_TASK_DELETE_SUCCESSFUL = "作業を削除しました。";
+	const MSG_TASK_DELETE_FAILURE = "作業を削除できませんでした。";
+	// complete
+	const MSG_TASK_COMPLETE_SUCCESSFUL = "作業を完了しました。";
+	const MSG_TASK_COMPLETE_FAILURE = "作業を完了できませんでした。";
 
 	/** ワンタイムトークン */
 	/** @var int openssl_random_pseudo_bytes()で使用する文字列の長さ */

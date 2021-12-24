@@ -222,11 +222,72 @@ class TodoItems
 	 * @param string $date 完了日（NULLの場合は今日の日付）
 	 * @return bool 成功した場合:TRUE、失敗した場合:FALSE
 	 */
+	public function makeTodoItemComplete(int $id, ?string $date = null): bool
+	{
+		if (!is_numeric($id)) {
+			return false;
+		}
+
+		if ($id <= 0) {
+			return false;
+		}
+
+		// $dateがnullだったら、今日の日付を設定する。
+		if (is_null($date)) {
+			$date = date('Y-m-d');
+		}
+
+		$sql = "UPDATE todo_items SET
+				finished_date = :finished_date
+				WHERE id = :id";
+
+		$stmt = $this->pdo->prepare($sql);
+		$stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+		$stmt->bindValue(':finished_date', $date, \PDO::PARAM_STR);
+
+		$this->pdo->beginTransaction();
+		try {
+			$stmt->execute();
+			return $this->pdo->commit();
+		} catch (\PDOException $e) {
+			$this->pdo->rollBack();
+			return false;
+		}
+	}
 
 	/**
 	 * 指定IDの1件の作業項目を論理削除します。
+	 * todo_itemsテーブルのis_deletedフラグを1に更新する
+	 * is_deleted=1の場合、画面に表示されない
 	 *
 	 * @param int $id 作業項目ID
 	 * @return bool 成功した場合:TRUE、失敗した場合:FALSE
 	 */
+	public function deleteTodoItemById(int $id): bool
+	{
+
+		if (!is_numeric($id)) {
+			return false;
+		}
+
+		if ($id <= 0) {
+			return false;
+		}
+
+		$sql = "UPDATE todo_items SET
+				is_deleted = 1
+				WHERE id = :id";
+
+		$stmt = $this->pdo->prepare($sql);
+		$stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+
+		$this->pdo->beginTransaction();
+		try {
+			$stmt->execute();
+			return $this->pdo->commit();
+		} catch (\PDOException $e) {
+			$this->pdo->rollBack();
+			return false;
+		}
+	}
 }
