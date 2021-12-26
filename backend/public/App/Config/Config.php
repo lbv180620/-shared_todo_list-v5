@@ -69,6 +69,9 @@ class Config
 	// complete
 	const MSG_TASK_COMPLETE_SUCCESSFUL = "作業を完了しました。";
 	const MSG_TASK_COMPLETE_FAILURE = "作業を完了できませんでした。";
+	// cancel
+	const MSG_USER_DELETE_SUCCESSFUL = "アカウントを削除しました。";
+	const MSG_USER_DELETE_FAILURE = "アカウント削除に失敗しました。";
 
 	/** ワンタイムトークン */
 	/** @var int openssl_random_pseudo_bytes()で使用する文字列の長さ */
@@ -87,4 +90,16 @@ class Config
 	// const SIMPLE_FORMAT = '[%datetime%] %level_name%: %message%' . PHP_EOL;
 	const SIMPLE_FORMAT = null;
 	const SIMPLE_DATE_FORMAT = "Y年n月d日 H:i:s";
+
+	/** 遅延ログアウト */
+	// ログアウトの遅延時間
+	const DEFAULT_DELAY_TIME = 10;
+	// ログアウトの遅延処理
+	const LOGOUT_SCRIPT = '<script type="text/javascript" async>
+		const deferredLogout = () => {
+			location.href = "../login/logout.php";
+		}
+
+		setTimeout(deferredLogout, ' . self::DEFAULT_DELAY_TIME * 1000 . ');
+	</script>';
 }

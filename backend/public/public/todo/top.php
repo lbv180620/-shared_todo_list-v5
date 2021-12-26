@@ -105,13 +105,16 @@ $token = Common::generateToken();
 						<?= Common::h($login['user_name']) ?>さん
 					</a>
 					<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<li><a class="dropdown-item" href="./show.php?login_id=<?= Common::h($login['id']) ?>">マイページ</a></li>
 						<li>
 							<form action="../login/logout.php" method="post" onsubmit="return checkLogout()" style="display: inline;">
 								<button type="submit" class="btn btn-danger dropdown-item">ログアウト</button>
 							</form>
 						</li>
-						<li><a class="dropdown-item" href="#">退会</a></li>
-						<li><a class="dropdown-item" href="#">Another action</a></li>
+						<li><a class="dropdown-item" href="./cancel.php?login_id=<?= Common::h($login['id']) ?>">退会</a></li>
+						<li>
+
+						</li>
 					</ul>
 				</li>
 			</ul>
@@ -145,6 +148,10 @@ $token = Common::generateToken();
 				<div class="col-sm-6 alert alert-success alert-dismissble fade show">
 					<button class="close" data-dismiss="alert">&times;</button>
 					<p><?= Common::h($success_msg) ?></p>
+					<?php if (Common::checkStringForLogout($success_msg)) : ?>
+						<p><?= Config::DEFAULT_DELAY_TIME ?>秒後ログアウトします。</p>
+						<?= Config::LOGOUT_SCRIPT ?>
+					<?php endif ?>
 				</div>
 				<div class="col-sm-3"></div>
 			</div>
@@ -183,9 +190,15 @@ $token = Common::generateToken();
 							<?php $class = '' ?>
 						<?php endif ?>
 						<?php
-						// 作成者名の取得
-						$client_id = $item['client_id'];
 						$users_table = new Users($base);
+						// 担当者のレコードを取得
+						$user_id = $item['user_id'];
+						$user = $users_table->getUserById($user_id);
+						if (!$user) {
+							$user = [];
+						}
+						// 依頼者のレコードを取得
+						$client_id = $item['client_id'];
 						$client = $users_table->getUserById($client_id);
 						if (!$client) {
 							$client = [];
@@ -194,14 +207,14 @@ $token = Common::generateToken();
 						<tr <?= $class ?>>
 							<!-- 作業項目名 -->
 							<td class="align-middle">
-								<?= Common::h($item['item_name']) ?>
+								<a href="./detail.php?item_id=<?= Common::h($item['id']) ?>"><?= Common::h($item['item_name']) ?></a>
 							</td>
 							<!-- 担当者 -->
-							<td class="align-middle">
+							<td class="align-middle" <?= $user['is_deleted'] === 1 ? 'style="color: red;"' : '' ?>>
 								<?= Common::h($item['family_name']) . " " . Common::h($item['first_name']) ?>
 							</td>
-							<!-- 作成者 -->
-							<td class="align-middle">
+							<!-- 依頼者 -->
+							<td class="align-middle" <?= $client['is_deleted'] === 1 ? 'style="color: red;"' : '' ?>>
 								<?= isset($client['user_name']) ? Common::h($client['user_name']) : "" ?>
 							</td>
 							<!-- 登録日 -->
@@ -237,7 +250,7 @@ $token = Common::generateToken();
 			</table>
 		<?php endif ?>
 
-
+		<p>※赤字のユーザはすでに退会しています。</p>
 	</div>
 	<!-- コンテナ ここまで -->
 
@@ -250,6 +263,8 @@ $token = Common::generateToken();
 			}
 		}
 	</script>
+
+
 
 	<!-- 必要なJavascriptを読み込む -->
 	<script src="../js/jquery-3.4.1.min.js"></script>

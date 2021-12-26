@@ -95,17 +95,17 @@ $token = Common::generateToken();
 					<a class="nav-link" href="./entry.php">作業登録</a>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<a class="nav-link dropdown-toggle" href="./detail.php?id=<?= Common::h($login['id']) ?>" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						<?= Common::h($login['user_name']) ?>さん
 					</a>
 					<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<li><a class="dropdown-item" href="./show.php?login_id=<?= Common::h($login['id']) ?>">マイページ</a></li>
 						<li>
 							<form action="../login/logout.php" method="post" onsubmit="return checkLogout()" style="display: inline;">
 								<button type="submit" class="btn btn-danger dropdown-item">ログアウト</button>
 							</form>
 						</li>
-						<li><a class="dropdown-item" href="#">退会</a></li>
-						<li><a class="dropdown-item" href="#">Another action</a></li>
+						<li><a class="dropdown-item" href="./cancel.php?login_id=<?= Common::h($login['id']) ?>">退会</a></li>
 					</ul>
 				</li>
 			</ul>

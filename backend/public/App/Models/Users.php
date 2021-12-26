@@ -130,6 +130,7 @@ class Users
 
 	/**
 	 * ログイン処理
+	 * is_deleted=1で論理削除されたユーザはログインできない
 	 *
 	 * @param arrsy $post
 	 * @return bool $result
@@ -140,7 +141,8 @@ class Users
 		$password = $post['password'];
 		// メールアドレスとパスワードが一致するユーザーを取得する
 		$user = $this->getUser($email, $password);
-		if (!empty($user)) {
+		// 論理削除されているユーザはログインできない
+		if (!empty($user) && $user['is_deleted'] === 0) {
 			// セッションにユーザ情報を登録
 			$_SESSION['login'] = $user;
 			return true;
@@ -177,9 +179,12 @@ class Users
 	 */
 	public function getUserAll()
 	{
+		// $sql = "SELECT id, user_name, password, family_name, first_name, is_admin
+		// 		FROM users
+		// 		WHERE is_deleted=0
+		// 		ORDER BY id";
 		$sql = "SELECT id, user_name, password, family_name, first_name, is_admin
 				FROM users
-				WHERE is_deleted=0
 				ORDER BY id";
 
 		$stmt = $this->pdo->prepare($sql);
@@ -206,7 +211,8 @@ class Users
 			return false;
 		}
 
-		$sql = "SELECT COUNT(id) AS num FROM users WHERE is_deleted=0";
+		// $sql = "SELECT COUNT(id) AS num FROM users WHERE is_deleted=0";
+		$sql = "SELECT COUNT(id) AS num FROM users";
 
 		$stmt = $this->pdo->prepare($sql);
 		$stmt->execute();
@@ -239,12 +245,49 @@ class Users
 			return false;
 		}
 
+		// $sql = "SELECT * FROM users
+		// 		WHERE id = :id
+		// 		AND is_deleted = 0";
 		$sql = "SELECT * FROM users
-				WHERE id = :id
-				AND is_deleted = 0";
+				WHERE id = :id";
 		$stmt = $this->pdo->prepare($sql);
 		$stmt->bindValue(':id', $id, \PDO::PARAM_INT);
 		$stmt->execute();
 		return $stmt->fetch();
+	}
+
+	/**
+	 * 指定IDの1件のユーザを論理削除します。
+	 * usersテーブルのis_deletedフラグを1に更新する
+	 *
+	 * @param int $id ユーザID
+	 * @return bool 成功した場合:TRUE、失敗した場合:FALSE
+	 */
+	public function deleteUserById(int $id): bool
+	{
+
+		if (!is_numeric($id)) {
+			return false;
+		}
+
+		if ($id <= 0) {
+			return false;
+		}
+
+		$sql = "UPDATE users SET
+				is_deleted = 1
+				WHERE id = :id";
+
+		$stmt = $this->pdo->prepare($sql);
+		$stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+
+		$this->pdo->beginTransaction();
+		try {
+			$stmt->execute();
+			return $this->pdo->commit();
+		} catch (\PDOException $e) {
+			$this->pdo->rollBack();
+			return false;
+		}
 	}
 }

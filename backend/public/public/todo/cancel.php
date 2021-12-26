@@ -7,7 +7,6 @@ require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
 use App\Utils\SessionUtil;
 use App\Utils\Common;
 use App\Models\Base;
-use App\Models\TodoItems;
 use App\Models\Users;
 
 SessionUtil::sessionStart();
@@ -22,20 +21,15 @@ if (!Common::isAuthUser()) {
 $login = isset($_SESSION['login']) ? $_SESSION['login'] : null;
 
 // GET送信の値を取得
-$item_id = $_GET['item_id'];
+$login_id = $_GET['login_id'];
 
 try {
 
 	$base = Base::getPDOInstance();
 
-	// GET送信で送られてきたIDに合致するtodo_itemsのレコードを1件取得
-	$todoItems_table = new TodoItems($base);
-	$item = $todoItems_table->getTodoItemByID($item_id);
-
-	// 担当者（ユーザー）のレコードを取得
-	$user_id = $item['user_id'];
+	// ログインユーザーのレコードを1件取得
 	$users_table = new Users($base);
-	$user = $users_table->getUserById($user_id);
+	$user = $users_table->getUserById($login_id);
 } catch (\PDOException $e) {
 
 	$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
@@ -57,7 +51,6 @@ unset($_SESSION['err']);
 // ワンタイムトークン生成
 $token = Common::generateToken();
 
-
 ?>
 
 <!DOCTYPE html>
@@ -68,7 +61,7 @@ $token = Common::generateToken();
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
-	<title>削除確認</title>
+	<title>退会</title>
 	<link rel="stylesheet" href="../css/bootstrap.min.css">
 </head>
 
@@ -82,11 +75,11 @@ $token = Common::generateToken();
 
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
-				<li class="nav-item">
-					<a class="nav-link" href="./top.php">作業一覧</a>
-				</li>
 				<li class="nav-item active">
-					<a class="nav-link" href="./entry.php">作業登録 <span class="sr-only">(current)</span></a>
+					<a class="nav-link" href="./top.php">作業一覧 <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./entry.php">作業登録</a>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -99,7 +92,6 @@ $token = Common::generateToken();
 								<button type="submit" class="btn btn-danger dropdown-item">ログアウト</button>
 							</form>
 						</li>
-						<li><a class="dropdown-item" href="./cancel.php?login_id=<?= Common::h($login['id']) ?>">退会</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -111,72 +103,44 @@ $token = Common::generateToken();
 	</nav>
 	<!-- ナビゲーション ここまで -->
 
+	<!-- エラメッセージアラート -->
+	<?php if (isset($err_msg)) : ?>
+		<div class="row my-2">
+			<div class="col-sm-3"></div>
+			<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
+				<button class="close" data-dismiss="alert">&times;</button>
+				<?php foreach ($err_msg as $v) : ?>
+					<p>・<?= Common::h($v) ?></p>
+				<?php endforeach ?>
+			</div>
+			<div class="col-sm-3"></div>
+		</div>
+	<?php endif ?>
+	<!-- エラーメッセージ ここまで -->
+
 	<!-- コンテナ -->
 	<div class="container">
 		<div class="row my-2">
 			<div class="col-sm-3"></div>
-			<div class="col-sm-6 alert alert-info">
-				下記の項目を削除します。よろしいですか？
-			</div>
-			<div class="col-sm-3"></div>
-		</div>
-
-		<!-- エラメッセージアラート -->
-		<?php if (isset($err_msg)) : ?>
-			<div class="row my-2">
-				<div class="col-sm-3"></div>
-				<div class="col-sm-6 alert alert-danger alert-dismissble fade show">
-					<button class="close" data-dismiss="alert">&times;</button>
-					<?php foreach ($err_msg as $v) : ?>
-						<p>・<?= Common::h($v) ?></p>
-					<?php endforeach ?>
-				</div>
-				<div class="col-sm-3"></div>
-			</div>
-		<?php endif ?>
-		<!-- エラーメッセージ ここまで -->
-
-		<!-- 入力フォーム -->
-		<div class="row my-2">
-			<div class="col-sm-3"></div>
-			<div class="col-sm-6">
-				<!-- フォーム -->
-				<form action="./delete_action.php" method="post">
+			<div class="col-sm-6 alert alert-danger">
+				<p><?= Common::h($user['user_name']) ?>さん本人であることを確認して、このまま退会しますか？</p>
+				<form action="./cancel_action.php" method="post" onsubmit="return checkSubmit()">
 					<!-- トークン送信 -->
 					<input type="hidden" name="token" value="<?= Common::h($token) ?>">
-					<!-- 作業IDを送信 -->
-					<input type="hidden" name="item_id" value="<?= Common::h($item['id']) ?>">
-					<div class="form-group">
-						<label for="item_name">項目名</label>
-						<p name="item_name" id="item_name" class="form-control"><?= Common::h($item['item_name']) ?></p>
-					</div>
-					<div class="form-group">
-						<label for="user_id">担当者</label>
-						<p name="user_id" id="user_id" class="form-control"><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></p>
-					</div>
-					<div class="form-group">
-						<label for="expiration_date">期限</label>
-						<p class="form-control" id="expiration_date" name="expiration_date"><?= Common::h($item['expiration_date']) ?></p>
-					</div>
-					<div class="form-group form-check">
-						<input type="checkbox" class="form-check-input" id="finished" name="finished" value="1" <?php if (!is_null($item['finished_date'])) echo 'checked' ?> disabled>
-						<label for="finished">完了</label>
-					</div>
-
-					<input type="submit" value="削除" class="btn btn-danger">
-					<input type="button" value="キャンセル" class="btn btn-outline-primary" onclick="location.href='./top.php';">
+					<!-- ログインユーザのidを送信 -->
+					<input type="hidden" name="login_id" value="<?= Common::h($login_id) ?>">
+					<input type="submit" class="btn btn-danger" value="退会">
+					<input type="button" value="キャンセル" class="btn btn-success" onclick="location.href='./top.php';">
 				</form>
 			</div>
 			<div class="col-sm-3"></div>
 		</div>
-		<!-- 入力フォーム ここまで -->
-
 	</div>
 	<!-- コンテナ ここまで -->
 
 	<script>
 		function checkSubmit() {
-			if (window.confirm('削除しますか?')) {
+			if (window.confirm('本当に退会しますか?')) {
 				return true;
 			} else {
 				return false;

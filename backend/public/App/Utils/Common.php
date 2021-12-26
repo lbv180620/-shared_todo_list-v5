@@ -108,4 +108,20 @@ class Common
 
 		return false;
 	}
+
+	/**
+	 * 文字列の比較処理(Config::MSG_USER_DELETE_SUCCESSFULと比較)
+	 *
+	 * @param string $str1 サクセスメッセージ
+	 * @param string $str2 初期値：Config::MSG_USER_DELETE_SUCCESSFUL
+	 * @return bool
+	 */
+	public static function checkStringForLogout($str1, $str2 = Config::MSG_USER_DELETE_SUCCESSFUL): bool
+	{
+		if ($str1 === Config::MSG_USER_DELETE_SUCCESSFUL && strcmp($str1, $str2) === 0) {
+			return true;
+		}
+
+		return false;
+	}
 }
