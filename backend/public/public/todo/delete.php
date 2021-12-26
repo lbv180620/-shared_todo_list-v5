@@ -9,6 +9,8 @@ use App\Utils\Common;
 use App\Models\Base;
 use App\Models\TodoItems;
 use App\Models\Users;
+use App\Config\Config;
+use App\Utils\Logger;
 
 SessionUtil::sessionStart();
 
@@ -33,9 +35,9 @@ try {
 	$item = $todoItems_table->getTodoItemByID($item_id);
 
 	// 担当者（ユーザー）のレコードを取得
-	$user_id = $item['user_id'];
+	$staff_id = $item['staff_id'];
 	$users_table = new Users($base);
-	$user = $users_table->getUserById($user_id);
+	$user = $users_table->getUserById($staff_id);
 } catch (\PDOException $e) {
 
 	$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
@@ -151,8 +153,12 @@ $token = Common::generateToken();
 						<p name="item_name" id="item_name" class="form-control"><?= Common::h($item['item_name']) ?></p>
 					</div>
 					<div class="form-group">
-						<label for="user_id">担当者</label>
-						<p name="user_id" id="user_id" class="form-control"><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></p>
+						<label for="staff_id">担当者</label>
+						<p name="staff_id" id="staff_id" class="form-control"><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></p>
+					</div>
+					<div class="form-group">
+						<label for="content">作業内容</label>
+						<p name="content" id="content" class="form-control"><?= Common::h($item['content']) ?></p>
 					</div>
 					<div class="form-group">
 						<label for="expiration_date">期限</label>

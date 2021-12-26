@@ -166,11 +166,20 @@ class Validation
 				}
 			}
 
-			if (isset($post['user_id'])) {
+			if (isset($post['staff_id'])) {
 				// 担当者がいるかどうか
-				if (!self::isValidUserId($post['user_id'])) {
-					$err['user_id'] = Config::MSG_NOT_EXISTS_USER_ID_ERROR;
-					Logger::errorLog(Config::MSG_NOT_EXISTS_USER_ID_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+				if (!self::isValidUserId($post['staff_id'])) {
+					$err['staff_id'] = Config::MSG_NOT_EXISTS_STAFF_ID_ERROR;
+					Logger::errorLog(Config::MSG_NOT_EXISTS_STAFF_ID_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+				}
+			}
+
+			if (isset($post['content'])) {
+				// contentのバリデーション
+				if (!$item_name = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+					$err['content'] = Config::MSG_CONTENT_ERROR;
+					$post['content'] = "";
+					Logger::errorLog(Config::MSG_CONTENT_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
 				}
 			}
 
@@ -206,18 +215,18 @@ class Validation
 	/**
 	 * 指定IDのユーザが存在するかどうか判定
 	 *
-	 * @param int $user_id ユーザID
+	 * @param int $staff_id ユーザID
 	 * @return bool
 	 */
-	private static function isValidUserId($user_id)
+	private static function isValidUserId($staff_id)
 	{
-		// $user_idが数字でなかったら、falseを返却
-		if (!is_numeric($user_id)) {
+		// $staff_idが数字でなかったら、falseを返却
+		if (!is_numeric($staff_id)) {
 			return false;
 		}
 
-		// $user_idが0以下はありえないので、falseを返却
-		if ($user_id <= 0) {
+		// $staff_idが0以下はありえないので、falseを返却
+		if ($staff_id <= 0) {
 			return false;
 		}
 
@@ -225,7 +234,7 @@ class Validation
 		try {
 			$base = Base::getPDOInstance();
 			$dbh = new Users($base);
-			return $dbh->isExistsUser($user_id);
+			return $dbh->isExistsUser($staff_id);
 		} catch (\PDOException $e) {
 
 			$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;

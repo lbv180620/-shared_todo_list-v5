@@ -67,10 +67,11 @@ try {
 
 	// 更新する内容を連想配列に
 	$data = [
-		'user_id' => $post['user_id'],
+		'staff_id' => $post['staff_id'],
 		'item_id' => $post['item_id'],
 		'client_id' => $post['client_id'],
 		'item_name' => $post['item_name'],
+		'content' => $post['content'],
 		'registration_date' => date('Y-m-d'),
 		'expiration_date' => $post['expiration_date'],
 		'finished_date' => isset($post['finished']) && $post['finished'] === 1 ? date('Y-m-d') : null,

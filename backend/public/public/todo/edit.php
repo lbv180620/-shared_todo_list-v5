@@ -9,6 +9,8 @@ use App\Utils\Common;
 use App\Models\Base;
 use App\Models\TodoItems;
 use App\Models\Users;
+use App\Config\Config;
+use App\Utils\Logger;
 
 SessionUtil::sessionStart();
 
@@ -37,7 +39,8 @@ try {
 	$users = $users_table->getUserAll();
 } catch (\PDOException $e) {
 
-	$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
+	// $_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
+	$_SESSION['err']['msg'] = $e->getMessage();
 	Logger::errorLog(Config::MSG_PDOEXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
 	header('Location: ../error/error.php', true, 301);
 	exit;
@@ -159,17 +162,21 @@ $token = Common::generateToken();
 						<input type="text" name="item_name" id="item_name" class="form-control" value="<?= isset($fill['item_name']) ? Common::h($fill['item_name']) : Common::h($item['item_name']) ?>">
 					</div>
 					<div class="form-group">
-						<label for="user_id">担当者</label>
-						<select name="user_id" id="user_id" class="form-control">
+						<label for="staff_id">担当者</label>
+						<select name="staff_id" id="staff_id" class="form-control">
 							<option value="">--選択してください--</option>
 							<?php foreach ($users as $user) : ?>
 								<?php if (!empty($fill)) : ?>
-									<option value="<?= Common::h($user['id']) ?>" <?php if ((int)$fill['user_id'] === $user['id']) echo 'selected' ?>><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
+									<option value="<?= Common::h($user['id']) ?>" <?php if ((int)$fill['staff_id'] === $user['id']) echo 'selected' ?>><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
 								<?php else : ?>
-									<option value="<?= Common::h($user['id']) ?>" <?php if ($item['user_id'] === $user['id']) echo 'selected' ?>><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
+									<option value="<?= Common::h($user['id']) ?>" <?php if ($item['staff_id'] === $user['id']) echo 'selected' ?>><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
 								<?php endif ?>
 							<?php endforeach ?>
 						</select>
+					</div>
+					<div class="form-group">
+						<label for="content">作業内容</label>
+						<textarea name="content" id="" cols="30" rows="10" class="form-control"><?= isset($fill['content']) ? Common::h($fill['content']) : Common::h($item['content']) ?></textarea>
 					</div>
 					<div class="form-group">
 						<label for="expiration_date">期限</label>

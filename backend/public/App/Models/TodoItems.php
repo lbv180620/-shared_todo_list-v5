@@ -35,7 +35,7 @@ class TodoItems
 		// 期限日の順番に並べる
 		$sql = "SELECT
 				t.id,
-				t.user_id,
+				t.staff_id,
 				t.client_id,
 				u.family_name,
 				u.first_name,
@@ -45,7 +45,7 @@ class TodoItems
 				t.finished_date
 				FROM todo_items t
 				INNER JOIN users u
-				ON t.user_id = u.id
+				ON t.staff_id = u.id
 				WHERE t.is_deleted = 0
 				ORDER BY t.expiration_date ASC";
 
@@ -80,17 +80,18 @@ class TodoItems
 
 		$sql = "SELECT
 				t.id,
-				t.user_id,
+				t.staff_id,
 				t.client_id,
 				u.family_name,
 				u.first_name,
 				t.item_name,
+				t.content,
 				t.registration_date,
 				t.expiration_date,
 				t.finished_date
 				FROM todo_items t
 				INNER JOIN users u
-				ON t.user_id = u.id
+				ON t.staff_id = u.id
 				WHERE u.is_deleted = 0
 				AND t.id = :id";
 
@@ -109,24 +110,27 @@ class TodoItems
 	public function registerTodoItem(array $data): bool
 	{
 
-		$user_id = $data['user_id'];
+		$staff_id = $data['staff_id'];
 		$client_id = $data['client_id'];
 		$item_name = $data['item_name'];
+		$content = $data['content'];
 		$registration_date = $data['registration_date'];
 		$expiration_date = $data['expiration_date'];
 		$finished_date = $data['finished_date'];
 
 		$sql = "INSERT INTO todo_items (
-				user_id,
+				staff_id,
 				client_id,
 				item_name,
+				content,
 				registration_date,
 				expiration_date,
 				finished_date
 				) VALUES (
-				:user_id,
+				:staff_id,
 				:client_id,
 				:item_name,
+				:content,
 				:registration_date,
 				:expiration_date,
 				:finished_date
@@ -134,9 +138,10 @@ class TodoItems
 
 		$stmt = $this->pdo->prepare($sql);
 
-		$stmt->bindValue(':user_id', $user_id, \PDO::PARAM_INT);
+		$stmt->bindValue(':staff_id', $staff_id, \PDO::PARAM_INT);
 		$stmt->bindValue(':client_id', $client_id, \PDO::PARAM_INT);
 		$stmt->bindValue(':item_name', $item_name, \PDO::PARAM_STR);
+		$stmt->bindValue(':content', $content, \PDO::PARAM_STR);
 		$stmt->bindValue(':registration_date', $registration_date, \PDO::PARAM_STR);
 		$stmt->bindValue(':expiration_date', $expiration_date, \PDO::PARAM_STR);
 		$stmt->bindValue(':finished_date', $finished_date, \PDO::PARAM_STR);
@@ -159,10 +164,11 @@ class TodoItems
 	 */
 	public function updateTodoItemById(array $data): bool
 	{
-		$user_id = $data['user_id']; // 担当者ID
+		$staff_id = $data['staff_id']; // 担当者ID
 		$item_id = $data['item_id']; // 作業ID
 		$client_id = $data['client_id']; // 作成者ID
 		$item_name = $data['item_name']; // 作業項目名
+		$content = $data['content']; // 作業内容
 		$registration_date = $data['registration_date']; // 登録日
 		$expiration_date = $data['expiration_date']; // 期限日
 		$finished_date = $data['finished_date']; // 完了日
@@ -185,9 +191,10 @@ class TodoItems
 
 		// 現状の仕様では「削除フラグ」をアップデートする必要はないが、今後の仕様追加のために実装しておく。
 		$sql = "UPDATE todo_items SET
-				user_id = :user_id,
+				staff_id = :staff_id,
 				client_id = :client_id,
 				item_name = :item_name,
+				content = :content,
 				registration_date = :registration_date,
 				expiration_date = :expiration_date,
 				finished_date = :finished_date,
@@ -196,9 +203,10 @@ class TodoItems
 
 		$stmt = $this->pdo->prepare($sql);
 
-		$stmt->bindValue(':user_id', $user_id, \PDO::PARAM_INT);
+		$stmt->bindValue(':staff_id', $staff_id, \PDO::PARAM_INT);
 		$stmt->bindValue(':client_id', $client_id, \PDO::PARAM_INT);
 		$stmt->bindValue(':item_name', $item_name, \PDO::PARAM_STR);
+		$stmt->bindValue(':content', $content, \PDO::PARAM_STR);
 		$stmt->bindValue(':registration_date', $registration_date, \PDO::PARAM_STR);
 		$stmt->bindValue(':expiration_date', $expiration_date, \PDO::PARAM_STR);
 		$stmt->bindValue(':finished_date', $finished_date, \PDO::PARAM_STR);
@@ -289,5 +297,54 @@ class TodoItems
 			$this->pdo->rollBack();
 			return false;
 		}
+	}
+
+	/**
+	 * 担当者IDと一致する作業項目を全件取得します。（削除済みの作業項目は含みません）
+	 *
+	 * @param int $staff_id 担当者ID番号
+	 * @return array 作業項目の配列
+	 */
+	public function getTodoItemAllByStaffId($staff_id)
+	{
+		// $staff_idが存在しなかったら、falseを返却
+		if (!isset($staff_id)) {
+			return [];
+		}
+
+		// $staff_idが数字でなかったら、falseを返却する。
+		if (!is_numeric($staff_id)) {
+			return [];
+		}
+
+		// $staff_idが0以下はありえないので、falseを返却
+		if ($staff_id <= 0) {
+			return [];
+		}
+
+		// 論理削除されている作業項目は表示対象外
+		// 期限日の順番に並べる
+		$sql = "SELECT
+				t.id,
+				t.staff_id,
+				t.client_id,
+				u.family_name,
+				u.first_name,
+				t.item_name,
+				t.registration_date,
+				t.expiration_date,
+				t.finished_date
+				FROM todo_items t
+				INNER JOIN users u
+				ON t.staff_id = u.id
+				WHERE t.is_deleted = 0
+				AND t.staff_id = :staff_id
+				ORDER BY t.expiration_date ASC";
+
+		$stmt = $this->pdo->prepare($sql);
+		$stmt->bindValue(':staff_id', $staff_id, \PDO::PARAM_INT);
+		$stmt->execute();
+
+		return $stmt->fetchAll();
 	}
 }

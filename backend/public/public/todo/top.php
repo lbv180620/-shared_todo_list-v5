@@ -192,8 +192,8 @@ $token = Common::generateToken();
 						<?php
 						$users_table = new Users($base);
 						// 担当者のレコードを取得
-						$user_id = $item['user_id'];
-						$user = $users_table->getUserById($user_id);
+						$staff_id = $item['staff_id'];
+						$user = $users_table->getUserById($staff_id);
 						if (!$user) {
 							$user = [];
 						}
