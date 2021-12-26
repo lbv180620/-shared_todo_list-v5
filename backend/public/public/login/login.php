@@ -63,7 +63,7 @@ try {
 	unset($_SESSION['login']);
 	/** ログイン処理 @param string $email @param string $password @return bool */
 	/** ログイン処理 @param array $post @return bool */
-	$ret = $dbh->login($post);
+	$ret = $dbh->loginAfterAccountRockConfirmation($post);
 
 	// ログインに成功したかの確認
 	if (!$ret) {

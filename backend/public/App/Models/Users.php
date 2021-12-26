@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Config\Config;
+
 /**
  * ユーザーテーブルクラス
  * ユーザテーブルのCUID処理
@@ -129,18 +131,68 @@ class Users
 	}
 
 	/**
+	 * アカウントロック確認後ログイン処理
+	 *
+	 * @param array $post
+	 * @return bool $result
+	 */
+	public function loginAfterAccountRockConfirmation(?array $post)
+	{
+		$email = $post['email'];
+
+		// 同一のメールアドレスのユーザーを探す
+		$user = $this->findUserByEmail($email);
+		// 同一のメールアドレスのユーザーがいる場合
+		if (!empty($user)) {
+
+			// アカウントロックされているユーザはログインできない
+			if (self::isAccountLocked($user)) {
+				$_SESSION['err']['acount_locked'] = Config::MSG_ACOUNT_LOCKED_ERROR;
+				return false;
+			}
+
+			// アカウントがロックされていなければ、ログイン処理
+			if ($this->login($post)) {
+				// エラーカウントを0にリセット
+				if (!$this->resetErrorCount($user)) {
+					return false;
+				}
+				return true;
+			}
+
+			// ログインに失敗したらエラーカウントを1増やす
+			if (!$this->addErrorCount($user)) {
+				return false;
+			}
+
+			// エラーカウントが6以上の場合はアカウントをロックする
+			// アカウントがロックされたら、falseを返す
+			if ($this->lockAccount($user)) {
+				$_SESSION['err']['acount_locked'] = Config::MSG_MAKE_ACOUNT_LOCKED;
+				return false;
+			}
+		}
+
+		// 一致するemailのユーザがいない場合
+		return false;
+	}
+
+
+	/**
 	 * ログイン処理
 	 * is_deleted=1で論理削除されたユーザはログインできない
 	 *
-	 * @param arrsy $post
+	 * @param array $post
 	 * @return bool $result
 	 */
-	public function login(?array $post)
+	private function login(?array $post)
 	{
 		$email = $post['email'];
 		$password = $post['password'];
+
 		// メールアドレスとパスワードが一致するユーザーを取得する
 		$user = $this->getUser($email, $password);
+
 		// 論理削除されているユーザはログインできない
 		if (!empty($user) && $user['is_deleted'] === 0) {
 			// セッションにユーザ情報を登録
@@ -289,5 +341,105 @@ class Users
 			$this->pdo->rollBack();
 			return false;
 		}
+	}
+
+	/**
+	 * アカウントがロックされているかどうか？
+	 *
+	 * @param object $user_row
+	 * @return bool
+	 */
+	private static function isAccountLocked($user_row)
+	{
+		$locked_flg = $user_row['locked_flg'];
+		if ($locked_flg === 1) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * エラーカウントをリセットする
+	 *
+	 * @param object $user_row
+	 * @return bool
+	 */
+	private function resetErrorCount($user_row): bool
+	{
+		// エラーカウントが0でない場合
+		if ($user_row['error_count'] > 0) {
+			$sql = "UPDATE users SET
+					error_count = 0
+					WHERE id = :id";
+
+			$stmt = $this->pdo->prepare($sql);
+			$stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
+
+			$this->pdo->beginTransaction();
+			try {
+				$stmt->execute();
+				return $this->pdo->commit();
+			} catch (\PDOException $e) {
+				$this->pdo->rollBack();
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * エラーカウントを1増やす
+	 *
+	 * @param object $user_row
+	 * @return int
+	 */
+	private function addErrorCount($user_row): bool
+	{
+		$error_count = $user_row['error_count'] + 1;
+
+		$sql = "UPDATE users SET
+					error_count = :error_count
+					WHERE id = :id";
+
+		$stmt = $this->pdo->prepare($sql);
+		$stmt->bindValue(':error_count', $error_count, \PDO::PARAM_INT);
+		$stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
+
+		$this->pdo->beginTransaction();
+		try {
+			$stmt->execute();
+			return $this->pdo->commit();
+		} catch (\PDOException $e) {
+			$this->pdo->rollBack();
+			return false;
+		}
+	}
+
+	/**
+	 * アカウントをロックする
+	 *
+	 * @param object $user_row
+	 * @return bool
+	 */
+	private function lockAccount($user_row): bool
+	{
+		if ($user_row['error_count'] > 5) {
+			$sql = "UPDATE users SET
+					locked_flg = 1
+					WHERE id = :id";
+			$stmt = $this->pdo->prepare($sql);
+			$stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
+
+			$this->pdo->beginTransaction();
+			try {
+				$stmt->execute();
+				return $this->pdo->commit();
+			} catch (\PDOException $e) {
+				$this->pdo->rollBack();
+				return false;
+			}
+		}
+		return false;
 	}
 }
