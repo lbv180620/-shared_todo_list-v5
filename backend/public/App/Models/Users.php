@@ -131,7 +131,7 @@ class Users
 	}
 
 	/**
-	 * アカウントロック確認後ログイン処理
+	 * アカウントロック確認後ログイン
 	 *
 	 * @param array $post
 	 * @return bool $result
