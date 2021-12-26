@@ -37,6 +37,12 @@ try {
 	// 担当者（ユーザー）のレコードを全件取得
 	$users_table = new Users($base);
 	$users = $users_table->getUserAll();
+
+	// ログインユーザのIDと依頼者のIDが一致しない場合リダイレクトでアクセス制限
+	if ($login['is_admin'] === 0 && $login['id'] !== $item['client_id']) {
+		header('Location: ./top.php', true, 301);
+		exit;
+	}
 } catch (\PDOException $e) {
 
 	// $_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;

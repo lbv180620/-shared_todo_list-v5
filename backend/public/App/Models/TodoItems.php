@@ -61,6 +61,58 @@ class TodoItems
 	 * @param mixed $search 検索キーワード
 	 * @return array 作業項目の配列
 	 */
+	public function getTodoItemBySearch($search)
+	{
+		if (empty($search)) {
+			return [];
+		}
+
+		$sql = "SELECT
+				t.id,
+				t.staff_id,
+				t.client_id,
+				u.family_name,
+				u.first_name,
+				t.item_name,
+				t.registration_date,
+				t.expiration_date,
+				t.finished_date
+				FROM todo_items t
+				INNER JOIN users u
+				ON t.staff_id = u.id
+				WHERE t.is_deleted = 0
+				AND (
+					t.item_name LIKE :item_name
+					OR u.family_name LIKE :family_name
+					OR u.first_name LIKE :first_name
+					OR t.registration_date = :registration_date
+					OR t.expiration_date = :expiration_date
+					OR t.finished_date = :finished_date
+				)
+				ORDER BY t.expiration_date ASC";
+
+		// bindValue()の第2引数には値を直接入れることができないので
+		// 下記のようにして、検索ワードを変数に入れる。
+		$likeWord = "%$search%";
+
+		$stmt = $this->pdo->prepare($sql);
+
+		$stmt->bindValue(':item_name', $likeWord, \PDO::PARAM_STR);
+		$stmt->bindValue(':family_name', $likeWord, \PDO::PARAM_STR);
+		$stmt->bindValue(':first_name', $likeWord, \PDO::PARAM_STR);
+		$stmt->bindValue(':registration_date', $search, \PDO::PARAM_STR);
+		$stmt->bindValue(':expiration_date', $search, \PDO::PARAM_STR);
+		$stmt->bindValue(':finished_date', $search, \PDO::PARAM_STR);
+
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+
+		if ($result === false) {
+			return [];
+		}
+
+		return $result;
+	}
 
 	/**
 	 * 指定IDの作業項目を1件取得します。（削除済みの作業項目は含みません）

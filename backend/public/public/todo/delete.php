@@ -34,6 +34,12 @@ try {
 	$todoItems_table = new TodoItems($base);
 	$item = $todoItems_table->getTodoItemByID($item_id);
 
+	// ログインユーザのIDと依頼者のIDが一致しない場合リダイレクトでアクセス制限
+	if ($login['is_admin'] === 0 && $login['id'] !== $item['client_id']) {
+		header('Location: ./top.php', true, 301);
+		exit;
+	}
+
 	// 担当者（ユーザー）のレコードを取得
 	$staff_id = $item['staff_id'];
 	$users_table = new Users($base);

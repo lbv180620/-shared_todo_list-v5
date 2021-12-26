@@ -93,10 +93,10 @@ $token = Common::generateToken();
 				<li class="nav-item">
 					<a class="nav-link" href="./top.php">作業一覧</a>
 				</li>
-				<li class="nav-item active">
+				<li class="nav-item">
 					<a class="nav-link" href="./entry.php">作業登録 <span class="sr-only">(current)</span></a>
 				</li>
-				<li class="nav-item dropdown">
+				<li class="nav-item dropdown active">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						<?= Common::h($login['user_name']) ?>さん
 					</a>
@@ -170,6 +170,7 @@ $token = Common::generateToken();
 				</form>
 				<a href="./edit.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-success">修正</a>
 				<a href="./delete.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-danger">削除</a>
+				<a href="./top.php" class="btn btn-outline-primary">もどる</a>
 			</div>
 			<div class="col-sm-3"></div>
 		</div>

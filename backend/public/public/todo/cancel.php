@@ -75,13 +75,13 @@ $token = Common::generateToken();
 
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active">
+				<li class="nav-item">
 					<a class="nav-link" href="./top.php">作業一覧 <span class="sr-only">(current)</span></a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="./entry.php">作業登録</a>
 				</li>
-				<li class="nav-item dropdown">
+				<li class="nav-item dropdown active">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						<?= Common::h($login['user_name']) ?>さん
 					</a>

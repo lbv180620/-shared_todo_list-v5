@@ -31,15 +31,31 @@ unset($_SESSION['success']);
 $err_msg = isset($_SESSION['err']) ? $_SESSION['err'] : null;
 unset($_SESSION['err']);
 
+
+// 検索キーワード
+// ここで初期化される
+$search = "";
+$isSearch = false;
+
 try {
 	// DB接続
 	$base = Base::getPDOInstance();
 	$todoItems_table = new TodoItems($base);
-	$items = $todoItems_table->getTodoItemAll();
+
+	if (isset($_GET['search'])) {
+		// GETに項目があるときは、検索
+		$get = Common::sanitize($_GET);
+		$search = $get['search'];
+		$isSearch = true;
+		$items = $todoItems_table->getTodoItemBySearch($search);
+	} else {
+		// GETに項目が無いときは、作業項目を全件取得
+		$items = $todoItems_table->getTodoItemAll();
+	}
 } catch (\PDOException $e) {
 
 	$_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
-	// $_SESSION['err']['msg'] = $e->getMessage();
+	$_SESSION['err']['msg'] = $e->getMessage();
 	Logger::errorLog(Config::MSG_PDOEXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
 	header('Location: ../error/error.php', true, 301);
 	exit;
@@ -102,6 +118,9 @@ $token = Common::generateToken();
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<?php if ($login['is_admin'] === 1) : ?>
+							<span>管理者</span>
+						<?php endif ?>
 						<?= Common::h($login['user_name']) ?>さん
 					</a>
 					<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -118,8 +137,8 @@ $token = Common::generateToken();
 					</ul>
 				</li>
 			</ul>
-			<form class="form-inline my-2 my-lg-0" action="./" method="get">
-				<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" value="">
+			<form class="form-inline my-2 my-lg-0" action="./top.php" method="get">
+				<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" value="<?= Common::h($search) ?>">
 				<button class="btn btn-outline-light my-2 my-sm-0" type="submit">検索</button>
 			</form>
 		</div>
@@ -158,7 +177,15 @@ $token = Common::generateToken();
 		<?php endif ?>
 
 		<?php if (!empty($items)) : ?>
-
+			<?php if ($isSearch) : ?>
+				<div class="row my-2">
+					<div class="col-sm-3"></div>
+					<div class="col-sm-6 alert alert-info">
+						検索結果：<?= count($items) ?>件
+					</div>
+					<div class="col-sm-3"></div>
+				</div>
+			<?php endif ?>
 			<table class="table table-striped table-hover table-bordered table-sm my-2">
 				<thead>
 					<tr>
@@ -233,24 +260,64 @@ $token = Common::generateToken();
 								<?php endif ?>
 							</td>
 							<td class="align-middle button">
-								<!-- フォーム -->
-								<form action="./complete_action.php" method="post" class="my-sm-1">
-									<!-- トークン送信 -->
-									<input type="hidden" name="token" value="<?= Common::h($token) ?>">
-									<!-- 作業ID送信 -->
-									<input type="hidden" name="item_id" value="<?= Common::h($item['id']) ?>">
-									<button class="btn btn-primary my-0" type="submit">完了</button>
-								</form>
-								<a href="./edit.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-success">修正</a>
-								<a href="./delete.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-danger">削除</a>
+								<?php if ($login['is_admin'] === 1 || $login['id'] === $item['staff_id']) : ?>
+									<!-- フォーム -->
+									<form action="./complete_action.php" method="post" class="my-sm-1">
+										<!-- トークン送信 -->
+										<input type="hidden" name="token" value="<?= Common::h($token) ?>">
+										<!-- 作業ID送信 -->
+										<input type="hidden" name="item_id" value="<?= Common::h($item['id']) ?>">
+										<button class="btn btn-primary my-0" type="submit">完了</button>
+									</form>
+								<?php endif ?>
+								<?php if ($login['is_admin'] === 1 || $login['id'] === $client['id']) : ?>
+									<a href="./edit.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-success">修正</a>
+									<a href="./delete.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-danger">削除</a>
+								<?php endif ?>
 							</td>
 						</tr>
 					<?php endforeach ?>
 				</tbody>
 			</table>
+
+			<p>※赤字のユーザはすでに退会しています。</p>
+		<?php elseif (empty($_GET['search']) || empty($items)) : ?>
+			<div class="row my-2">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-6 alert alert-info">
+					検索結果がありません。
+				</div>
+				<div class="col-sm-3"></div>
+			</div>
 		<?php endif ?>
 
-		<p>※赤字のユーザはすでに退会しています。</p>
+		<?php if ($isSearch) : ?>
+			<!-- 検索のとき、戻るボタンを表示する -->
+			<?php if (empty($_GET['search']) || empty($items)) : ?>
+				<div class="row my-2">
+					<div class="col-sm-3"></div>
+					<div class="col-sm-6">
+						<form>
+							<div class="goback">
+								<input type="button" value="もどる" class="btn btn-primary my-0" onclick="location.href='./top.php'">
+							</div>
+						</form>
+					</div>
+					<div class="col-sm-3"></div>
+				</div>
+			<?php else : ?>
+				<div class="row my-2">
+					<div class="col">
+						<form>
+							<div class="goback">
+								<input type="button" value="もどる" class="btn btn-primary my-0" onclick="location.href='./top.php'">
+							</div>
+						</form>
+					</div>
+				</div>
+			<?php endif ?>
+		<?php endif ?>
+
 	</div>
 	<!-- コンテナ ここまで -->
 
