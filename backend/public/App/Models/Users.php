@@ -51,9 +51,18 @@ class Users
 		$password = password_hash($password, PASSWORD_DEFAULT);
 
 		// ユーザ登録情報をDBにインサートする
-		$sql = "INSERT INTO users (user_name, email, password, family_name, first_name)";
-		$sql .= "VALUES";
-		$sql .= "(:user_name, :email, :password, :family_name, :first_name)";
+		$sql = "INSERT INTO users (
+				user_name,
+				email,
+				password,
+				family_name,
+				first_name
+				) VALUES (
+				:user_name,
+				:email,
+				:password,
+				:family_name,
+				:first_name)";
 
 		// データ変更ありなので、トランザクション処理
 		$this->pdo->beginTransaction();
@@ -225,7 +234,8 @@ class Users
 	}
 
 	/**
-	 * 論理削除されていないすべてのユーザ情報を全件取得
+	 * すべてのユーザ情報を全件取得
+	 * 論理削除されているユーザも表示する
 	 *
 	 * @return array ユーザのレコードの配列
 	 */
@@ -233,7 +243,7 @@ class Users
 	{
 		// $sql = "SELECT id, user_name, password, family_name, first_name, is_admin
 		// 		FROM users
-		// 		WHERE is_deleted=0
+		// 		WHERE is_deleted = 0
 		// 		ORDER BY id";
 		$sql = "SELECT id, user_name, password, family_name, first_name, is_admin
 				FROM users
@@ -263,7 +273,8 @@ class Users
 			return false;
 		}
 
-		// $sql = "SELECT COUNT(id) AS num FROM users WHERE is_deleted=0";
+		// 退会したユーザも名前は表示する
+		// $sql = "SELECT COUNT(id) AS num FROM users WHERE is_deleted = 0";
 		$sql = "SELECT COUNT(id) AS num FROM users";
 
 		$stmt = $this->pdo->prepare($sql);
