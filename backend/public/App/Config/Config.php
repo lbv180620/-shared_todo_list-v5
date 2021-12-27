@@ -24,6 +24,9 @@ class Config
 	const MSG_EXCEPTION_ERROR = "申し訳ございません。エラーが発生しました。";
 	const MSG_PDOEXCEPTION_ERROR = "データベース接続に失敗しました。";
 
+	// パスワードの正規表現
+	const DEFAULT_PASSWORD_REGEX = "/\A[a-z\d]{8,255}+\z/i";
+
 	// register login
 	const MSG_POST_SENDING_FAILURE_ERROR = "送信に失敗しました。";
 
@@ -73,6 +76,7 @@ class Config
 	// cancel
 	const MSG_USER_DELETE_SUCCESSFUL = "アカウントを削除しました。";
 	const MSG_USER_DELETE_FAILURE = "アカウント削除に失敗しました。";
+
 
 	/** ワンタイムトークン */
 	/** @var int openssl_random_pseudo_bytes()で使用する文字列の長さ */
