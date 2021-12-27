@@ -280,7 +280,7 @@ $token = Common::generateToken();
 				</tbody>
 			</table>
 
-			<p>※赤字のユーザはすでに退会しています。</p>
+			<p>※<span style="color: red;">赤字</span>のユーザはすでに退会しています。</p>
 		<?php elseif (empty($_GET['search']) || empty($items)) : ?>
 			<div class="row my-2">
 				<div class="col-sm-3"></div>
