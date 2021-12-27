@@ -49,12 +49,17 @@ $token = Common::generateToken();
 			display: flex;
 			justify-content: space-between;
 		}
+
+		#a-conf {
+			color: inherit;
+			text-decoration: none;
+		}
 	</style>
 </head>
 
 <body>
 	<nav class="navbar navbar-expand-md navbar-dark bg-primary">
-		<span class="navbar-brand">TODOリスト</span>
+		<span class="navbar-brand"><a href="./login_form.php" id="a-conf">TODOリスト</a></span>
 		<a href="../register/signup_form.php" class="btn btn-success">新規登録へ</a>
 	</nav>
 

@@ -85,12 +85,18 @@ $token = Common::generateToken();
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<title>作業修正</title>
 	<link rel="stylesheet" href="../css/bootstrap.min.css">
+	<style>
+		#a-conf {
+			color: inherit;
+			text-decoration: none;
+		}
+	</style>
 </head>
 
 <body>
 	<!-- ナビゲーション -->
 	<nav class="navbar navbar-expand-md navbar-dark bg-primary">
-		<span class="navbar-brand">TODOリスト</span>
+		<span class="navbar-brand"><a href="./top.php" id="a-conf">TODOリスト</a></span>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>

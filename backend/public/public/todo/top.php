@@ -97,13 +97,18 @@ $token = Common::generateToken();
 		tr.del>td.button {
 			text-decoration: none;
 		}
+
+		#a-conf {
+			color: inherit;
+			text-decoration: none;
+		}
 	</style>
 </head>
 
 <body>
 	<!-- ナビゲーション -->
 	<nav class="navbar navbar-expand-md navbar-dark bg-primary">
-		<span class="navbar-brand">TODOリスト</span>
+		<span class="navbar-brand"><a href="./top.php" id="a-conf">TODOリスト</a></span>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
