@@ -22,7 +22,7 @@ window.addEventListener(
           // クラスを追加(フォームの枠線を赤くする)
           userName.classList.add("input-invalid");
           // 後続の処理を止める
-          // return;
+          return;
         } else {
           // エラーメッセージのテキストに空文字を代入
           errMsgUserName.textContent = "";
@@ -37,7 +37,7 @@ window.addEventListener(
           errMsgEmail.classList.add("form-invalid");
           errMsgEmail.textContent = js_array.MSG_EMAIL_ERROR;
           email.classList.add("input-invalid");
-          // return;
+          return;
         } else {
           errMsgEmail.textContent = "";
           email.classList.remove("input-invalid");
@@ -50,7 +50,7 @@ window.addEventListener(
           errMsgFamilyName.classList.add("form-invalid");
           errMsgFamilyName.textContent = js_array.MSG_FAMILY_NAME_ERROR;
           familyName.classList.add("input-invalid");
-          // return;
+          return;
         } else {
           errMsgFamilyName.textContent = "";
           familyName.classList.remove("input-invalid");
@@ -63,9 +63,9 @@ window.addEventListener(
           errMsgFirstName.classList.add("form-invalid");
           errMsgFirstName.textContent = js_array.MSG_FIRST_NAME_ERROR;
           firstName.classList.add("input-invalid");
-          // return;
+          return;
         } else {
-          errMsgfirstName.textContent = "";
+          errMsgFirstName.textContent = "";
           firstName.classList.remove("input-invalid");
         }
 
@@ -76,13 +76,13 @@ window.addEventListener(
           errMsgPassword.classList.add("form-invalid");
           errMsgPassword.textContent = js_array.MSG_PASSWORD_ERROR;
           password.classList.add("input-invalid");
-          // return;
+          return;
         } else {
           if (!password.value.match(/^([a-z\d]{8,255})$/)) {
             errMsgPassword.classList.add("form-invalid");
             errMsgPassword.textContent = js_array.MSG_PASSWORD_REGEX_ERROR;
             password.classList.add("input-invalid");
-            // return;
+            return;
           } else {
             errMsgPassword.textContent = "";
             password.classList.remove("input-invalid");
@@ -109,7 +109,7 @@ window.addEventListener(
             return;
           } else {
             errMsgPasswordConfirm.textContent = "";
-            passwordConfirm.remove("input-invalid");
+            passwordConfirm.classList.remove("input-invalid");
           }
         }
       },
