@@ -6,6 +6,7 @@ require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
 
 use App\Utils\SessionUtil;
 use App\Utils\Common;
+use App\Config\Config;
 
 // セッション開始
 SessionUtil::sessionStart();
@@ -39,6 +40,7 @@ $token = Common::generateToken();
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<title>新規登録</title>
 	<link rel="stylesheet" href="../css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/validate_siginup_form.css">
 	<style>
 		.navbar {
 			display: flex;
@@ -84,30 +86,35 @@ $token = Common::generateToken();
 					<input type="hidden" name="token" value="<?= $token ?>">
 					<div class="form-group">
 						<label for="user_name">ユーザー名</label>
-						<input type="text" class="form-control" id="user_name" name="user_name" value="<?php if (isset($fill['user_name'])) echo Common::h($fill['user_name']) ?>">
+						<input type="text" class="form-control" id="user_name" name="user_name" value="<?php if (isset($fill['user_name'])) echo Common::h($fill['user_name']) ?>" placeholder="太郎">
+						<div class="err-msg-user_name"></div>
 					</div>
 					<div class="form-group">
 						<label for="email">メールアドレス</label>
-						<input type="text" class="form-control" id="email" name="email" value="<?php if (isset($fill['email'])) echo Common::h($fill['email']) ?>">
-
+						<input type="text" class="form-control" id="email" name="email" value="<?php if (isset($fill['email'])) echo Common::h($fill['email']) ?>" placeholder="メールアドレス">
+						<div class="err-msg-email"></div>
 					</div>
 					<div class="form-group">
 						<label for="family_name">お名前(姓)</label>
-						<input type="text" class="form-control" id="family_name" name="family_name" value="<?php if (isset($fill['family_name'])) echo Common::h($fill['family_name']) ?>">
+						<input type="text" class="form-control" id="family_name" name="family_name" value="<?php if (isset($fill['family_name'])) echo Common::h($fill['family_name']) ?>" placeholder="山田">
+						<div class="err-msg-family_name"></div>
 					</div>
 					<div class="form-group">
 						<label for="first_name">お名前(名)</label>
-						<input type="text" class="form-control" id="first_name" name="first_name" value="<?php if (isset($fill['first_name'])) echo Common::h($fill['first_name']) ?>">
+						<input type="text" class="form-control" id="first_name" name="first_name" value="<?php if (isset($fill['first_name'])) echo Common::h($fill['first_name']) ?>" placeholder="太郎">
+						<div class="err-msg-first_name"></div>
 					</div>
 					<div class="form-group">
 						<label for="password">パスワード</label>
-						<input type="password" class="form-control" id="password" name="password">
+						<input type="password" class="form-control" id="password" name="password" placeholder="8文字以上の英小文字数字">
+						<div class="err-msg-password"></div>
 					</div>
 					<div class="form-group">
 						<label for="password_confirm">パスワード確認</label>
-						<input type="password" class="form-control" id="password_confirm" name="password_confirm">
+						<input type="password" class="form-control" id="password_confirm" name="password_confirm" placeholder="8文字以上の英小文字数字">
+						<div class="err-msg-password_confirm"></div>
 					</div>
-					<button type="submit" class="btn btn-primary">新規登録</button>
+					<button type="submit" class="btn btn-primary submit">新規登録</button>
 				</form>
 
 			</div>
@@ -126,10 +133,25 @@ $token = Common::generateToken();
 		}
 	</script>
 
+	<!-- JSのフォームバリデーション処理 -->
+	<?php
+	$php_array = [
+		'MSG_USER_NAME_ERROR' => Config::MSG_USER_NAME_ERROR,
+		'MSG_FAMILY_NAME_ERROR' => Config::MSG_FAMILY_NAME_ERROR,
+		'MSG_FIRST_NAME_ERROR' => Config::MSG_FIRST_NAME_ERROR,
+		'MSG_PASSWORD_REGEX_ERROR' => Config::MSG_PASSWORD_REGEX_ERROR,
+		'MSG_PASSWORD_CONFIRM_MISMATCH_ERROR' => Config::MSG_PASSWORD_CONFIRM_MISMATCH_ERROR
+	];
+	$json_array = json_encode($php_array);
+	?>
+	<script type="text/javascript">
+		const js_array = JSON.parse('<?= $json_array ?>');
+	</script>
+	<script type="text/javascript" src="../js/validate_siginup_form.js"></script>
+
 	<!-- 必要なJavascriptを読み込む -->
 	<script src="../js/jquery-3.4.1.min.js"></script>
 	<script src="../js/bootstrap.bundle.min.js"></script>
-
 </body>
 
 </html>

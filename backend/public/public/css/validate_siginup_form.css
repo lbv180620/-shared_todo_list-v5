@@ -1,0 +1,9 @@
+.form-invalid {
+  color: #f50000;
+  font-style: 12px;
+  padding-left: 12px;
+}
+
+.input-invalid {
+  border: 1px solid #f50000;
+}
