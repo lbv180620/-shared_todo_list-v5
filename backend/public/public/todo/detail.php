@@ -150,7 +150,7 @@ $token = Common::generateToken();
 				</div>
 				<div class="form-group">
 					<label for="content">作業内容</label>
-					<p name="content" id="content" class="form-control"><?= Common::h($item['content']) ?></p>
+					<textarea name="content" id="content" class="form-control" cols="30" rows="10" disabled style="background-color: white;"><?= Common::h($item['content']) ?></textarea>
 				</div>
 				<div class="form-group">
 					<label for="expiration_date">期限</label>
