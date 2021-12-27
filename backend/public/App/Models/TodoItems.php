@@ -144,7 +144,7 @@ class TodoItems
 				FROM todo_items t
 				INNER JOIN users u
 				ON t.staff_id = u.id
-				WHERE u.is_deleted = 0
+				WHERE t.is_deleted = 0
 				AND t.id = :id";
 
 		$stmt = $this->pdo->prepare($sql);
