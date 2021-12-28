@@ -23,7 +23,8 @@ document.addEventListener(
     // button
     const btn = document.querySelector("#btn");
     // バリデーションパターン
-    // const emailExp = ;
+    // const emailExp =
+    //   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$/;
     const paaswordExp = /^([a-z\d]{8,255})$/;
     // 初期状態設定
     // btn.disabled = true;
@@ -149,9 +150,11 @@ document.addEventListener(
         e.preventDefault();
         form.method = "post";
         form.action = "./register.php";
-        // このreturnが無いと、キャンセルしたのにPOST送信してしまう
-        // form.onsubmit = return checkSubmit();
-        form.submit();
+        if ((form.onsubmit = checkSubmit())) {
+          form.submit();
+        } else {
+          return false;
+        }
       },
       false
     );
