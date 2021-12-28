@@ -6,6 +6,7 @@ require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
 
 use App\Utils\SessionUtil;
 use App\Utils\Common;
+use App\Config\Config;
 
 SessionUtil::sessionStart();
 
@@ -44,6 +45,7 @@ $token = Common::generateToken();
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<title>ログイン</title>
 	<link rel="stylesheet" href="../css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/validate_signup_form.css">
 	<style>
 		.navbar {
 			display: flex;
@@ -100,18 +102,20 @@ $token = Common::generateToken();
 			<div class="col-sm-3"></div>
 			<div class="col-sm-6">
 				<!-- フォーム -->
-				<form action="./login.php" method="post" onsubmit="return checkSubmit() ">
+				<form action="./login.php" method="post" onsubmit="return checkSubmit() " id="form">
 					<!-- トークン送信 -->
 					<input type="hidden" name="token" value="<?= Common::h($token) ?>">
 					<div class="form-group">
 						<label for="email">メールアドレス</label>
 						<input type="text" class="form-control" id="email" name="email" value="<?php if (isset($fill['email'])) echo Common::h($fill['email']) ?>">
+						<div class="err-msg-email"></div>
 					</div>
 					<div class="form-group">
 						<label for="password">パスワード</label>
 						<input type="password" class="form-control" id="password" name="password">
+						<div class="err-msg-password"></div>
 					</div>
-					<button type="submit" class="btn btn-primary">ログイン</button>
+					<button type="submit" class="btn btn-primary" id="btn">ログイン</button>
 				</form>
 			</div>
 			<div class="col-sm-3"></div>
@@ -128,6 +132,20 @@ $token = Common::generateToken();
 			}
 		}
 	</script>
+
+	<!-- JSのフォームバリデーション処理 -->
+	<?php
+	$php_array = [
+		'MSG_EMAIL_ERROR' => Config::MSG_EMAIL_ERROR,
+		'MSG_PASSWORD_ERROR' => Config::MSG_PASSWORD_ERROR,
+		'MSG_PASSWORD_REGEX_ERROR' => Config::MSG_PASSWORD_REGEX_ERROR
+	];
+	$json_array = json_encode($php_array);
+	?>
+	<script type="text/javascript">
+		const js_array = JSON.parse('<?= $json_array ?>');
+	</script>
+	<script type="text/javascript" src="../js/validate_login_form.js"></script>
 
 	<!-- 必要なJavascriptを読み込む -->
 	<script src="../js/jquery-3.4.1.min.js"></script>

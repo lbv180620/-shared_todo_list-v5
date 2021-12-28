@@ -155,7 +155,7 @@ $token = Common::generateToken();
 	<script type="text/javascript">
 		const js_array = JSON.parse('<?= $json_array ?>');
 	</script>
-	<script type="text/javascript" src="../js/validate_form.js"></script>
+	<script type="text/javascript" src="../js/validate_signup_form.js"></script>
 
 	<!-- 必要なJavascriptを読み込む -->
 	<script src="../js/jquery-3.4.1.min.js"></script>
