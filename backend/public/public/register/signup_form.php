@@ -40,7 +40,7 @@ $token = Common::generateToken();
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<title>新規登録</title>
 	<link rel="stylesheet" href="../css/bootstrap.min.css">
-	<link rel="stylesheet" href="../css/validate_siginup_form.css">
+	<link rel="stylesheet" href="../css/validate_signup_form.css">
 	<style>
 		.navbar {
 			display: flex;
@@ -86,7 +86,7 @@ $token = Common::generateToken();
 			<div class="col-sm-3"></div>
 			<div class="col-sm-6">
 				<!-- フォーム -->
-				<form action="./register.php" method="post" onsubmit="return checkSubmit()">
+				<form action="./register.php" method="post" onsubmit="return checkSubmit()" id="form">
 					<!-- トークン送信 -->
 					<input type="hidden" name="token" value="<?= $token ?>">
 					<div class="form-group">
@@ -119,7 +119,7 @@ $token = Common::generateToken();
 						<input type="password" class="form-control" id="password_confirm" name="password_confirm" placeholder="8文字以上の英小文字数字">
 						<div class="err-msg-password_confirm"></div>
 					</div>
-					<button type="submit" class="btn btn-primary submit">新規登録</button>
+					<button type="submit" class="btn btn-primary" id="btn">新規登録</button>
 				</form>
 
 			</div>
@@ -155,7 +155,7 @@ $token = Common::generateToken();
 	<script type="text/javascript">
 		const js_array = JSON.parse('<?= $json_array ?>');
 	</script>
-	<script type="text/javascript" src="../js/validate_siginup_form.js"></script>
+	<script type="text/javascript" src="../js/validate_form.js"></script>
 
 	<!-- 必要なJavascriptを読み込む -->
 	<script src="../js/jquery-3.4.1.min.js"></script>
