@@ -45,7 +45,7 @@ $token = Common::generateToken();
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<title>ログイン</title>
 	<link rel="stylesheet" href="../css/bootstrap.min.css">
-	<link rel="stylesheet" href="../css/validate_signup_form.css">
+	<link rel="stylesheet" href="../css/validate_form.css">
 	<style>
 		.navbar {
 			display: flex;
