@@ -125,7 +125,7 @@ $token = Common::generateToken();
 
 	<script>
 		function checkSubmit() {
-			if (window.confirm('ログインしますかしますか?')) {
+			if (window.confirm('ログインしますか?')) {
 				return true;
 			} else {
 				return false;
