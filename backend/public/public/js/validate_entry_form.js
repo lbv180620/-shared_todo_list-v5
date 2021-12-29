@@ -2,14 +2,17 @@ document.addEventListener(
   "DOMContentLoaded",
   () => {
     /** Element取得 */
+
     // form
     const form = document.querySelector("#form");
+
     // form element
     const itemName = document.querySelector("#item_name");
     // const staff = document.querySelector("#staff");
     // const content = document.querySelector("#content");
     // const expirationDate = document.querySelector("#expiration_date");
     // const finishedDate = document.querySelector("#finished_date");
+
     // error message
     const errMsgItemName = document.querySelector(".err-msg-item_name");
     // const errMsgStaff = document.querySelector(".err-msg-staff");
@@ -18,6 +21,7 @@ document.addEventListener(
     //   ".err-msg-expiration_date"
     // );
     // const errMsgFinishedDate = document.querySelector(".err-msg-finished_date");
+
     // button
     const btn = document.querySelector("#btn");
 
@@ -35,12 +39,20 @@ document.addEventListener(
           itemName.classList.add("input-invalid");
           return;
         } else {
-          errMsgItemName.textContent = "";
-          itemName.classList.remove("input-invalid");
+          if (itemName.value.length > 100) {
+            errMsgItemName.classList.add("form-invalid");
+            errMsgItemName.textContent = js_array.MSG_ITEM_NAME_STRLEN_ERROR;
+            itemName.classList.add("input-invalid");
+            return;
+          } else {
+            errMsgItemName.textContent = "";
+            itemName.classList.remove("input-invalid");
+          }
         }
       },
       false
     );
+
     // staff
     // staff.addEventListener(
     //   "keyup",
@@ -57,6 +69,7 @@ document.addEventListener(
     //   },
     //   false
     // );
+
     // content
     // content.addEventListener(
     //   "keyup",
@@ -73,6 +86,7 @@ document.addEventListener(
     //   },
     //   false
     // );
+
     // expiration_date
     // expirationDate.addEventListener(
     //   "keyup",
@@ -108,6 +122,7 @@ document.addEventListener(
     // );
 
     // buttonのdisabled制御関数
+
     // submit
     btn.addEventListener(
       "click",
