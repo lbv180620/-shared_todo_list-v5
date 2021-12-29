@@ -59,6 +59,7 @@ class Config
 	// entry edit
 	const MSG_ITEM_NAME_ERROR = "項目名を入力してください。";
 	const MSG_ITEM_NAME_STRLEN_ERROR = "項目名は100文字以下にしてください。";
+	const MSG_STAFF_ID_ERROR = "担当者を選択してください";
 	const MSG_NOT_EXISTS_STAFF_ID_ERROR = "指定の担当者は存在しません。";
 	const MSG_CONTENT_ERROR = "作業内容を入力してください。";
 	const MSG_INVAID_DATE_ERROR = "期限日の日付が正しくありません。";
@@ -123,8 +124,10 @@ class Config
 		// item_name
 		'MSG_ITEM_NAME_ERROR' => self::MSG_ITEM_NAME_ERROR,
 		'MSG_ITEM_NAME_STRLEN_ERROR' => self::MSG_ITEM_NAME_STRLEN_ERROR,
-		// 'MSG_NOT_EXISTS_STAFF_ID_ERROR' => Config::MSG_NOT_EXISTS_STAFF_ID_ERROR,
-		// 'MSG_CONTENT_ERROR' => Config::MSG_CONTENT_ERROR,
+		// staff_id
+		'MSG_STAFF_ID_ERROR' => self::MSG_STAFF_ID_ERROR,
+		// content
+		'MSG_CONTENT_ERROR' => self::MSG_CONTENT_ERROR,
 		// 'MSG_INVAID_DATE_ERROR' => Config::MSG_INVAID_DATE_ERROR,
 		// 'MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR' => Config::MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR
 	];
