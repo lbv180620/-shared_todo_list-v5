@@ -44,6 +44,11 @@ document.addEventListener(
             errMsgEmail.textContent = js_array.MSG_EMAIL_INCORRECT_ERROR;
             email.classList.add("input-invalid");
             return;
+          } else if (email.value.length > 255) {
+            errMsgEmail.classList.add("form-invalid");
+            errMsgEmail.textContent = js_array.MSG_EMAIL_STRLEN_ERROR;
+            email.classList.add("input-invalid");
+            return;
           } else {
             errMsgEmail.textContent = "";
             email.classList.remove("input-invalid");

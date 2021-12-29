@@ -135,14 +135,7 @@ $token = Common::generateToken();
 
 	<!-- JSのフォームバリデーション処理 -->
 	<?php
-	$php_array = [
-		'MSG_EMAIL_ERROR' => Config::MSG_EMAIL_ERROR,
-		'MSG_EMAIL_INCORRECT_ERROR' => Config::MSG_EMAIL_INCORRECT_ERROR,
-		'JS_DEFAULT_PASSWORD_REGEXP' => Config::JS_DEFAULT_PASSWORD_REGEXP,
-		'JS_DEFAULT_PASSWORD_REGEXFLG' => Config::JS_DEFAULT_PASSWORD_REGEXFLG,
-		'MSG_PASSWORD_ERROR' => Config::MSG_PASSWORD_ERROR,
-		'MSG_PASSWORD_REGEX_ERROR' => Config::MSG_PASSWORD_REGEX_ERROR
-	];
+	$php_array = Config::JS_LOGIN_FORM_VALIDATION_ERROR_MSG_LIST;
 	$json_array = json_encode($php_array);
 	?>
 	<script type="text/javascript">
