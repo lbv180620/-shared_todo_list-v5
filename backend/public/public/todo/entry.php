@@ -181,7 +181,6 @@ $token = Common::generateToken();
 						<div class="form-group form-check">
 							<input type="checkbox" class="form-check-input" id="finished" name="finished" value="1" <?= isset($fill['finished']) ? 'checked' : '' ?>>
 							<label for="finished">完了</label>
-							<div class="err-msg-finished_date"></div>
 						</div>
 
 						<input type="submit" value="登録" class="btn btn-primary" id="btn">

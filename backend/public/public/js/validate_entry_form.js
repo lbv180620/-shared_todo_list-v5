@@ -11,7 +11,6 @@ document.addEventListener(
     const staff = document.querySelector("#staff");
     const content = document.querySelector("#content");
     const expirationDate = document.querySelector("#expiration_date");
-    // const finishedDate = document.querySelector("#finished_date");
 
     // error message
     const errMsgItemName = document.querySelector(".err-msg-item_name");
@@ -20,7 +19,6 @@ document.addEventListener(
     const errMsgExpirationDate = document.querySelector(
       ".err-msg-expiration_date"
     );
-    // const errMsgFinishedDate = document.querySelector(".err-msg-finished_date");
 
     // button
     const btn = document.querySelector("#btn");
@@ -165,23 +163,6 @@ document.addEventListener(
       },
       false
     );
-
-    // finished_date
-    // finishedDate.addEventListener(
-    //   "keyup",
-    //   (e) => {
-    //     if (!finishedDate.value) {
-    //       errMsgFinishedDate.classList.add("form-invalid");
-    //       errMsgFinishedDate.textContent = js_array.MSG_INVAID_DATE_ERROR;
-    //       finishedDate.classList.add("input-invalid");
-    //       return;
-    //     } else {
-    //       errMsgFinishedDate.textContent = "";
-    //       finishedDate.classList.remove("input-invalid");
-    //     }
-    //   },
-    //   false
-    // );
 
     // buttonのdisabled制御関数
 
