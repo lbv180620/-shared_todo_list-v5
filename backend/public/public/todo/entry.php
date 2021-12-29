@@ -215,7 +215,7 @@ $token = Common::generateToken();
 
 		<!-- JSのフォームバリデーション処理 -->
 		<?php
-		$php_array = Config::JS_ENTRY_FORM_VALODATION_ERROR_MSG_LIST;
+		$php_array = Config::JS_TODO_FORM_VALIDATION_ERROR_MSG_LIST;
 		$json_array = json_encode($php_array);
 		?>
 		<script type="text/javascript">
