@@ -10,16 +10,16 @@ document.addEventListener(
     const itemName = document.querySelector("#item_name");
     const staff = document.querySelector("#staff");
     const content = document.querySelector("#content");
-    // const expirationDate = document.querySelector("#expiration_date");
+    const expirationDate = document.querySelector("#expiration_date");
     // const finishedDate = document.querySelector("#finished_date");
 
     // error message
     const errMsgItemName = document.querySelector(".err-msg-item_name");
     const errMsgStaff = document.querySelector(".err-msg-staff");
     const errMsgContent = document.querySelector(".err-msg-content");
-    // const errMsgExpirationDate = document.querySelector(
-    //   ".err-msg-expiration_date"
-    // );
+    const errMsgExpirationDate = document.querySelector(
+      ".err-msg-expiration_date"
+    );
     // const errMsgFinishedDate = document.querySelector(".err-msg-finished_date");
 
     // button
@@ -27,6 +27,20 @@ document.addEventListener(
 
     // 初期状態設定
     // btn.disabled = true;
+
+    /**
+     * 日付文字列を時刻値 (秒)に変換
+     */
+    // function strtotime(date) {
+    //   return new Date(date).getTime() / 1000;
+    // }
+
+    /**
+     * 日付チェック
+     */
+    // function isValidDate(date) {
+    //   return typeof strtotime(date) === "number" ? true : false;
+    // }
 
     /** event */
     // item_name
@@ -55,7 +69,7 @@ document.addEventListener(
 
     // staff
     staff.addEventListener(
-      "click",
+      "change",
       (e) => {
         if (staff.options[0].selected === true) {
           errMsgStaff.classList.add("form-invalid");
@@ -104,21 +118,53 @@ document.addEventListener(
     );
 
     // expiration_date
-    // expirationDate.addEventListener(
-    //   "keyup",
-    //   (e) => {
-    //     if (!expirationDate.value) {
-    //       errMsgExpirationDate.classList.add("form-invalid");
-    //       errMsgExpirationDate.textContent = js_array.MSG_INVAID_DATE_ERROR;
-    //       expirationDate.classList.add("input-invalid");
-    //       return;
-    //     } else {
-    //       errMsgExpirationDate.textContent = "";
-    //       expirationDate.classList.remove("input-invalid");
-    //     }
-    //   },
-    //   false
-    // );
+    expirationDate.addEventListener(
+      "keyup",
+      (e) => {
+        if (!expirationDate.value) {
+          errMsgExpirationDate.classList.add("form-invalid");
+          errMsgExpirationDate.textContent = js_array.MSG_EXPIRATION_DATE_ERROR;
+          expirationDate.classList.add("input-invalid");
+          return;
+        } else {
+          errMsgExpirationDate.textContent = "";
+          expirationDate.classList.remove("input-invalid");
+        }
+      },
+      false
+    );
+
+    expirationDate.addEventListener(
+      "click",
+      (e) => {
+        if (!expirationDate.value) {
+          errMsgExpirationDate.classList.add("form-invalid");
+          errMsgExpirationDate.textContent = js_array.MSG_EXPIRATION_DATE_ERROR;
+          expirationDate.classList.add("input-invalid");
+          return;
+        } else {
+          errMsgExpirationDate.textContent = "";
+          expirationDate.classList.remove("input-invalid");
+        }
+      },
+      false
+    );
+
+    expirationDate.addEventListener(
+      "change",
+      (e) => {
+        if (expirationDate.value) {
+          errMsgExpirationDate.textContent = "";
+          expirationDate.classList.remove("input-invalid");
+        } else {
+          errMsgExpirationDate.classList.add("form-invalid");
+          errMsgExpirationDate.textContent = js_array.MSG_EXPIRATION_DATE_ERROR;
+          expirationDate.classList.add("input-invalid");
+          return;
+        }
+      },
+      false
+    );
 
     // finished_date
     // finishedDate.addEventListener(
