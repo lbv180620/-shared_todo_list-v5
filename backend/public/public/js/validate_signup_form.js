@@ -49,8 +49,15 @@ document.addEventListener(
           userName.classList.add("input-invalid");
           return;
         } else {
-          errMsgUserName.textContent = "";
-          userName.classList.remove("input-invalid");
+          if (userName.value.length > 50) {
+            errMsgUserName.classList.add("form-invalid");
+            errMsgUserName.textContent = js_array.MSG_USER_NAME_STRLEN_ERROR;
+            userName.classList.add("input-invalid");
+            return;
+          } else {
+            errMsgUserName.textContent = "";
+            userName.classList.remove("input-invalid");
+          }
         }
       },
       false
@@ -69,6 +76,11 @@ document.addEventListener(
           if (!emailRegexp.test(email.value)) {
             errMsgEmail.classList.add("form-invalid");
             errMsgEmail.textContent = js_array.MSG_EMAIL_INCORRECT_ERROR;
+            email.classList.add("input-invalid");
+            return;
+          } else if (email.value.length > 255) {
+            errMsgEmail.classList.add("form-invalid");
+            errMsgEmail.textContent = js_array.MSG_EMAIL_STRLEN_ERROR;
             email.classList.add("input-invalid");
             return;
           } else {
@@ -90,8 +102,16 @@ document.addEventListener(
           familyName.classList.add("input-invalid");
           return;
         } else {
-          errMsgFamilyName.textContent = "";
-          familyName.classList.remove("input-invalid");
+          if (familyName.value.length > 50) {
+            errMsgFamilyName.classList.add("form-invalid");
+            errMsgFamilyName.textContent =
+              js_array.MSG_FAMILY_NAME_STRLEN_ERROR;
+            familyName.classList.add("input-invalid");
+            return;
+          } else {
+            errMsgFamilyName.textContent = "";
+            familyName.classList.remove("input-invalid");
+          }
         }
       },
       false
@@ -107,8 +127,15 @@ document.addEventListener(
           firstName.classList.add("input-invalid");
           return;
         } else {
-          errMsgFirstName.textContent = "";
-          firstName.classList.remove("input-invalid");
+          if (firstName.value.length > 50) {
+            errMsgFirstName.classList.add("form-invalid");
+            errMsgFirstName.textContent = js_array.MSG_FIRST_NAME_STRLEN_ERROR;
+            firstName.classList.add("input-invalid");
+            return;
+          } else {
+            errMsgFirstName.textContent = "";
+            firstName.classList.remove("input-invalid");
+          }
         }
       },
       false
