@@ -2,24 +2,33 @@ document.addEventListener(
   "DOMContentLoaded",
   () => {
     /** Element取得 */
+
     // form
     const form = document.querySelector("#form");
+
     // form element
     const email = document.querySelector("#email");
     const password = document.querySelector("#password");
+
     // error message
     const errMsgEmail = document.querySelector(".err-msg-email");
     const errMsgPassword = document.querySelector(".err-msg-password");
+
     // button
     const btn = document.querySelector("#btn");
-    // バリデーションパターン
-    // const emailExp =
-    //   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$/;
-    const paaswordExp = /^([a-z\d]{8,255})$/;
+
+    /** 正規表現パターン */
+    const emailRegexp =
+      /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}.[A-Za-z0-9]{1,}$/;
+    const regexp = js_array.JS_DEFAULT_PASSWORD_REGEXP;
+    const regexFlg = js_array.JS_DEFAULT_PASSWORD_REGEXFLG;
+    const passwordRegexp = new RegExp(regexp, regexFlg);
+
     // 初期状態設定
     // btn.disabled = true;
 
     /** event */
+
     // email
     email.addEventListener(
       "keyup",
@@ -30,12 +39,20 @@ document.addEventListener(
           email.classList.add("input-invalid");
           return;
         } else {
-          errMsgEmail.textContent = "";
-          email.classList.remove("input-invalid");
+          if (!emailRegexp.test(email.value)) {
+            errMsgEmail.classList.add("form-invalid");
+            errMsgEmail.textContent = js_array.MSG_EMAIL_INCORRECT_ERROR;
+            email.classList.add("input-invalid");
+            return;
+          } else {
+            errMsgEmail.textContent = "";
+            email.classList.remove("input-invalid");
+          }
         }
       },
       false
     );
+
     // password
     password.addEventListener(
       "keyup",
@@ -46,7 +63,7 @@ document.addEventListener(
           password.classList.add("input-invalid");
           return;
         } else {
-          if (!password.value.match(/^([a-z\d]{8,255})$/)) {
+          if (!passwordRegexp.test(password.value)) {
             errMsgPassword.classList.add("form-invalid");
             errMsgPassword.textContent = js_array.MSG_PASSWORD_REGEX_ERROR;
             password.classList.add("input-invalid");
@@ -60,6 +77,7 @@ document.addEventListener(
       false
     );
     // buttonのdisabled制御関数
+
     // submit
     btn.addEventListener(
       "click",
