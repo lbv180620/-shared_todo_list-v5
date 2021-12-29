@@ -8,6 +8,7 @@ use App\Utils\SessionUtil;
 use App\Utils\Common;
 use App\Models\Base;
 use App\Models\Users;
+use App\Config\Config;
 
 SessionUtil::sessionStart();
 
@@ -68,6 +69,7 @@ $token = Common::generateToken();
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<title>作業登録</title>
 	<link rel="stylesheet" href="../css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/validate_form.css">
 	<style>
 		#a-conf {
 			color: inherit;
@@ -146,7 +148,7 @@ $token = Common::generateToken();
 				<div class="col-sm-3"></div>
 				<div class="col-sm-6">
 					<!-- フォーム -->
-					<form action="./entry_action.php" method="post" onsubmit="return checkSubmit() ">
+					<form action="./entry_action.php" method="post" onsubmit="return checkSubmit()" id="form">
 						<!-- トークン送信 -->
 						<input type="hidden" name="token" value="<?= Common::h($token) ?>">
 						<!-- 作成者IDを送信 -->
@@ -154,30 +156,35 @@ $token = Common::generateToken();
 						<div class="form-group">
 							<label for="item_name">項目名</label>
 							<input type="text" class="form-control" id="item_name" name="item_name" value="<?php if (isset($fill['item_name'])) echo Common::h($fill['item_name']) ?>">
+							<div class="err-msg-item_name"></div>
 						</div>
 						<div class="form-group">
 							<label for="staff_id">担当者</label>
-							<select name="staff_id" id="staff_id" class="form-control">
+							<select name="staff_id" id="staff" class="form-control">
 								<option value="">--選択してください--</option>
 								<?php foreach ($users as $user) : ?>
 									<option value="<?= Common::h($user['id']) ?>" <?= isset($fill['staff_id']) && (int)$fill['staff_id'] === $user['id'] ? 'selected' : '' ?>><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
 								<?php endforeach ?>
 							</select>
+							<div class="err-msg-staff"></div>
 						</div>
 						<div class="form-group">
 							<label for="content">作業内容</label>
 							<textarea name="content" id="" cols="30" rows="10" class="form-control"><?php if (isset($fill['content'])) echo Common::h($fill['content']) ?></textarea>
+							<div class="err-msg-content"></div>
 						</div>
 						<div class="form-group">
 							<label for="expiration_date">期限</label>
 							<input type="date" class="form-control" id="expiration_date" name="expiration_date" value="<?php if ($fill['expiration_date']) echo Common::h($fill['expiration_date']) ?>">
+							<div class="err-msg-expiration_date"></div>
 						</div>
 						<div class="form-group form-check">
 							<input type="checkbox" class="form-check-input" id="finished" name="finished" value="1" <?= isset($fill['finished']) ? 'checked' : '' ?>>
 							<label for="finished">完了</label>
+							<div class="err-msg-finished_date"></div>
 						</div>
 
-						<input type="submit" value="登録" class="btn btn-primary">
+						<input type="submit" value="登録" class="btn btn-primary" id="btn">
 						<input type="reset" value="リセット" class="btn btn-outline-primary">
 						<input type="button" value="キャンセル" class="btn btn-outline-primary" onclick="location.href='./top.php';">
 					</form>
@@ -206,6 +213,22 @@ $token = Common::generateToken();
 				}
 			}
 		</script>
+
+		<!-- JSのフォームバリデーション処理 -->
+		<?php
+		$php_array = [
+			'MSG_ITEM_NAME_ERROR' => Config::MSG_ITEM_NAME_ERROR,
+			// 'MSG_NOT_EXISTS_STAFF_ID_ERROR' => Config::MSG_NOT_EXISTS_STAFF_ID_ERROR,
+			// 'MSG_CONTENT_ERROR' => Config::MSG_CONTENT_ERROR,
+			// 'MSG_INVAID_DATE_ERROR' => Config::MSG_INVAID_DATE_ERROR,
+			// 'MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR' => Config::MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR
+		];
+		$json_array = json_encode($php_array);
+		?>
+		<script type="text/javascript">
+			const js_array = JSON.parse('<?= $json_array ?>');
+		</script>
+		<script type="text/javascript" src="../js/validate_entry_form.js"></script>
 
 		<!-- 必要なJavascriptを読み込む -->
 		<script src="../js/jquery-3.4.1.min.js"></script>

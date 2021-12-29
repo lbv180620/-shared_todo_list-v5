@@ -25,7 +25,9 @@ class Config
 	const MSG_PDOEXCEPTION_ERROR = "データベース接続に失敗しました。";
 
 	// パスワードの正規表現
-	const DEFAULT_PASSWORD_REGEX = "/\A[a-z\d]{8,255}+\z/i";
+	const DEFAULT_PASSWORD_REGEXP = "/\A[a-z\d]{8,255}+\z/i";
+	const JS_DEFAULT_PASSWORD_REGEXP = "^([a-z0-9]{8,255})$";
+	const JS_DEFAULT_PASSWORD_REGEXFLG = "i";
 
 	// register login
 	const MSG_POST_SENDING_FAILURE_ERROR = "送信に失敗しました。";

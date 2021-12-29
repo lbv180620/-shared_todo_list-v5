@@ -2,8 +2,10 @@ document.addEventListener(
   "DOMContentLoaded",
   () => {
     /** Element取得 */
+
     // form
     const form = document.querySelector("#form");
+
     // form element
     const userName = document.querySelector("#user_name");
     const email = document.querySelector("#email");
@@ -11,6 +13,7 @@ document.addEventListener(
     const firstName = document.querySelector("#first_name");
     const password = document.querySelector("#password");
     const passwordConfirm = document.querySelector("#password_confirm");
+
     // error message
     const errMsgUserName = document.querySelector(".err-msg-user_name");
     const errMsgEmail = document.querySelector(".err-msg-email");
@@ -20,16 +23,22 @@ document.addEventListener(
     const errMsgPasswordConfirm = document.querySelector(
       ".err-msg-password_confirm"
     );
+
     // button
     const btn = document.querySelector("#btn");
-    // バリデーションパターン
-    // const emailExp =
-    //   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$/;
-    const paaswordExp = /^([a-z\d]{8,255})$/;
+
+    /** 正規表現パターン */
+    const emailRegexp =
+      /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}.[A-Za-z0-9]{1,}$/;
+    const regexp = js_array.JS_DEFAULT_PASSWORD_REGEXP;
+    const regexFlg = js_array.JS_DEFAULT_PASSWORD_REGEXFLG;
+    const passwordRegexp = new RegExp(regexp, regexFlg);
+
     // 初期状態設定
     // btn.disabled = true;
 
     /** event */
+
     // user_name
     userName.addEventListener(
       "keyup",
@@ -46,6 +55,7 @@ document.addEventListener(
       },
       false
     );
+
     // email
     email.addEventListener(
       "keyup",
@@ -56,12 +66,20 @@ document.addEventListener(
           email.classList.add("input-invalid");
           return;
         } else {
-          errMsgEmail.textContent = "";
-          email.classList.remove("input-invalid");
+          if (!emailRegexp.test(email.value)) {
+            errMsgEmail.classList.add("form-invalid");
+            errMsgEmail.textContent = js_array.MSG_EMAIL_INCORRECT_ERROR;
+            email.classList.add("input-invalid");
+            return;
+          } else {
+            errMsgEmail.textContent = "";
+            email.classList.remove("input-invalid");
+          }
         }
       },
       false
     );
+
     // family_name
     familyName.addEventListener(
       "keyup",
@@ -78,6 +96,7 @@ document.addEventListener(
       },
       false
     );
+
     // first_name
     firstName.addEventListener(
       "keyup",
@@ -94,6 +113,7 @@ document.addEventListener(
       },
       false
     );
+
     // password
     password.addEventListener(
       "keyup",
@@ -104,7 +124,7 @@ document.addEventListener(
           password.classList.add("input-invalid");
           return;
         } else {
-          if (!password.value.match(/^([a-z\d]{8,255})$/)) {
+          if (!passwordRegexp.test(password.value)) {
             errMsgPassword.classList.add("form-invalid");
             errMsgPassword.textContent = js_array.MSG_PASSWORD_REGEX_ERROR;
             password.classList.add("input-invalid");
@@ -117,6 +137,7 @@ document.addEventListener(
       },
       false
     );
+
     // password_confirm
     passwordConfirm.addEventListener(
       "keyup",
@@ -142,7 +163,9 @@ document.addEventListener(
       },
       false
     );
+
     // buttonのdisabled制御関数
+
     // submit
     btn.addEventListener(
       "click",

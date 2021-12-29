@@ -129,7 +129,7 @@ class Validation
 				 *"/\A[a-z\d]{8,100}+\z/i"
 				 *英小文字数字で8文字以上255文字以下の範囲で1回続く(大文字小文字は区別しない)パスワード
 				 */
-				if (!empty($password) && !preg_match(Config::DEFAULT_PASSWORD_REGEX, $password)) {
+				if (!empty($password) && !preg_match(Config::DEFAULT_PASSWORD_REGEXP, $password)) {
 					$err['password'] = Config::MSG_PASSWORD_REGEX_ERROR;
 					Logger::errorLog(Config::MSG_PASSWORD_REGEX_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
 				}
