@@ -216,13 +216,7 @@ $token = Common::generateToken();
 
 		<!-- JSのフォームバリデーション処理 -->
 		<?php
-		$php_array = [
-			'MSG_ITEM_NAME_ERROR' => Config::MSG_ITEM_NAME_ERROR,
-			// 'MSG_NOT_EXISTS_STAFF_ID_ERROR' => Config::MSG_NOT_EXISTS_STAFF_ID_ERROR,
-			// 'MSG_CONTENT_ERROR' => Config::MSG_CONTENT_ERROR,
-			// 'MSG_INVAID_DATE_ERROR' => Config::MSG_INVAID_DATE_ERROR,
-			// 'MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR' => Config::MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR
-		];
+		$php_array = Config::JS_ENTRY_FORM_VALODATION_ERROR_MSG_LIST;
 		$json_array = json_encode($php_array);
 		?>
 		<script type="text/javascript">
