@@ -87,7 +87,7 @@ images/
 *.txt
 *.csv
 review/
-# sample/
+sample.d/
 share/
 vagrant_data/
 
