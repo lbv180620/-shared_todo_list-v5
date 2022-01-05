@@ -76,7 +76,7 @@ scripts/
 .vscode/
 
 # 環境変数
-# env/
+env.d/
 Makefile.env
 .env.*
 # !.env.example
