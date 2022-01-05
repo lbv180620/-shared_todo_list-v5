@@ -58,31 +58,35 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-# Docker Compose
-.env
-
 # Composer
 vendor/
 
 # yarn
 node_modules/
 
-# vscode
-.vscode/
-
 # OS
 Thumb.db
 .DS_Store
 
 # MySQL
-/data
+data/
+scripts/
+
+# VScode
+.vscode/
+
+# 環境変数
+# env/
+Makefile.env.f
+.env.*
+# !.env.example
 
 # その他
 images/
 *.txt
 *.csv
 review/
-sample/
+# sample/
 share/
 vagrant_data/
 
