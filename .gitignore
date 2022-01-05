@@ -79,7 +79,7 @@ scripts/
 env/
 Makefile.env
 # .env.*
-.env.f
+.env
 # !.env.example
 
 # その他
