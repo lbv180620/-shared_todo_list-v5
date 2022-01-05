@@ -1,4 +1,7 @@
-include Makefile.env.f
+include Makefile.env
+
+# 擬似ターゲット
+# .PHONEY:
 
 ps:
 	docker-compose ps

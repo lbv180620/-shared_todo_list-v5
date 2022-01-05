@@ -77,7 +77,7 @@ scripts/
 
 # 環境変数
 # env/
-Makefile.env.f
+Makefile.env
 .env.*
 # !.env.example
 
