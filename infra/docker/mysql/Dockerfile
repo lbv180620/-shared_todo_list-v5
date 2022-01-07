@@ -1,5 +1,4 @@
 FROM mysql:5.7
-LABEL maintainer="ucan-lab <yes@u-can.pro>"
 
 # timezone environment
 ENV TZ=Asia/Tokyo \
