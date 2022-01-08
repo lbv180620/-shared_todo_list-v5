@@ -12,445 +12,457 @@ use App\Config\Config;
  */
 class Users
 {
-	/** @var \PDO $pdo PDOクラスインスタンス*/
-	private $pdo;
+    /** @var \PDO $pdo PDOクラスインスタンス*/
+    private $pdo;
 
-	/**
-	 * コンストラクタ
-	 * @param \PDO $pdo PDOクラスインスタンス
-	 */
-	public function __construct(\PDO $pdo)
-	{
-		// 引数に指定されたPDOクラスのインスタンスをプロパティに代入
-		// クラスのインスタンスは別の変数に代入されても同じものとして扱われる(複製されるわけではない)
-		$this->pdo = $pdo;
-	}
+    /**
+     * コンストラクタ
+     * @param \PDO $pdo PDOクラスインスタンス
+     */
+    public function __construct(\PDO $pdo)
+    {
+        // 引数に指定されたPDOクラスのインスタンスをプロパティに代入
+        // クラスのインスタンスは別の変数に代入されても同じものとして扱われる(複製されるわけではない)
+        $this->pdo = $pdo;
+    }
 
-	/**
-	 * ユーザを新規登録する
-	 * @method addUser
-	 * @param array $post
-	 * @return bool
-	 */
-	public function addUser(array $post): bool
-	{
-		$user_name = $post['user_name'];
-		$family_name = $post['family_name'];
-		$first_name = $post['first_name'];
-		$email = $post['email'];
-		$password = $post['password'];
+    /**
+     * ユーザを新規登録する
+     * @method addUser
+     * @param array $post
+     * @return bool
+     */
+    public function addUser(array $post): bool
+    {
+        $result = false;
 
-		// 同じメールアドレスのユーザーがいないか調べる
-		if (!empty($this->findUserByEmail($email))) {
-			// すでに同じメールアドレスをもつユーザがいる場合、falseを返す
-			$result = false;
-			return $result;
-		}
+        $user_name = $post['user_name'];
+        $family_name = $post['family_name'];
+        $first_name = $post['first_name'];
+        $email = $post['email'];
+        $password = $post['password'];
 
-		// パスワードをハッシュ化する
-		$password = password_hash($password, PASSWORD_DEFAULT);
+        // 同じメールアドレスのユーザーがいないか調べる
+        if (!empty($this->findUserByEmail($email))) {
+            // すでに同じメールアドレスをもつユーザがいる場合、falseを返す
+            return $result;
+        }
 
-		// ユーザ登録情報をDBにインサートする
-		$sql = "INSERT INTO users (
-				user_name,
-				email,
-				password,
-				family_name,
-				first_name
-				) VALUES (
-				:user_name,
-				:email,
-				:password,
-				:family_name,
-				:first_name)";
+        // パスワードをハッシュ化する
+        $password = password_hash($password, PASSWORD_DEFAULT);
 
-		// データ変更ありなので、トランザクション処理
-		$this->pdo->beginTransaction();
-		try {
-			$stmt = $this->pdo->prepare($sql);
+        // ユーザ登録情報をDBにインサートする
+        $sql = "INSERT INTO users (
+                user_name,
+                email,
+                password,
+                family_name,
+                first_name
+                ) VALUES (
+                :user_name,
+                :email,
+                :password,
+                :family_name,
+                :first_name)";
 
-			$stmt->bindValue(':user_name', $user_name, \PDO::PARAM_STR);
-			$stmt->bindValue(':email', $email, \PDO::PARAM_STR);
-			$stmt->bindValue(':password', $password, \PDO::PARAM_STR);
-			$stmt->bindValue(':family_name', $family_name, \PDO::PARAM_STR);
-			$stmt->bindValue(':first_name', $first_name, \PDO::PARAM_STR);
+        // データ変更ありなので、トランザクション処理
+        $this->pdo->beginTransaction();
+        try {
+            $stmt = $this->pdo->prepare($sql);
 
-			$stmt->execute();
-			$result = $this->pdo->commit();
+            $stmt->bindValue(':user_name', $user_name, \PDO::PARAM_STR);
+            $stmt->bindValue(':email', $email, \PDO::PARAM_STR);
+            $stmt->bindValue(':password', $password, \PDO::PARAM_STR);
+            $stmt->bindValue(':family_name', $family_name, \PDO::PARAM_STR);
+            $stmt->bindValue(':first_name', $first_name, \PDO::PARAM_STR);
 
-			return $result;
-		} catch (\PDOException $e) {
-			$this->pdo->rollBack();
-			return $result;
-		}
-	}
+            $stmt->execute();
+            $result = $this->pdo->commit();
 
-	/**
-	 * 同一のメールアドレスのユーザーを探す
-	 * @method findUserByEmail
-	 * @param string $email
-	 * @return array ユーザーの連想配列
-	 */
-	private function findUserByEmail(string $email): array
-	{
-		// usersテーブルから同一のメールアドレスのユーザーを取得するクエリ
-		$sql = "SELECT * FROM users WHERE email = :email";
+            return $result;
+        } catch (\PDOException $e) {
+            $this->pdo->rollBack();
+            return $result;
+        }
+    }
 
-		$stmt = $this->pdo->prepare($sql);
+    /**
+     * 同一のメールアドレスのユーザーを探す
+     * @method findUserByEmail
+     * @param string $email
+     * @return array ユーザーの連想配列
+     */
+    private function findUserByEmail(string $email): array
+    {
+        // usersテーブルから同一のメールアドレスのユーザーを取得するクエリ
+        $sql = "SELECT * FROM users WHERE email = :email";
 
-		$stmt->bindValue(':email', $email, \PDO::PARAM_STR);
+        $stmt = $this->pdo->prepare($sql);
 
-		$stmt->execute();
+        $stmt->bindValue(':email', $email, \PDO::PARAM_STR);
 
-		// 該当するユーザーが1名でもいたらダメなので、fetchAllではなくfetchで十分
-		$rec = $stmt->fetch();
+        $stmt->execute();
 
-		// fetchに失敗した場合、戻り値がfalseなので、空の配列を返すように修正
-		if (empty($rec)) {
-			return [];
-		}
+        // 該当するユーザーが1名でもいたらダメなので、fetchAllではなくfetchで十分
+        $rec = $stmt->fetch();
 
-		return $rec;
-	}
+        // fetchに失敗した場合、戻り値がfalseなので、空の配列を返すように修正
+        if (empty($rec)) {
+            return [];
+        }
 
-	/**
-	 * メールアドレスとパスワードが一致するユーザーを取得する
-	 *
-	 * @param string $email
-	 * @param string $password
-	 * @return array $user ユーザーの連想配列
-	 */
-	private function getUser(?string $email, ?string $password)
-	{
-		// 同一のメールアドレスのユーザーを探す
-		$user = $this->findUserByEmail($email);
-		// 同一のメールアドレスのユーザーが無かったら、空の配列を返す
-		if (empty($user)) {
-			return [];
-		}
+        return $rec;
+    }
 
-		// パスワードの照合
-		if (password_verify($password, $user['password'])) {
-			// 照合できたら、ユーザ情報を返す
-			return $user;
-		}
+    /**
+     * メールアドレスとパスワードが一致するユーザーを取得する
+     *
+     * @param string $email
+     * @param string $password
+     * @return array $user ユーザーの連想配列
+     */
+    private function getUser(?string $email, ?string $password)
+    {
+        // 同一のメールアドレスのユーザーを探す
+        $user = $this->findUserByEmail($email);
+        // 同一のメールアドレスのユーザーが無かったら、空の配列を返す
+        if (empty($user)) {
+            return [];
+        }
 
-		// 照合できなかったら、空の配列を返す
-		return [];
-	}
+        // パスワードの照合
+        if (password_verify($password, $user['password'])) {
+            // 照合できたら、ユーザ情報を返す
+            return $user;
+        }
 
-	/**
-	 * アカウントロック確認後ログイン
-	 *
-	 * @param array $post
-	 * @return bool $result
-	 */
-	public function loginAfterAccountRockConfirmation(?array $post)
-	{
-		$email = $post['email'];
+        // 照合できなかったら、空の配列を返す
+        return [];
+    }
 
-		// 同一のメールアドレスのユーザーを探す
-		$user = $this->findUserByEmail($email);
-		// 同一のメールアドレスのユーザーがいる場合
-		if (!empty($user)) {
+    /**
+     * アカウントロック確認後ログイン
+     *
+     * @param array $post
+     * @return bool $result
+     */
+    public function loginAfterAccountRockConfirmation(?array $post)
+    {
+        $result = false;
 
-			// アカウントロックされているユーザはログインできない
-			if (self::isAccountLocked($user)) {
-				$_SESSION['err']['acount_locked'] = Config::MSG_ACOUNT_LOCKED_ERROR;
-				return false;
-			}
+        $email = $post['email'];
 
-			// アカウントがロックされていなければ、ログイン処理
-			if ($this->login($post)) {
-				// エラーカウントを0にリセット
-				if (!$this->resetErrorCount($user)) {
-					return false;
-				}
-				return true;
-			}
+        // 同一のメールアドレスのユーザーを探す
+        $user = $this->findUserByEmail($email);
+        // 同一のメールアドレスのユーザーがいる場合
+        if (!empty($user)) {
 
-			// ログインに失敗したらエラーカウントを1増やす
-			if (!$this->addErrorCount($user)) {
-				return false;
-			}
+            // アカウントロックされているユーザはログインできない
+            if (self::isAccountLocked($user)) {
+                $_SESSION['err']['acount_locked'] = Config::MSG_ACOUNT_LOCKED_ERROR;
+                return $result;
+            }
 
-			// エラーカウントが6以上の場合はアカウントをロックする
-			// アカウントがロックされたら、falseを返す
-			if ($this->lockAccount($user)) {
-				$_SESSION['err']['acount_locked'] = Config::MSG_MAKE_ACOUNT_LOCKED;
-				return false;
-			}
-		}
+            // アカウントがロックされていなければ、ログイン処理
+            if ($this->login($post)) {
+                // エラーカウントを0にリセット
+                if (!$this->resetErrorCount($user)) {
+                    return $result;
+                }
+                $result = true;
+                return $result;
+            }
 
-		// 一致するemailのユーザがいない場合
-		return false;
-	}
+            // ログインに失敗したらエラーカウントを1増やす
+            if (!$this->addErrorCount($user)) {
+                return $result;
+            }
+
+            // エラーカウントが6以上の場合はアカウントをロックする
+            // アカウントがロックされたら、falseを返す
+            if ($this->lockAccount($user)) {
+                $_SESSION['err']['acount_locked'] = Config::MSG_MAKE_ACOUNT_LOCKED;
+                return $result;
+            }
+        }
+
+        // 一致するemailのユーザがいない場合
+        return $result;
+    }
 
 
-	/**
-	 * ログイン処理
-	 * is_deleted=1で論理削除されたユーザはログインできない
-	 *
-	 * @param array $post
-	 * @return bool $result
-	 */
-	private function login(?array $post)
-	{
-		$email = $post['email'];
-		$password = $post['password'];
+    /**
+     * ログイン処理
+     * is_deleted=1で論理削除されたユーザはログインできない
+     *
+     * @param array $post
+     * @return bool $result
+     */
+    private function login(?array $post)
+    {
+        $result = false;
 
-		// メールアドレスとパスワードが一致するユーザーを取得する
-		$user = $this->getUser($email, $password);
+        $email = $post['email'];
+        $password = $post['password'];
 
-		// 論理削除されているユーザはログインできない
-		if (!empty($user) && $user['is_deleted'] === 0) {
-			// セッションにユーザ情報を登録
-			$_SESSION['login'] = $user;
-			return true;
-		}
+        // メールアドレスとパスワードが一致するユーザーを取得する
+        $user = $this->getUser($email, $password);
 
-		// メールアドレスとパスワードが一致するユーザを取得できなかった場合、空の配列を返す
-		return false;
-	}
+        // 論理削除されているユーザはログインできない
+        if (!empty($user) && $user['is_deleted'] === 0) {
+            // セッションにユーザ情報を登録
+            $_SESSION['login'] = $user;
+            $result = true;
+            return $result;
+        }
 
-	/**
-	 * ログアウト処理
-	 *
-	 * @return bool
-	 */
-	public static function logout(): bool
-	{
-		// ログインユーザー情報を削除して、ログアウト処理とする
-		unset($_SESSION['login']);
+        // メールアドレスとパスワードが一致するユーザを取得できなかった場合、空の配列を返す
+        return $result;
+    }
 
-		// 念のためにセッションに保存した他の情報も削除する
-		unset($_SESSION['fill']);
-		unset($_SESSION['err']);
-		unset($_SESSION['success']);
+    /**
+     * ログアウト処理
+     *
+     * @return bool
+     */
+    public static function logout(): bool
+    {
+        // ログインユーザー情報を削除して、ログアウト処理とする
+        unset($_SESSION['login']);
 
-		// さらに念のために全消し
-		$_SESSION = array();
-		return session_destroy();
-	}
+        // 念のためにセッションに保存した他の情報も削除する
+        unset($_SESSION['fill']);
+        unset($_SESSION['err']);
+        unset($_SESSION['success']);
 
-	/**
-	 * すべてのユーザ情報を全件取得
-	 * 論理削除されているユーザも表示する
-	 *
-	 * @return array ユーザのレコードの配列
-	 */
-	public function getUserAll()
-	{
-		// $sql = "SELECT id, user_name, password, family_name, first_name, is_admin
-		// 		FROM users
-		// 		WHERE is_deleted = 0
-		// 		ORDER BY id";
-		$sql = "SELECT id, user_name, password, family_name, first_name, is_admin
-				FROM users
-				ORDER BY id";
+        // さらに念のために全消し
+        $_SESSION = array();
+        return session_destroy();
+    }
 
-		$stmt = $this->pdo->prepare($sql);
-		$stmt->execute();
+    /**
+     * すべてのユーザ情報を全件取得
+     * 論理削除されているユーザも表示する
+     *
+     * @return array ユーザのレコードの配列
+     */
+    public function getUserAll()
+    {
+        $sql = "SELECT id, user_name, password, family_name, first_name, is_admin
+                FROM users
+                ORDER BY id";
 
-		return $stmt->fetchAll();
-	}
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
 
-	/**
-	 * 論理削除されていない指定IDのユーザが存在するかどうか調べる
-	 *
-	 * @param int $id ユーザID
-	 * @return bool ユーザが存在するとき：true、ユーザが存在しないとき：false
-	 */
-	public function isExistsUser($id)
-	{
-		// $idが数字でなかったら、falseを返却
-		if (!is_numeric($id)) {
-			return false;
-		}
+        return $stmt->fetchAll();
+    }
 
-		// $idが0以下はありえないので、falseを返却
-		if ($id <= 0) {
-			return false;
-		}
+    /**
+     * 論理削除されていない指定IDのユーザが存在するかどうか調べる
+     *
+     * @param int $id ユーザID
+     * @return bool ユーザが存在するとき：true、ユーザが存在しないとき：false
+     */
+    public function isExistsUser($id)
+    {
+        // $idが数字でなかったら、falseを返却
+        if (!is_numeric($id)) {
+            return false;
+        }
 
-		// 退会したユーザも名前は表示する
-		// $sql = "SELECT COUNT(id) AS num FROM users WHERE is_deleted = 0";
-		$sql = "SELECT COUNT(id) AS num FROM users";
+        // $idが0以下はありえないので、falseを返却
+        if ($id <= 0) {
+            return false;
+        }
 
-		$stmt = $this->pdo->prepare($sql);
-		$stmt->execute();
-		$ret = $stmt->fetch();
+        // 退会したユーザも名前は表示する
+        // $sql = "SELECT COUNT(id) AS num FROM users WHERE is_deleted = 0";
+        $sql = "SELECT COUNT(id) AS num FROM users";
 
-		// レコードの数が0だったらfalseを返却
-		if ($ret['num'] == 0) {
-			return false;
-		}
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        $ret = $stmt->fetch();
 
-		return true;
-	}
+        // レコードの数が0だったらfalseを返却
+        if ($ret['num'] == 0) {
+            return false;
+        }
 
-	/**
-	 * 指定したIDに一致したユーザのレコードを1件取得
-	 *
-	 * todo_itemsテーブルのclient_idから、 作成者名を取得する
-	 * staff_idから担当者のレコードを取得
-	 *
-	 * @param int $id 作成者ID
-	 * @return array 作成者のレコード
-	 */
-	public function getUserById(int $id)
-	{
-		if (!is_numeric($id)) {
-			return false;
-		}
+        return true;
+    }
 
-		if ($id <= 0) {
-			return false;
-		}
+    /**
+     * 指定したIDに一致したユーザのレコードを1件取得
+     *
+     * todo_itemsテーブルのclient_idから、 作成者名を取得する
+     * staff_idから担当者のレコードを取得
+     *
+     * @param int $id 作成者ID
+     * @return array 作成者のレコード
+     */
+    public function getUserById(int $id)
+    {
+        if (!is_numeric($id)) {
+            return false;
+        }
 
-		// $sql = "SELECT * FROM users
-		// 		WHERE id = :id
-		// 		AND is_deleted = 0";
-		$sql = "SELECT * FROM users
-				WHERE id = :id";
-		$stmt = $this->pdo->prepare($sql);
-		$stmt->bindValue(':id', $id, \PDO::PARAM_INT);
-		$stmt->execute();
-		return $stmt->fetch();
-	}
+        if ($id <= 0) {
+            return false;
+        }
 
-	/**
-	 * 指定IDの1件のユーザを論理削除します。
-	 * usersテーブルのis_deletedフラグを1に更新する
-	 *
-	 * @param int $id ユーザID
-	 * @return bool 成功した場合:TRUE、失敗した場合:FALSE
-	 */
-	public function deleteUserById(int $id): bool
-	{
+        $sql = "SELECT * FROM users
+                WHERE id = :id";
 
-		if (!is_numeric($id)) {
-			return false;
-		}
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
 
-		if ($id <= 0) {
-			return false;
-		}
+    /**
+     * 指定IDの1件のユーザを論理削除します。
+     * usersテーブルのis_deletedフラグを1に更新する
+     *
+     * @param int $id ユーザID
+     * @return bool $result 成功した場合:true、失敗した場合:false
+     */
+    public function deleteUserById(int $id): bool
+    {
+        $result = false;
 
-		$sql = "UPDATE users SET
-				is_deleted = 1
-				WHERE id = :id";
+        if (!is_numeric($id)) {
+            return $result;
+        }
 
-		$stmt = $this->pdo->prepare($sql);
-		$stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+        if ($id <= 0) {
+            return $result;
+        }
 
-		$this->pdo->beginTransaction();
-		try {
-			$stmt->execute();
-			return $this->pdo->commit();
-		} catch (\PDOException $e) {
-			$this->pdo->rollBack();
-			return false;
-		}
-	}
+        $sql = "UPDATE users SET
+                is_deleted = 1
+                WHERE id = :id";
 
-	/**
-	 * アカウントがロックされているかどうか？
-	 *
-	 * @param object $user_row
-	 * @return bool
-	 */
-	private static function isAccountLocked($user_row)
-	{
-		$locked_flg = $user_row['locked_flg'];
-		if ($locked_flg === 1) {
-			return true;
-		}
-		return false;
-	}
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
 
-	/**
-	 * エラーカウントをリセットする
-	 *
-	 * @param object $user_row
-	 * @return bool
-	 */
-	private function resetErrorCount($user_row): bool
-	{
-		// エラーカウントが0でない場合
-		if ($user_row['error_count'] > 0) {
-			$sql = "UPDATE users SET
-					error_count = 0
-					WHERE id = :id";
+        $this->pdo->beginTransaction();
+        try {
+            $stmt->execute();
+            return $this->pdo->commit();
+        } catch (\PDOException $e) {
+            $this->pdo->rollBack();
+            return $result;
+        }
+    }
 
-			$stmt = $this->pdo->prepare($sql);
-			$stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
+    /**
+     * アカウントがロックされているかどうか？
+     *
+     * @param array $user_row
+     * @return bool $result
+     */
+    private static function isAccountLocked(array $user_row): bool
+    {
+        $result = false;
 
-			$this->pdo->beginTransaction();
-			try {
-				$stmt->execute();
-				return $this->pdo->commit();
-			} catch (\PDOException $e) {
-				$this->pdo->rollBack();
-				return false;
-			}
-		}
+        $locked_flg = $user_row['locked_flg'];
+        if ($locked_flg === 1) {
+            $result = true;
+            return $result;
+        }
+        return $result;
+    }
 
-		return true;
-	}
+    /**
+     * エラーカウントをリセットする
+     *
+     * @param array $user_row
+     * @return bool $result
+     */
+    private function resetErrorCount(array $user_row): bool
+    {
+        $result = false;
 
-	/**
-	 * エラーカウントを1増やす
-	 *
-	 * @param object $user_row
-	 * @return int
-	 */
-	private function addErrorCount($user_row): bool
-	{
-		$error_count = $user_row['error_count'] + 1;
+        // エラーカウントが0でない場合
+        if ($user_row['error_count'] > 0) {
+            $sql = "UPDATE users SET
+                    error_count = 0
+                    WHERE id = :id";
 
-		$sql = "UPDATE users SET
-					error_count = :error_count
-					WHERE id = :id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
 
-		$stmt = $this->pdo->prepare($sql);
-		$stmt->bindValue(':error_count', $error_count, \PDO::PARAM_INT);
-		$stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
+            $this->pdo->beginTransaction();
+            try {
+                $stmt->execute();
+                return $this->pdo->commit();
+            } catch (\PDOException $e) {
+                $this->pdo->rollBack();
+                return $result;
+            }
+        }
 
-		$this->pdo->beginTransaction();
-		try {
-			$stmt->execute();
-			return $this->pdo->commit();
-		} catch (\PDOException $e) {
-			$this->pdo->rollBack();
-			return false;
-		}
-	}
+        $result = true;
+        return $result;
+    }
 
-	/**
-	 * アカウントをロックする
-	 *
-	 * @param object $user_row
-	 * @return bool
-	 */
-	private function lockAccount($user_row): bool
-	{
-		if ($user_row['error_count'] > 5) {
-			$sql = "UPDATE users SET
-					locked_flg = 1
-					WHERE id = :id";
-			$stmt = $this->pdo->prepare($sql);
-			$stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
+    /**
+     * エラーカウントを1増やす
+     *
+     * @param array $user_row
+     * @return bool $result
+     */
+    private function addErrorCount(array $user_row): bool
+    {
+        $result = false;
 
-			$this->pdo->beginTransaction();
-			try {
-				$stmt->execute();
-				return $this->pdo->commit();
-			} catch (\PDOException $e) {
-				$this->pdo->rollBack();
-				return false;
-			}
-		}
-		return false;
-	}
+        $error_count = $user_row['error_count'] + 1;
+
+        $sql = "UPDATE users SET
+                    error_count = :error_count
+                    WHERE id = :id";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':error_count', $error_count, \PDO::PARAM_INT);
+        $stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
+
+        $this->pdo->beginTransaction();
+        try {
+            $stmt->execute();
+            return $this->pdo->commit();
+        } catch (\PDOException $e) {
+            $this->pdo->rollBack();
+            return $result;
+        }
+    }
+
+    /**
+     * アカウントをロックする
+     *
+     * @param array $user_row
+     * @return bool $result
+     */
+    private function lockAccount(array $user_row): bool
+    {
+        $result = false;
+
+        if ($user_row['error_count'] > 5) {
+            $sql = "UPDATE users SET
+                    locked_flg = 1
+                    WHERE id = :id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
+
+            $this->pdo->beginTransaction();
+            try {
+                $stmt->execute();
+                return $this->pdo->commit();
+            } catch (\PDOException $e) {
+                $this->pdo->rollBack();
+                return $result;
+            }
+        }
+        return $result;
+    }
 }

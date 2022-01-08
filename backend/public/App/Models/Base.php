@@ -14,27 +14,27 @@ require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
  */
 class Base
 {
-	/** @static@var object PDOクラスインスタンス */
-	private static $pdo;
+    /** @static@var object PDOクラスインスタンス */
+    private static $pdo;
 
-	/**
-	 * PDOクラスのインスタンスを生成して返却する
-	 * @static@method getPDOInstance
-	 * @param void
-	 * @return \PDO PDOクラスのインスタンス
-	 */
-	public static function getPDOInstance(): \PDO
-	{
-		$dsn = "mysql:dbname=" . Env::get('DB_NAME') . ";host=" . Env::get('DB_HOST') . ";charset=utf8mb4";
+    /**
+     * PDOクラスのインスタンスを生成して返却する
+     * @static@method getPDOInstance
+     * @param void
+     * @return \PDO PDOクラスのインスタンス
+     */
+    public static function getPDOInstance(): \PDO
+    {
+        $dsn = "mysql:dbname=" . Env::get('DB_NAME') . ";host=" . Env::get('DB_HOST') . ";charset=utf8mb4";
 
-		// インスタンスが生成されていなかったら、新しく生成する
-		// すでに生成済みであれば、生成済みのインスタンスを返す
-		if (!isset(self::$pdo)) {
-			self::$pdo = new \PDO($dsn, Env::get('DB_USER'), Env::get('DB_PASS'), Config::DRIVER_OPTS);
-		}
+        // インスタンスが生成されていなかったら、新しく生成する
+        // すでに生成済みであれば、生成済みのインスタンスを返す
+        if (!isset(self::$pdo)) {
+            self::$pdo = new \PDO($dsn, Env::get('DB_USER'), Env::get('DB_PASS'), Config::DRIVER_OPTS);
+        }
 
-		return self::$pdo;
-	}
+        return self::$pdo;
+    }
 
-	// トランザクション処理
+    // トランザクション処理
 }

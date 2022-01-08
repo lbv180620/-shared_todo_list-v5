@@ -26,20 +26,6 @@ document.addEventListener(
     // 初期状態設定
     // btn.disabled = true;
 
-    /**
-     * 日付文字列を時刻値 (秒)に変換
-     */
-    // function strtotime(date) {
-    //   return new Date(date).getTime() / 1000;
-    // }
-
-    /**
-     * 日付チェック
-     */
-    // function isValidDate(date) {
-    //   return typeof strtotime(date) === "number" ? true : false;
-    // }
-
     /** event */
     // item_name
     itemName.addEventListener(
