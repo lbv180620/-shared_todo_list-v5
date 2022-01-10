@@ -163,6 +163,10 @@ $token = Common::generateToken();
                             <select name="staff_id" id="staff" class="form-control">
                                 <option value="0">--選択してください--</option>
                                 <?php foreach ($users as $user) : ?>
+                                    <!-- 退会済みのユーザは選択しから消える -->
+                                    <?php if ($user['is_deleted'] === 1) : ?>
+                                        <?php continue ?>
+                                    <?php endif ?>
                                     <option value="<?= Common::h($user['id']) ?>" <?= isset($fill['staff_id']) && (int)$fill['staff_id'] === $user['id'] ? 'selected' : '' ?>><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></option>
                                 <?php endforeach ?>
                             </select>

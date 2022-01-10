@@ -169,4 +169,7 @@ class Config
     const MSG_ACOUNT_LOCKED_ERROR = "アカウントロックされてます。";
     const MSG_MAKE_ACOUNT_LOCKED = "アカウントがロックされました。解除したい場合は運営者に連絡してください。";
     const MSG_DELETED_USER_ERROR = "存在しないユーザです。";
+
+    /** トランザクション */
+    const MSG_TRANSACTION_INACTIVE_ERROR = "トランザクションがアクティブではありません";
 }

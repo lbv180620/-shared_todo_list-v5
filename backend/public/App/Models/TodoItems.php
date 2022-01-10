@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Utils\Common;
+use App\Utils\Logger;
+
 /**
  * todo_itemsテーブルクラス
  * todo_itemsテーブルのCUID処理
@@ -161,8 +164,6 @@ class TodoItems
      */
     public function registerTodoItem(array $data): bool
     {
-        $result = false;
-
         $staff_id = $data['staff_id'];
         $client_id = $data['client_id'];
         $item_name = $data['item_name'];
@@ -189,23 +190,30 @@ class TodoItems
                 :finished_date
                 )";
 
-        $stmt = $this->pdo->prepare($sql);
 
-        $stmt->bindValue(':staff_id', $staff_id, \PDO::PARAM_INT);
-        $stmt->bindValue(':client_id', $client_id, \PDO::PARAM_INT);
-        $stmt->bindValue(':item_name', $item_name, \PDO::PARAM_STR);
-        $stmt->bindValue(':content', $content, \PDO::PARAM_STR);
-        $stmt->bindValue(':registration_date', $registration_date, \PDO::PARAM_STR);
-        $stmt->bindValue(':expiration_date', $expiration_date, \PDO::PARAM_STR);
-        $stmt->bindValue(':finished_date', $finished_date, \PDO::PARAM_STR);
-
-        $this->pdo->beginTransaction();
         try {
-            $stmt->execute();
-            return $this->pdo->commit();
+            Common::beginTransaction($this->pdo);
+
+            $stmt = $this->pdo->prepare($sql);
+
+            $stmt->bindValue(':staff_id', $staff_id, \PDO::PARAM_INT);
+            $stmt->bindValue(':client_id', $client_id, \PDO::PARAM_INT);
+            $stmt->bindValue(':item_name', $item_name, \PDO::PARAM_STR);
+            $stmt->bindValue(':content', $content, \PDO::PARAM_STR);
+            $stmt->bindValue(':registration_date', $registration_date, \PDO::PARAM_STR);
+            $stmt->bindValue(':expiration_date', $expiration_date, \PDO::PARAM_STR);
+            $stmt->bindValue(':finished_date', $finished_date, \PDO::PARAM_STR);
+
+            if ($stmt->execute()) {
+                return Common::commit($this->pdo);
+            }
+            return false;
         } catch (\PDOException $e) {
-            $this->pdo->rollBack();
-            return $result;
+            Common::rollBack($this->pdo);
+            return false;
+        } catch (\Exception $e) {
+            Logger::errorLog($e->getMessage(), ['file' => __FILE__, 'line' => __LINE__]);
+            return false;
         }
     }
 
@@ -256,20 +264,20 @@ class TodoItems
                 is_deleted = :is_deleted
                 WHERE id = :id";
 
-        $stmt = $this->pdo->prepare($sql);
-
-        $stmt->bindValue(':staff_id', $staff_id, \PDO::PARAM_INT);
-        $stmt->bindValue(':client_id', $client_id, \PDO::PARAM_INT);
-        $stmt->bindValue(':item_name', $item_name, \PDO::PARAM_STR);
-        $stmt->bindValue(':content', $content, \PDO::PARAM_STR);
-        $stmt->bindValue(':registration_date', $registration_date, \PDO::PARAM_STR);
-        $stmt->bindValue(':expiration_date', $expiration_date, \PDO::PARAM_STR);
-        $stmt->bindValue(':finished_date', $finished_date, \PDO::PARAM_STR);
-        $stmt->bindValue(':is_deleted', $is_deleted, \PDO::PARAM_INT);
-        $stmt->bindValue(':id', $item_id, \PDO::PARAM_INT);
-
-        $this->pdo->beginTransaction();
         try {
+            $stmt = $this->pdo->prepare($sql);
+
+            $stmt->bindValue(':staff_id', $staff_id, \PDO::PARAM_INT);
+            $stmt->bindValue(':client_id', $client_id, \PDO::PARAM_INT);
+            $stmt->bindValue(':item_name', $item_name, \PDO::PARAM_STR);
+            $stmt->bindValue(':content', $content, \PDO::PARAM_STR);
+            $stmt->bindValue(':registration_date', $registration_date, \PDO::PARAM_STR);
+            $stmt->bindValue(':expiration_date', $expiration_date, \PDO::PARAM_STR);
+            $stmt->bindValue(':finished_date', $finished_date, \PDO::PARAM_STR);
+            $stmt->bindValue(':is_deleted', $is_deleted, \PDO::PARAM_INT);
+            $stmt->bindValue(':id', $item_id, \PDO::PARAM_INT);
+
+            $this->pdo->beginTransaction();
             $stmt->execute();
             return $this->pdo->commit();
         } catch (\PDOException $e) {
@@ -306,12 +314,12 @@ class TodoItems
                 finished_date = :finished_date
                 WHERE id = :id";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
-        $stmt->bindValue(':finished_date', $date, \PDO::PARAM_STR);
-
-        $this->pdo->beginTransaction();
         try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+            $stmt->bindValue(':finished_date', $date, \PDO::PARAM_STR);
+
+            $this->pdo->beginTransaction();
             $stmt->execute();
             return $this->pdo->commit();
         } catch (\PDOException $e) {
@@ -344,11 +352,11 @@ class TodoItems
                 is_deleted = 1
                 WHERE id = :id";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
-
-        $this->pdo->beginTransaction();
         try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+
+            $this->pdo->beginTransaction();
             $stmt->execute();
             return $this->pdo->commit();
         } catch (\PDOException $e) {

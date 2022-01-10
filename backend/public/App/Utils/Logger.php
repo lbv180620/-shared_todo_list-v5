@@ -52,6 +52,9 @@ class Logger extends \Monolog\Logger
     /**
      * ログメッセージの出力
      *
+     * ログレベル:emergency
+     * システムが使用不可能な状態
+     *
      * @param string $msg ログメッセージ
      */
     public static function emergencyLog(string $msg, array $context = [])
@@ -61,6 +64,14 @@ class Logger extends \Monolog\Logger
         }
     }
 
+    /**
+     * ログメッセージの出力
+     *
+     * ログレベル:alert
+     * 直ちになんらかの対処の必要がある
+     *
+     * @param string $msg ログメッセージ
+     */
     public static function alertLog(string $msg, array $context = [])
     {
         if (Config::IS_LOGFILE) {
@@ -68,6 +79,14 @@ class Logger extends \Monolog\Logger
         }
     }
 
+    /**
+     * ログメッセージの出力
+     *
+     * ログレベル:critical
+     * 危機的な状態
+     *
+     * @param string $msg ログメッセージ
+     */
     public static function criticalLog(string $msg, array $context = [])
     {
         if (Config::IS_LOGFILE) {
@@ -75,6 +94,14 @@ class Logger extends \Monolog\Logger
         }
     }
 
+    /**
+     * ログメッセージの出力
+     *
+     * ログレベル:error
+     * 直ちに対処する必要のない実行時エラーだが、通常はログに記録して監視すべき
+     *
+     * @param string $msg ログメッセージ
+     */
     public static function errorLog(string $msg, array $context = [])
     {
         if (Config::IS_LOGFILE) {
@@ -82,6 +109,14 @@ class Logger extends \Monolog\Logger
         }
     }
 
+    /**
+     * ログメッセージの出力
+     *
+     * ログレベル:warning
+     * エラーではない例外的な出来事
+     *
+     * @param string $msg ログメッセージ
+     */
     public static function warningLog(string $msg, array $context = [])
     {
         if (Config::IS_LOGFILE) {
@@ -89,6 +124,14 @@ class Logger extends \Monolog\Logger
         }
     }
 
+    /**
+     * ログメッセージの出力
+     *
+     * ログレベル:notice
+     * 正常だが、重要な事象
+     *
+     * @param string $msg ログメッセージ
+     */
     public static function noticeLog(string $msg, array $context = [])
     {
         if (Config::IS_LOGFILE) {
@@ -96,6 +139,14 @@ class Logger extends \Monolog\Logger
         }
     }
 
+    /**
+     * ログメッセージの出力
+     *
+     * ログレベル:info
+     * 興味深い事象
+     *
+     * @param string $msg ログメッセージ
+     */
     public static function infoLog(string $msg, array $context = [])
     {
         if (Config::IS_LOGFILE) {
@@ -103,6 +154,14 @@ class Logger extends \Monolog\Logger
         }
     }
 
+    /**
+     * ログメッセージの出力
+     *
+     * ログレベル:debug
+     * 詳細なデバッグ情報
+     *
+     * @param string $msg ログメッセージ
+     */
     public static function debugLog(string $msg, array $context = [])
     {
         if (Config::IS_LOGFILE) {

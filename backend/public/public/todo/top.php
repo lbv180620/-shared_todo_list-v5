@@ -90,7 +90,7 @@ $token = Common::generateToken();
 
         /* 打消し線を入れる */
         tr.del>td {
-            text-decoration: line-through;
+            text-decoration: line-through black;
         }
 
         /* ボタンのセルは打消し線を入れない */
@@ -100,6 +100,10 @@ $token = Common::generateToken();
 
         #a-conf {
             color: inherit;
+            text-decoration: none;
+        }
+
+        #item-conf {
             text-decoration: none;
         }
     </style>
@@ -239,14 +243,14 @@ $token = Common::generateToken();
                         <tr <?= $class ?>>
                             <!-- 作業項目名 -->
                             <td class="align-middle">
-                                <a href="./detail.php?item_id=<?= Common::h($item['id']) ?>"><?= Common::h($item['item_name']) ?></a>
+                                <a id="item-conf" href="./detail.php?item_id=<?= Common::h($item['id']) ?>"><?= Common::h($item['item_name']) ?></a>
                             </td>
                             <!-- 担当者 -->
-                            <td class="align-middle" <?= $user['is_deleted'] === 1 ? 'style="color: red;"' : '' ?>>
+                            <td class="align-middle" <?= $user['is_deleted'] === 1 ? 'style="color: green;"' : '' ?>>
                                 <?= Common::h($item['family_name']) . " " . Common::h($item['first_name']) ?>
                             </td>
                             <!-- 依頼者 -->
-                            <td class="align-middle" <?= $client['is_deleted'] === 1 ? 'style="color: red;"' : '' ?>>
+                            <td class="align-middle" <?= $client['is_deleted'] === 1 ? 'style="color: green;"' : '' ?>>
                                 <?= isset($client['user_name']) ? Common::h($client['user_name']) : "" ?>
                             </td>
                             <!-- 登録日 -->
@@ -286,7 +290,7 @@ $token = Common::generateToken();
                 </tbody>
             </table>
 
-            <p>※<span style="color: red;">赤字</span>のユーザはすでに退会しています。</p>
+            <p>※<span style="color: green;">緑字</span>のユーザはすでに退会しています。</p>
         <?php elseif (empty($_GET['search']) || empty($items)) : ?>
             <div class="row my-2">
                 <div class="col-sm-3"></div>

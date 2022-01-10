@@ -248,7 +248,7 @@ class Users
      */
     public function getUserAll()
     {
-        $sql = "SELECT id, user_name, password, family_name, first_name, is_admin
+        $sql = "SELECT id, user_name, password, family_name, first_name, is_admin, is_deleted
                 FROM users
                 ORDER BY id";
 
@@ -343,11 +343,11 @@ class Users
                 is_deleted = 1
                 WHERE id = :id";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
-
-        $this->pdo->beginTransaction();
         try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+
+            $this->pdo->beginTransaction();
             $stmt->execute();
             return $this->pdo->commit();
         } catch (\PDOException $e) {
@@ -390,11 +390,11 @@ class Users
                     error_count = 0
                     WHERE id = :id";
 
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
-
-            $this->pdo->beginTransaction();
             try {
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
+
+                $this->pdo->beginTransaction();
                 $stmt->execute();
                 return $this->pdo->commit();
             } catch (\PDOException $e) {
@@ -423,12 +423,12 @@ class Users
                     error_count = :error_count
                     WHERE id = :id";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':error_count', $error_count, \PDO::PARAM_INT);
-        $stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
-
-        $this->pdo->beginTransaction();
         try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':error_count', $error_count, \PDO::PARAM_INT);
+            $stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
+
+            $this->pdo->beginTransaction();
             $stmt->execute();
             return $this->pdo->commit();
         } catch (\PDOException $e) {
@@ -451,11 +451,11 @@ class Users
             $sql = "UPDATE users SET
                     locked_flg = 1
                     WHERE id = :id";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
-
-            $this->pdo->beginTransaction();
             try {
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
+
+                $this->pdo->beginTransaction();
                 $stmt->execute();
                 return $this->pdo->commit();
             } catch (\PDOException $e) {

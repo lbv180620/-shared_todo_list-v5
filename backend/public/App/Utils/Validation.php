@@ -18,7 +18,7 @@ class Validation
 
 
     /**
-     * フォームリクエストを検証してエラーメッセージとリクエスト情報の入った連想配列を返す
+     * 新規登録フォームからのリクエストを検証してエラーメッセージとリクエスト情報の入った連想配列を返す
      *
      * @param array $post
      * @return array $result 連想配列で、エラーメッセージ($result['err'])と記入情報($result['fill'])を返す
@@ -34,24 +34,10 @@ class Validation
         // バリデーション
         if (!empty($post)) {
 
-            if (isset($post['user_name'])) {
-
-                // user_nameのバリデーション
-                if (!$user_name = filter_input(INPUT_POST, 'user_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
-                    $err['user_name'] = Config::MSG_USER_NAME_ERROR;
-                    $post['user_name'] = "";
-                    Logger::errorLog(Config::MSG_USER_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-                /**
-                 * 文字数制限
-                 * varchar(50)
-                 */
-                if (!empty($user_name) && mb_strlen($user_name) > 50) {
-                    $err['user_name'] = Config::MSG_USER_NAME_STRLEN_ERROR;
-                    $post['user_name'] = "";
-                    Logger::errorLog(Config::MSG_USER_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-            }
+            // user_nameのバリデーション
+            $result = self::validateUserName();
+            $err['user_name'] = $result['err']['user_name'];
+            $post['user_name'] = $result['post']['user_name'];
 
             if (isset($post['email'])) {
 
@@ -213,6 +199,110 @@ class Validation
     }
 
     /**
+     * ログインフォームからのリクエストを検証してエラーメッセージとリクエスト情報の入った連想配列を返す
+     *
+     * @param array $post
+     * @return array $result 連想配列で、エラーメッセージ($result['err'])と記入情報($result['fill'])を返す
+     */
+    public static function validateLoginFormReSignUp()
+    {
+    }
+
+
+
+    /**
+     * user_nameのバリデーション
+     *
+     * @return array
+     */
+    private static function validateUserName(): array
+    {
+        $result = $err = $post = [];
+
+        if (!$user_name = filter_input(INPUT_POST, 'user_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+            $err['user_name'] = Config::MSG_USER_NAME_ERROR;
+            $post['user_name'] = "";
+            Logger::errorLog(Config::MSG_USER_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+        /**
+         * 文字数制限
+         * varchar(50)
+         */
+        if (!empty($user_name) && mb_strlen($user_name) > 50) {
+            $err['user_name'] = Config::MSG_USER_NAME_STRLEN_ERROR;
+            $post['user_name'] = "";
+            Logger::errorLog(Config::MSG_USER_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+
+        $result['err'] = $err;
+        $result['post'] = $post;
+        return $result;
+    }
+
+    /**
+     * emailのバリデーション
+     */
+    private static function validateEmail()
+    {
+    }
+
+    /**
+     * family_nameのバリデーション
+     */
+    private static function validateFamilyName()
+    {
+    }
+
+    /**
+     * first_nameのバリデーション
+     */
+    private static function validateFirstName()
+    {
+    }
+
+    /**
+     * passwordのバリデーション
+     */
+    private static function validatePassword()
+    {
+    }
+
+    /**
+     * password_confirmのバリデーション
+     */
+    private static function validatePasswordConfirm()
+    {
+    }
+
+    /**
+     * item_nameのバリデーション
+     */
+    private static function validateItemName()
+    {
+    }
+
+    /**
+     * staff_idのバリデーション
+     */
+    private static function validateStaffId()
+    {
+    }
+
+    /**
+     * contentのバリデーション
+     */
+    private static function validateContent()
+    {
+    }
+
+    /**
+     * expiration_dateのバリデーション
+     */
+    private static function validateExpirationDate()
+    {
+    }
+
+    /**
      * 指定IDのユーザが存在するかどうか判定
      *
      * @param string $staff_id ユーザID(文字列)
@@ -263,4 +353,12 @@ class Validation
         // strtotime()関数を使って、タイムスタンプに変換できるかどうかで正しい日付かどうかを調べる
         return strtotime($date) === false ? false : true;
     }
+
+    /**
+     * 文字数制限
+     */
+
+    /**
+     * input_filter
+     */
 }

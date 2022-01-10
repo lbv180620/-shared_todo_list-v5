@@ -124,4 +124,47 @@ class Common
 
         return false;
     }
+
+    /**
+     * トランザクションの開始処理
+     *
+     * @param \PDO $dbh
+     */
+    public static function beginTransaction(\PDO $dbh)
+    {
+        $dbh->beginTransaction();
+
+        if (!$dbh->inTransaction()) {
+            throw new \Exception(Config::MSG_TRANSACTION_INACTIVE_ERROR);
+        }
+    }
+
+    /**
+     * トランザクションのコミット処理
+     *
+     * @param \PDO $dbh
+     * @return bool
+     */
+    public static function commit(\PDO $dbh): bool
+    {
+        if (!$dbh->inTransaction()) {
+            throw new \Exception(Config::MSG_TRANSACTION_INACTIVE_ERROR);
+        }
+
+        return $dbh->commit();
+    }
+
+    /**
+     * トランザクションのロールバック処理
+     *
+     * @param \PDO $dbh
+     */
+    public static function rollBack(\PDO $dbh)
+    {
+        if (!$dbh->inTransaction()) {
+            throw new \Exception(Config::MSG_TRANSACTION_INACTIVE_ERROR);
+        }
+
+        $dbh->rollBack();
+    }
 }
