@@ -28,7 +28,7 @@ if (!isset($post['token']) || !Common::isValidToken($post['token'])) {
 }
 
 // バリデーション
-$result = Validation::validateFormRequesut($post);
+$result = Validation::validateTodoFormRequest($post);
 
 
 // 記入情報をサニタイズしてセッションに保存する

@@ -26,7 +26,7 @@ if (!isset($post['token']) || !Common::isValidToken($post['token'])) {
 }
 
 // バリデーション
-$result = Validation::validateFormRequesut($_POST);
+$result = Validation::validateLoginFormRequest($_POST);
 
 // 記入情報をサニタイズしてセッションに保存する
 $fill = $result['fill'];

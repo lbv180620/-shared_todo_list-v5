@@ -23,168 +23,40 @@ class Validation
      * @param array $post
      * @return array $result 連想配列で、エラーメッセージ($result['err'])と記入情報($result['fill'])を返す
      */
-    public static function validateFormRequesut(array $post): array
+    public static function validateSignUpFormRequest(array $post): array
     {
 
-        $result = [];
+        $result = $err = [];
 
-        // エラーメッセージ
-        $err = [];
-
-        // バリデーション
         if (!empty($post)) {
 
             // user_nameのバリデーション
             $result = self::validateUserName();
-            $err['user_name'] = $result['err']['user_name'];
-            $post['user_name'] = $result['post']['user_name'];
+            if (!empty($result['err'])) $err['user_name'] = $result['err']['user_name'];
+            if (!empty($result['post'])) $post['user_name'] = $result['post']['user_name'];
 
-            if (isset($post['email'])) {
+            // emailのバリデーション
+            $result = self::validateEmail();
+            if (!empty($result['err'])) $err['email'] = $result['err']['email'];
+            if (!empty($result['post'])) $post['email'] = $result['post']['email'];
 
-                // emailのバリデーション
-                if (!$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
-                    $err['email'] = Config::MSG_EMAIL_ERROR;
-                    $post['email'] = "";
-                    Logger::errorLog(Config::MSG_EMAIL_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-                // メールアドレスの形式チェック
-                if (!empty($email) && !$email = filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    $err['email'] = Config::MSG_EMAIL_INCORRECT_ERROR;
-                    $post['email'] = "";
-                    Logger::errorLog(Config::MSG_EMAIL_INCORRECT_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-                /**
-                 * 文字数制限
-                 * varchar(255)
-                 */
-                if (!empty($email) && mb_strlen($email) > 255) {
-                    $err['email'] = Config::MSG_EMAIL_STRLEN_ERROR;
-                    $post['email'] = "";
-                    Logger::errorLog(Config::MSG_EMAIL_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-            }
+            // family_nameのバリデーション
+            $result = self::validateFamilyName();
+            if (!empty($result['err'])) $err['family_name'] = $result['err']['family_name'];
+            if (!empty($result['post'])) $post['family_name'] = $result['post']['family_name'];
 
-            if (isset($post['family_name'])) {
+            // first_nameのバリデーション
+            $result = self::validateFirstName();
+            if (!empty($result['err'])) $err['first_name'] = $result['err']['first_name'];
+            if (!empty($result['post'])) $post['first_name'] = $result['post']['first_name'];
 
-                // family_nameのバリデーション
-                if (!$family_name = filter_input(INPUT_POST, 'family_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
-                    $err['family_name'] = Config::MSG_FAMILY_NAME_ERROR;
-                    $post['family_name'] = "";
-                    Logger::errorLog(Config::MSG_FAMILY_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-                /**
-                 * 文字数制限
-                 * varchar(50)
-                 */
-                if (!empty($family_name) && mb_strlen($family_name) > 50) {
-                    $err['family_name'] = Config::MSG_FAMILY_NAME_STRLEN_ERROR;
-                    $post['family_name'] = "";
-                    Logger::errorLog(Config::MSG_FAMILY_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-            }
+            // passwordのバリデーション
+            $result = self::validatePassword();
+            if (!empty($result['err'])) $err['password'] = $result['err']['password'];
 
-            if (isset($post['first_name'])) {
-
-                // first_nameのバリデーション
-                if (!$first_name = filter_input(INPUT_POST, 'first_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
-                    $err['first_name'] = Config::MSG_FIRST_NAME_ERROR;
-                    $post['first_name'] = "";
-                    Logger::errorLog(Config::MSG_FIRST_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-                /**
-                 * 文字数制限
-                 * varchar(50)
-                 */
-                if (!empty($first_name) && mb_strlen($first_name) > 50) {
-                    $err['first_name'] = Config::MSG_FIRST_NAME_STRLEN_ERROR;
-                    $post['first_name'] = "";
-                    Logger::errorLog(Config::MSG_FIRST_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-            }
-
-            if (isset($post['password'])) {
-
-                // passwordのバリデーション
-                if (!$password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
-                    $err['password'] = Config::MSG_PASSWORD_ERROR;
-                    Logger::errorLog(Config::MSG_PASSWORD_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-
-                // 正規表現
-                /**
-                 *"/\A[a-z\d]{8,100}+\z/i"
-                 *英小文字数字で8文字以上255文字以下の範囲で1回続く(大文字小文字は区別しない)パスワード
-                 */
-                if (!empty($password) && !preg_match(Config::DEFAULT_PASSWORD_REGEXP, $password)) {
-                    $err['password'] = Config::MSG_PASSWORD_REGEX_ERROR;
-                    Logger::errorLog(Config::MSG_PASSWORD_REGEX_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-            }
-
-            if (isset($post['password_confirm'])) {
-
-                // password_confirmのバリデーション
-                if (!$password_confirm = filter_input(INPUT_POST, 'password_confirm', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
-                    $err['password_confirm'] = Config::MSG_PASSWORD_CONFIRM_ERROR;
-                    Logger::errorLog(Config::MSG_PASSWORD_CONFIRM_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-                if (!empty($password) && !empty($password_confirm) && $password !== $password_confirm) {
-                    $err['password_confirm'] = Config::MSG_PASSWORD_CONFIRM_MISMATCH_ERROR;
-                    Logger::errorLog(Config::MSG_PASSWORD_CONFIRM_MISMATCH_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-            }
-
-            if (isset($post['item_name'])) {
-                // item_nameのバリデーション
-                if (!$item_name = filter_input(INPUT_POST, 'item_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
-                    $err['item_name'] = Config::MSG_ITEM_NAME_ERROR;
-                    $post['item_name'] = "";
-                    Logger::errorLog(Config::MSG_ITEM_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-                /**
-                 * 文字数制限
-                 * varchar(100)
-                 */
-                if (!empty($item_name) && mb_strlen($item_name) > 100) {
-                    $err['item_name'] = Config::MSG_ITEM_NAME_STRLEN_ERROR;
-                    $post['item_name'] = "";
-                    Logger::errorLog(Config::MSG_ITEM_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-            }
-
-            if (isset($post['staff_id'])) {
-                // 担当者がいるかどうか
-                if (!self::isValidUserId($post['staff_id'])) {
-                    $err['staff_id'] = Config::MSG_NOT_EXISTS_STAFF_ID_ERROR;
-                    Logger::errorLog(Config::MSG_NOT_EXISTS_STAFF_ID_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-            }
-
-            if (isset($post['content'])) {
-                // contentのバリデーション
-                if (!$item_name = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
-                    $err['content'] = Config::MSG_CONTENT_ERROR;
-                    $post['content'] = "";
-                    Logger::errorLog(Config::MSG_CONTENT_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-            }
-
-            if (isset($post['expiration_date'])) {
-                // 正しい日付かどうか判定
-                if (!self::isValidDate($post['expiration_date'])) {
-                    $err['expiration_date'] = Config::MSG_INVAID_DATE_ERROR;
-                    Logger::errorLog(Config::MSG_INVAID_DATE_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-            }
-
-            if (isset($post['finished'])) {
-                // finishedのバリデーション
-                // 0 null "" [] じゃない
-                if (!empty($post['finished']) && $post['finished'] !== 1) {
-                    $err['finished'] = Config::MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR;
-                    Logger::errorLog(Config::MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-                }
-            }
+            // password_confirmのバリデーション
+            $result = self::validatePasswordConfirm();
+            if (!empty($result['err'])) $err['password_confirm'] = $result['err']['password_confirm'];
         } else {
             $err['msg'] = Config::MSG_POST_SENDING_FAILURE_ERROR;
             Logger::errorLog(Config::MSG_POST_SENDING_FAILURE_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
@@ -204,10 +76,78 @@ class Validation
      * @param array $post
      * @return array $result 連想配列で、エラーメッセージ($result['err'])と記入情報($result['fill'])を返す
      */
-    public static function validateLoginFormReSignUp()
+    public static function validateLoginFormRequest(array $post): array
     {
+        $result = $err = [];
+
+        if (!empty($post)) {
+
+            // emailのバリデーション
+            $result = self::validateEmail();
+            if (!empty($result['err'])) $err['email'] = $result['err']['email'];
+            if (!empty($result['post'])) $post['email'] = $result['post']['email'];
+
+            // passwordのバリデーション
+            $result = self::validatePassword();
+            if (!empty($result['err'])) $err['password'] = $result['err']['password'];
+        } else {
+            $err['msg'] = Config::MSG_POST_SENDING_FAILURE_ERROR;
+            Logger::errorLog(Config::MSG_POST_SENDING_FAILURE_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+
+        // エラーメッセージ情報
+        $result['err'] = $err;
+        // 記入情報
+        $result['fill'] = $post;
+
+        return $result;
     }
 
+    /**
+     * 作業登録フォームからのリクエストを検証してエラーメッセージとリクエスト情報の入った連想配列を返す
+     *
+     * @param array $post
+     * @return array $result 連想配列で、エラーメッセージ($result['err'])と記入情報($result['fill'])を返す
+     */
+    public static function validateTodoFormRequest(array $post): array
+    {
+        $result = $err = [];
+
+        if (!empty($post)) {
+
+            // item_nameのバリデーション
+            $result = self::validateItemName();
+            if (!empty($result['err'])) $err['item_name'] = $result['err']['item_name'];
+            if (!empty($result['post'])) $post['item_name'] = $result['post']['item_name'];
+
+            // staff_idのバリデーション
+            $result = self::validateStaffId($post);
+            if (!empty($result['err'])) $err['staff_id'] = $result['err']['staff_id'];
+
+            // contentのバリデーション
+            $result = self::validateContent();
+            if (!empty($result['err'])) $err['content'] = $result['err']['content'];
+            if (!empty($result['post'])) $post['content'] = $result['post']['content'];
+
+            // expiration_dateのバリデーション
+            $result = self::validateExpirationDate($post);
+            if (!empty($result['err'])) $err['expiration_date'] = $result['err']['expiration_date'];
+
+            // finishedのバリデーション
+            $result = self::validateFinished($post);
+            if (!empty($result['err'])) $err['finished'] = $result['err']['finished'];
+        } else {
+            $err['msg'] = Config::MSG_POST_SENDING_FAILURE_ERROR;
+            Logger::errorLog(Config::MSG_POST_SENDING_FAILURE_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+
+        // エラーメッセージ情報
+        $result['err'] = $err;
+        // 記入情報
+        $result['fill'] = $post;
+
+        return $result;
+    }
 
 
     /**
@@ -241,65 +181,254 @@ class Validation
 
     /**
      * emailのバリデーション
+     *
+     * @return array
      */
-    private static function validateEmail()
+    private static function validateEmail(): array
     {
+        $result = $err = $post = [];
+
+        if (!$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+            $err['email'] = Config::MSG_EMAIL_ERROR;
+            $post['email'] = "";
+            Logger::errorLog(Config::MSG_EMAIL_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+        // メールアドレスの形式チェック
+        if (!empty($email) && !$email = filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $err['email'] = Config::MSG_EMAIL_INCORRECT_ERROR;
+            $post['email'] = "";
+            Logger::errorLog(Config::MSG_EMAIL_INCORRECT_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+        /**
+         * 文字数制限
+         * varchar(255)
+         */
+        if (!empty($email) && mb_strlen($email) > 255) {
+            $err['email'] = Config::MSG_EMAIL_STRLEN_ERROR;
+            $post['email'] = "";
+            Logger::errorLog(Config::MSG_EMAIL_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+
+        $result['err'] = $err;
+        $result['post'] = $post;
+        return $result;
     }
 
     /**
      * family_nameのバリデーション
+     *
+     * @return array
      */
-    private static function validateFamilyName()
+    private static function validateFamilyName(): array
     {
+        $result = $err = $post = [];
+
+        if (!$family_name = filter_input(INPUT_POST, 'family_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+            $err['family_name'] = Config::MSG_FAMILY_NAME_ERROR;
+            $post['family_name'] = "";
+            Logger::errorLog(Config::MSG_FAMILY_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+        /**
+         * 文字数制限
+         * varchar(50)
+         */
+        if (!empty($family_name) && mb_strlen($family_name) > 50) {
+            $err['family_name'] = Config::MSG_FAMILY_NAME_STRLEN_ERROR;
+            $post['family_name'] = "";
+            Logger::errorLog(Config::MSG_FAMILY_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+
+        $result['err'] = $err;
+        $result['post'] = $post;
+        return $result;
     }
 
     /**
      * first_nameのバリデーション
+     *
+     * @return array
      */
-    private static function validateFirstName()
+    private static function validateFirstName(): array
     {
+        $result = $err = $post = [];
+
+        if (!$first_name = filter_input(INPUT_POST, 'first_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+            $err['first_name'] = Config::MSG_FIRST_NAME_ERROR;
+            $post['first_name'] = "";
+            Logger::errorLog(Config::MSG_FIRST_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+        /**
+         * 文字数制限
+         * varchar(50)
+         */
+        if (!empty($first_name) && mb_strlen($first_name) > 50) {
+            $err['first_name'] = Config::MSG_FIRST_NAME_STRLEN_ERROR;
+            $post['first_name'] = "";
+            Logger::errorLog(Config::MSG_FIRST_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+
+        $result['err'] = $err;
+        $result['post'] = $post;
+        return $result;
     }
 
     /**
      * passwordのバリデーション
+     *
+     * @return array
      */
-    private static function validatePassword()
+    private static function validatePassword(): array
     {
+        $err = [];
+
+        if (!$password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+            $err['password'] = Config::MSG_PASSWORD_ERROR;
+            Logger::errorLog(Config::MSG_PASSWORD_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+
+        // 正規表現
+        /**
+         *"/\A[a-z\d]{8,100}+\z/i"
+         *英小文字数字で8文字以上255文字以下の範囲で1回続く(大文字小文字は区別しない)パスワード
+         */
+        if (!empty($password) && !preg_match(Config::DEFAULT_PASSWORD_REGEXP, $password)) {
+            $err['password'] = Config::MSG_PASSWORD_REGEX_ERROR;
+            Logger::errorLog(Config::MSG_PASSWORD_REGEX_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+
+        $result['err'] = $err;
+        return $result;
     }
 
     /**
      * password_confirmのバリデーション
+     *
+     * @return array
      */
-    private static function validatePasswordConfirm()
+    private static function validatePasswordConfirm(): array
     {
+        $result = $err = [];
+
+        if (!$password_confirm = filter_input(INPUT_POST, 'password_confirm', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+            $err['password_confirm'] = Config::MSG_PASSWORD_CONFIRM_ERROR;
+            Logger::errorLog(Config::MSG_PASSWORD_CONFIRM_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+        if (!empty($password) && !empty($password_confirm) && $password !== $password_confirm) {
+            $err['password_confirm'] = Config::MSG_PASSWORD_CONFIRM_MISMATCH_ERROR;
+            Logger::errorLog(Config::MSG_PASSWORD_CONFIRM_MISMATCH_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+
+        $result['err'] = $err;
+        return $result;
     }
 
     /**
      * item_nameのバリデーション
+     *
+     * @return array
      */
-    private static function validateItemName()
+    private static function validateItemName(): array
     {
+        $result = $err = $post = [];
+
+        if (!$item_name = filter_input(INPUT_POST, 'item_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+            $err['item_name'] = Config::MSG_ITEM_NAME_ERROR;
+            $post['item_name'] = "";
+            Logger::errorLog(Config::MSG_ITEM_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+        /**
+         * 文字数制限
+         * varchar(100)
+         */
+        if (!empty($item_name) && mb_strlen($item_name) > 100) {
+            $err['item_name'] = Config::MSG_ITEM_NAME_STRLEN_ERROR;
+            $post['item_name'] = "";
+            Logger::errorLog(Config::MSG_ITEM_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+
+        $result['err'] = $err;
+        $result['post'] = $post;
+        return $result;
     }
 
     /**
      * staff_idのバリデーション
+     *
+     * @param array $post
+     * @return array
      */
-    private static function validateStaffId()
+    private static function validateStaffId(array $post): array
     {
+        $result = $err = [];
+
+        // 担当者がいるかどうか
+        if (!self::isValidUserId($post['staff_id'])) {
+            $err['staff_id'] = Config::MSG_NOT_EXISTS_STAFF_ID_ERROR;
+            Logger::errorLog(Config::MSG_NOT_EXISTS_STAFF_ID_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+
+        $result['err'] = $err;
+        return $result;
     }
 
     /**
      * contentのバリデーション
+     *
+     * @return array
      */
-    private static function validateContent()
+    private static function validateContent(): array
     {
+        $result = $err = $post = [];
+
+        if (!filter_input(INPUT_POST, 'content', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+            $err['content'] = Config::MSG_CONTENT_ERROR;
+            $post['content'] = "";
+            Logger::errorLog(Config::MSG_CONTENT_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+
+        $result['err'] = $err;
+        $result['post'] = $post;
+        return $result;
     }
 
     /**
      * expiration_dateのバリデーション
+     *
+     * @param array $post
+     * @return array
      */
-    private static function validateExpirationDate()
+    private static function validateExpirationDate(array $post): array
     {
+        $result = $err = [];
+
+        // 正しい日付かどうか判定
+        if (!self::isValidDate($post['expiration_date'])) {
+            $err['expiration_date'] = Config::MSG_INVAID_DATE_ERROR;
+            Logger::errorLog(Config::MSG_INVAID_DATE_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+
+        $result['err'] = $err;
+        return $result;
+    }
+
+    /**
+     * finishedのバリデーション
+     *
+     * @param array $post
+     * @return array
+     */
+    private static function validateFinished(array $post): array
+    {
+        $result = $err = [];
+
+        // 0 null "" [] じゃない
+        if (!empty($post['finished']) && $post['finished'] !== 1) {
+            $err['finished'] = Config::MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR;
+            Logger::errorLog(Config::MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+
+        $result['err'] = $err;
+        return $result;
     }
 
     /**
