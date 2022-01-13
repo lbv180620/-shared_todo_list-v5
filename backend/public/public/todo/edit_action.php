@@ -31,11 +31,10 @@ if (!isset($post['token']) || !Common::isValidToken($post['token'])) {
 }
 
 // バリデーション
-$result = Validation::validateFormRequesut($post);
-
+$result = Validation::validateTodoFormRequest($post);
+['err' => $err, 'fill' => $fill] = $result;
 
 // 記入情報をサニタイズしてセッションに保存する
-$fill = $result['fill'];
 $fill['finished'] = !empty($fill['finished']) ? "1" : null; // 1 -> "1" に変換
 
 if (!empty($fill)) {
@@ -48,7 +47,6 @@ if (!empty($fill)) {
  * エラーメッセージをセッションに登録し、
  * 元のフォームへリダイレクト
  */
-$err = $result['err'];
 if (count($err) > 0) {
     $_SESSION['err'] = $err;
     header("Location: {$url}", true, 301);

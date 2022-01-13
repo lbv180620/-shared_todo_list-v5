@@ -29,10 +29,9 @@ if (!isset($post['token']) || !Common::isValidToken($post['token'])) {
 
 // バリデーション
 $result = Validation::validateTodoFormRequest($post);
-
+['err' => $err, 'fill' => $fill] = $result;
 
 // 記入情報をサニタイズしてセッションに保存する
-$fill = $result['fill'];
 $fill['finished'] = !empty($fill['finished']) ? "1" : null; // 1 -> "1" に変換
 if (!empty($fill)) {
     $_SESSION['fill'] = Common::sanitize($fill);
@@ -44,7 +43,6 @@ if (!empty($fill)) {
  * エラーメッセージをセッションに登録し、
  * 元のフォームへリダイレクト
  */
-$err = $result['err'];
 if (count($err) > 0) {
     $_SESSION['err'] = $err;
     header('Location: ./entry.php', true, 301);

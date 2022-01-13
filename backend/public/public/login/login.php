@@ -27,9 +27,9 @@ if (!isset($post['token']) || !Common::isValidToken($post['token'])) {
 
 // バリデーション
 $result = Validation::validateLoginFormRequest($_POST);
+['err' => $err, 'fill' => $fill] = $result;
 
 // 記入情報をサニタイズしてセッションに保存する
-$fill = $result['fill'];
 if (!empty($fill)) {
     $_SESSION['fill'] = Common::sanitize($fill);
 }
@@ -40,7 +40,6 @@ if (!empty($fill)) {
  * エラーメッセージをセッションに登録し、
  * 元のフォームへリダイレクト
  */
-$err = $result['err'];
 if (count($err) > 0) {
     $_SESSION['err'] = $err;
     header('Location: ./login_form.php', true, 301);
