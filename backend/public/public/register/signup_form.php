@@ -17,6 +17,7 @@ require_once dirname(__FILE__, 2) . '/components/php/guest/overhead.php';
 
 $title = "新規登録";
 $page = "ログイン";
+$message = "新規登録してください";
 $login_form_dir = "../login";
 $page_transition_path = "../login/login_form.php";
 include_once dirname(__FILE__, 2) . '/components/head/guest/head.php';
