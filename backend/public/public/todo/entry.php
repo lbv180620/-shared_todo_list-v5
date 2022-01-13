@@ -126,41 +126,11 @@ include_once dirname(__FILE__, 2) . '/components/head/auth/head.php';
 </div>
 <!-- 入力フォーム ここまで -->
 
-</div>
-<!-- コンテナ ここまで -->
-
-<script>
-    function checkSubmit() {
-        if (window.confirm('作業登録しますか?')) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    function checkLogout() {
-        if (window.confirm('ログアウトしますか?')) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-</script>
-
-<!-- JSのフォームバリデーション処理 -->
 <?php
-$php_array = Config::JS_TODO_FORM_VALIDATION_ERROR_MSG_LIST;
-$json_array = json_encode($php_array);
+
+$message = '作業登録しますか?';
+$js_validation_path = "/validate_entry_form.js";
+$validation_list = Config::JS_TODO_FORM_VALIDATION_ERROR_MSG_LIST;
+include_once dirname(__FILE__, 2) . '/components/foot/auth/foot.php';
+
 ?>
-<script type="text/javascript">
-    const js_array = JSON.parse('<?= $json_array ?>');
-</script>
-<script type="text/javascript" src="../js/validate_entry_form.js"></script>
-
-<!-- 必要なJavascriptを読み込む -->
-<script src="../js/jquery-3.4.1.min.js"></script>
-<script src="../js/bootstrap.bundle.min.js"></script>
-
-</body>
-
-</html>

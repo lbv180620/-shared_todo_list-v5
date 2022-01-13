@@ -3,7 +3,7 @@
 /**
  * auth
  *
- * login_form.php
+ * entry.php
  * $message = '作業登録しますか?';
  * $js_validation_path = "/validate_entry_form.js";
  * $validation_list = Config::JS_TODO_FORM_VALIDATION_ERROR_MSG_LIST;
@@ -43,6 +43,7 @@ use App\Utils\Common;
 <!-- JSのフォームバリデーション処理 -->
 <?php
 $php_array = $validation_list;
+// $php_array = Config::JS_TODO_FORM_VALIDATION_ERROR_MSG_LIST;
 $json_array = json_encode($php_array);
 ?>
 <script type="text/javascript">
