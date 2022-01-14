@@ -77,7 +77,7 @@ $token = Common::generateToken();
 $title = "作業一覧";
 $active = "top";
 $message = "作業一覧";
-include_once dirname(__FILE__, 2) . '/components/head/auth/head.php';
+include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
 
 ?>
 
@@ -103,9 +103,9 @@ include_once dirname(__FILE__, 2) . '/components/head/auth/head.php';
 </style>
 
 <!-- エラメッセージアラート -->
-<?php include_once dirname(__FILE__, 2) . '/components/alert/auth/alert_err_msg.php' ?>
+<?php include_once dirname(__FILE__, 3) . '/components/alert/auth/alert_err_msg.php' ?>
 <!-- サクセスメッセージアラート -->
-<?php include_once dirname(__FILE__, 2) . '/components/alert/auth/alert_success_msg.php' ?>
+<?php include_once dirname(__FILE__, 3) . '/components/alert/auth/alert_success_msg.php' ?>
 
 <?php if (!empty($items)) : ?>
     <?php if ($isSearch) : ?>

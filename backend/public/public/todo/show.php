@@ -56,7 +56,7 @@ $title = "マイページ";
 $active = "show";
 $message = $login['user_name'] . "さんが担当の作業一覧";
 $search = "";
-include_once dirname(__FILE__, 2) . '/components/head/auth/head.php';
+include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
 
 ?>
 
@@ -78,7 +78,7 @@ include_once dirname(__FILE__, 2) . '/components/head/auth/head.php';
 </style>
 
 <!-- エラメッセージアラート -->
-<?php include_once dirname(__FILE__, 2) . '/components/alert/auth/alert_err_msg.php' ?>
+<?php include_once dirname(__FILE__, 3) . '/components/alert/auth/alert_err_msg.php' ?>
 
 <?php if (!empty($items)) : ?>
 

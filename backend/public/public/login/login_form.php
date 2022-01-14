@@ -8,7 +8,7 @@ use App\Utils\Common;
 use App\Config\Config;
 
 // 共通処理
-require_once dirname(__FILE__, 2) . '/components/php/guest/overhead.php';
+require_once dirname(__FILE__, 3) . '/components/php/guest/overhead.php';
 
 ?>
 
@@ -20,14 +20,14 @@ $page = "新規登録";
 $message = "ログインしてください";
 $login_form_dir = ".";
 $page_transition_path = "../register/signup_form.php";
-include_once dirname(__FILE__, 2) . '/components/head/guest/head.php';
+include_once dirname(__FILE__, 3) . '/components/head/guest/head.php';
 
 ?>
 
 <!-- エラメッセージアラート -->
-<?php include_once dirname(__FILE__, 2) . '/components/alert/guest/alert_err_msg.php' ?>
+<?php include_once dirname(__FILE__, 3) . '/components/alert/guest/alert_err_msg.php' ?>
 <!-- サクセスメッセージアラート -->
-<?php include_once dirname(__FILE__, 2) . '/components/alert/guest/alert_success_msg.php' ?>
+<?php include_once dirname(__FILE__, 3) . '/components/alert/guest/alert_success_msg.php' ?>
 
 <!-- コンテンツ -->
 <div class="row my-2">
@@ -59,6 +59,6 @@ include_once dirname(__FILE__, 2) . '/components/head/guest/head.php';
 $title = "ログイン";
 $js_validation_path = "/validate_login_form.js";
 $validation_list = Config::JS_LOGIN_FORM_VALIDATION_ERROR_MSG_LIST;
-include_once dirname(__FILE__, 2) . '/components/foot/guest/foot.php';
+include_once dirname(__FILE__, 3) . '/components/foot/guest/foot.php';
 
 ?>

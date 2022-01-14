@@ -8,7 +8,7 @@ use App\Utils\Common;
 use App\Config\Config;
 
 // 共通処理
-require_once dirname(__FILE__, 2) . '/components/php/guest/overhead.php';
+require_once dirname(__FILE__, 3) . '/components/php/guest/overhead.php';
 
 ?>
 
@@ -20,12 +20,12 @@ $page = "ログイン";
 $message = "新規登録してください";
 $login_form_dir = "../login";
 $page_transition_path = "../login/login_form.php";
-include_once dirname(__FILE__, 2) . '/components/head/guest/head.php';
+include_once dirname(__FILE__, 3) . '/components/head/guest/head.php';
 
 ?>
 
 <!-- エラメッセージアラート -->
-<?php include_once dirname(__FILE__, 2) . '/components/alert/guest/alert_err_msg.php' ?>
+<?php include_once dirname(__FILE__, 3) . '/components/alert/guest/alert_err_msg.php' ?>
 
 <!-- コンテンツ -->
 <div class="row my-2">
@@ -78,6 +78,6 @@ include_once dirname(__FILE__, 2) . '/components/head/guest/head.php';
 $title = "新規登録";
 $js_validation_path = "/validate_signup_form.js";
 $validation_list = Config::JS_SIGNUP_FORM_VALIDATION_ERROR_MSG_LIST;
-include_once dirname(__FILE__, 2) . '/components/foot/guest/foot.php';
+include_once dirname(__FILE__, 3) . '/components/foot/guest/foot.php';
 
 ?>

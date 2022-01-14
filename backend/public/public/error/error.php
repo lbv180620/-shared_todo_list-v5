@@ -25,7 +25,7 @@ unset($_SESSION['err']);
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>エラーメッセージ</title>
-    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../views/css/bootstrap.min.css">
     <style>
         .navbar {
             display: flex;
@@ -78,8 +78,8 @@ unset($_SESSION['err']);
     </div>
 
     <!-- 必要なJavascriptを読み込む -->
-    <script src="../js/jquery-3.4.1.min.js"></script>
-    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="../views/js/jquery-3.4.1.min.js"></script>
+    <script src="../views/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

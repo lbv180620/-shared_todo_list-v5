@@ -82,12 +82,12 @@ $title = "修正確認";
 $active = "top";
 $message = "作業を修正してください";
 $search = "";
-include_once dirname(__FILE__, 2) . '/components/head/auth/head.php';
+include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
 
 ?>
 
 <!-- エラメッセージアラート -->
-<?php include_once dirname(__FILE__, 2) . '/components/alert/auth/alert_err_msg.php' ?>
+<?php include_once dirname(__FILE__, 3) . '/components/alert/auth/alert_err_msg.php' ?>
 
 <!-- 入力フォーム -->
 <div class="row my-2">

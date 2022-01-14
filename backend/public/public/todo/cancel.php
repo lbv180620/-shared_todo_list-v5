@@ -60,7 +60,7 @@ $title = "退会確認";
 $active = "show";
 $message = "";
 $search = "";
-include_once dirname(__FILE__, 2) . '/components/head/auth/head.php';
+include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
 
 ?>
 
@@ -71,7 +71,7 @@ include_once dirname(__FILE__, 2) . '/components/head/auth/head.php';
 </style>
 
 <!-- エラメッセージアラート -->
-<?php include_once dirname(__FILE__, 2) . '/components/alert/auth/alert_err_msg.php' ?>
+<?php include_once dirname(__FILE__, 3) . '/components/alert/auth/alert_err_msg.php' ?>
 
 <div class="row my-2">
     <div class="col-sm-3"></div>

@@ -66,12 +66,12 @@ $title = "作業登録";
 $active = "entry";
 $message = "作業を登録してください";
 $search = "";
-include_once dirname(__FILE__, 2) . '/components/head/auth/head.php';
+include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
 
 ?>
 
 <!-- エラメッセージアラート -->
-<?php include_once dirname(__FILE__, 2) . '/components/alert/auth/alert_err_msg.php' ?>
+<?php include_once dirname(__FILE__, 3) . '/components/alert/auth/alert_err_msg.php' ?>
 
 <!-- 入力フォーム -->
 <div class="row my-2">
@@ -131,6 +131,6 @@ include_once dirname(__FILE__, 2) . '/components/head/auth/head.php';
 $message = '作業登録しますか?';
 $js_validation_path = "/validate_entry_form.js";
 $validation_list = Config::JS_TODO_FORM_VALIDATION_ERROR_MSG_LIST;
-include_once dirname(__FILE__, 2) . '/components/foot/auth/foot.php';
+include_once dirname(__FILE__, 3) . '/components/foot/auth/foot.php';
 
 ?>

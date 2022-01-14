@@ -53,8 +53,8 @@ use App\Utils\Common;
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title><?= Common::h($title) ?></title>
-    <link rel="stylesheet" href="../css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/validate_form.css">
+    <link rel="stylesheet" href="../views/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../views/css/validate_form.css">
     <style>
         #a-conf {
             color: inherit;
