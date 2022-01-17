@@ -53,7 +53,7 @@ class Validation
             if (!empty($result['err'])) $err['password'] = $result['err']['password'];
 
             // password_confirmのバリデーション
-            $result = self::validatePasswordConfirm();
+            $result = self::validatePasswordConfirm($post['password']);
             if (!empty($result['err'])) $err['password_confirm'] = $result['err']['password_confirm'];
         } else {
             $err['msg'] = Config::MSG_POST_SENDING_FAILURE_ERROR;
@@ -157,7 +157,7 @@ class Validation
     {
         $result = $err = $post = [];
 
-        if (!$user_name = filter_input(INPUT_POST, 'user_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+        if (!$user_name = self::filterInput('user_name')) {
             $err['user_name'] = Config::MSG_USER_NAME_ERROR;
             $post['user_name'] = "";
             Logger::errorLog(Config::MSG_USER_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
@@ -166,7 +166,7 @@ class Validation
          * 文字数制限
          * varchar(50)
          */
-        if (!empty($user_name) && mb_strlen($user_name) > 50) {
+        if (!self::isValidStringLength($user_name, 50)) {
             $err['user_name'] = Config::MSG_USER_NAME_STRLEN_ERROR;
             $post['user_name'] = "";
             Logger::errorLog(Config::MSG_USER_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
@@ -186,13 +186,13 @@ class Validation
     {
         $result = $err = $post = [];
 
-        if (!$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+        if (!$email = self::filterInput('email')) {
             $err['email'] = Config::MSG_EMAIL_ERROR;
             $post['email'] = "";
             Logger::errorLog(Config::MSG_EMAIL_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
         // メールアドレスの形式チェック
-        if (!empty($email) && !$email = filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (!self::isValidEmail($email)) {
             $err['email'] = Config::MSG_EMAIL_INCORRECT_ERROR;
             $post['email'] = "";
             Logger::errorLog(Config::MSG_EMAIL_INCORRECT_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
@@ -201,7 +201,7 @@ class Validation
          * 文字数制限
          * varchar(255)
          */
-        if (!empty($email) && mb_strlen($email) > 255) {
+        if (!self::isValidStringLength($email, 255)) {
             $err['email'] = Config::MSG_EMAIL_STRLEN_ERROR;
             $post['email'] = "";
             Logger::errorLog(Config::MSG_EMAIL_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
@@ -221,7 +221,7 @@ class Validation
     {
         $result = $err = $post = [];
 
-        if (!$family_name = filter_input(INPUT_POST, 'family_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+        if (!$family_name = self::filterInput('family_name')) {
             $err['family_name'] = Config::MSG_FAMILY_NAME_ERROR;
             $post['family_name'] = "";
             Logger::errorLog(Config::MSG_FAMILY_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
@@ -230,7 +230,7 @@ class Validation
          * 文字数制限
          * varchar(50)
          */
-        if (!empty($family_name) && mb_strlen($family_name) > 50) {
+        if (!self::isValidStringLength($family_name, 50)) {
             $err['family_name'] = Config::MSG_FAMILY_NAME_STRLEN_ERROR;
             $post['family_name'] = "";
             Logger::errorLog(Config::MSG_FAMILY_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
@@ -250,7 +250,7 @@ class Validation
     {
         $result = $err = $post = [];
 
-        if (!$first_name = filter_input(INPUT_POST, 'first_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+        if (!$first_name = self::filterInput('first_name')) {
             $err['first_name'] = Config::MSG_FIRST_NAME_ERROR;
             $post['first_name'] = "";
             Logger::errorLog(Config::MSG_FIRST_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
@@ -259,7 +259,7 @@ class Validation
          * 文字数制限
          * varchar(50)
          */
-        if (!empty($first_name) && mb_strlen($first_name) > 50) {
+        if (!self::isValidStringLength($first_name, 50)) {
             $err['first_name'] = Config::MSG_FIRST_NAME_STRLEN_ERROR;
             $post['first_name'] = "";
             Logger::errorLog(Config::MSG_FIRST_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
@@ -279,7 +279,7 @@ class Validation
     {
         $err = [];
 
-        if (!$password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+        if (!$password = self::filterInput('password')) {
             $err['password'] = Config::MSG_PASSWORD_ERROR;
             Logger::errorLog(Config::MSG_PASSWORD_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
@@ -289,7 +289,7 @@ class Validation
          *"/\A[a-z\d]{8,100}+\z/i"
          *英小文字数字で8文字以上255文字以下の範囲で1回続く(大文字小文字は区別しない)パスワード
          */
-        if (!empty($password) && !preg_match(Config::DEFAULT_PASSWORD_REGEXP, $password)) {
+        if (!self::isValidPassword($password)) {
             $err['password'] = Config::MSG_PASSWORD_REGEX_ERROR;
             Logger::errorLog(Config::MSG_PASSWORD_REGEX_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
@@ -301,17 +301,18 @@ class Validation
     /**
      * password_confirmのバリデーション
      *
+     * @param string $password
      * @return array
      */
-    private static function validatePasswordConfirm(): array
+    private static function validatePasswordConfirm(string $password): array
     {
         $result = $err = [];
 
-        if (!$password_confirm = filter_input(INPUT_POST, 'password_confirm', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+        if (!$password_confirm = self::filterInput('password_confirm')) {
             $err['password_confirm'] = Config::MSG_PASSWORD_CONFIRM_ERROR;
             Logger::errorLog(Config::MSG_PASSWORD_CONFIRM_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
-        if (!empty($password) && !empty($password_confirm) && $password !== $password_confirm) {
+        if (!self::isValidConfirmedPassword($password, $password_confirm)) {
             $err['password_confirm'] = Config::MSG_PASSWORD_CONFIRM_MISMATCH_ERROR;
             Logger::errorLog(Config::MSG_PASSWORD_CONFIRM_MISMATCH_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
@@ -329,7 +330,7 @@ class Validation
     {
         $result = $err = $post = [];
 
-        if (!$item_name = filter_input(INPUT_POST, 'item_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+        if (!$item_name = self::filterInput('item_name')) {
             $err['item_name'] = Config::MSG_ITEM_NAME_ERROR;
             $post['item_name'] = "";
             Logger::errorLog(Config::MSG_ITEM_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
@@ -338,7 +339,7 @@ class Validation
          * 文字数制限
          * varchar(100)
          */
-        if (!empty($item_name) && mb_strlen($item_name) > 100) {
+        if (!self::isValidStringLength($item_name, 100)) {
             $err['item_name'] = Config::MSG_ITEM_NAME_STRLEN_ERROR;
             $post['item_name'] = "";
             Logger::errorLog(Config::MSG_ITEM_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
@@ -378,7 +379,7 @@ class Validation
     {
         $result = $err = $post = [];
 
-        if (!filter_input(INPUT_POST, 'content', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+        if (!self::filterInput('content', false)) {
             $err['content'] = Config::MSG_CONTENT_ERROR;
             $post['content'] = "";
             Logger::errorLog(Config::MSG_CONTENT_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
@@ -482,10 +483,59 @@ class Validation
     }
 
     /**
-     * 文字数制限
+     * input_filter
+     *
+     * @param string $str
+     * @param bool $trim_flg
      */
+    private static function filterInput(string $str, $trim_flg = true): string
+    {
+        $result = filter_input(INPUT_POST, $str, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        return $trim_flg ? trim($result) : $result;
+    }
 
     /**
-     * input_filter
+     * 文字数制限
+     *
+     * @param string $var_name
+     * @param int $str_length
+     * @return bool
      */
+    private static function isValidStringLength(string $var_name, int $str_length): bool
+    {
+        return empty($var_name) || mb_strlen($var_name) <= $str_length;
+    }
+
+    /**
+     * 正しいメールアドレスの形式かどうか
+     *
+     * @param string $email
+     * @return bool
+     */
+    private static function isValidEmail(string $email): bool
+    {
+        return empty($email) || $email = filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
+
+    /**
+     * 正しいパスワードかどうか
+     *
+     * @param string $password
+     * @return bool
+     */
+    private static function isValidPassword(string $password): bool
+    {
+        return empty($password) || preg_match(Config::DEFAULT_PASSWORD_REGEXP, $password);
+    }
+
+    /**
+     * パスワードと確認用パスードが一致するかどうか
+     *
+     * @param string $password
+     * @param string $password_confirm
+     */
+    private static function isValidConfirmedPassword($password, $password_confirm): bool
+    {
+        return empty($password_confirm) || $password === $password_confirm;
+    }
 }

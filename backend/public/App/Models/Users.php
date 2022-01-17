@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Config\Config;
+use App\Utils\Common;
 
 /**
  * ユーザーテーブルクラス
@@ -34,8 +35,6 @@ class Users
      */
     public function addUser(array $post): bool
     {
-        $result = false;
-
         $user_name = $post['user_name'];
         $family_name = $post['family_name'];
         $first_name = $post['first_name'];
@@ -45,7 +44,7 @@ class Users
         // 同じメールアドレスのユーザーがいないか調べる
         if (!empty($this->findUserByEmail($email))) {
             // すでに同じメールアドレスをもつユーザがいる場合、falseを返す
-            return $result;
+            return false;
         }
 
         // パスワードをハッシュ化する
@@ -66,8 +65,9 @@ class Users
                 :first_name)";
 
         // データ変更ありなので、トランザクション処理
-        $this->pdo->beginTransaction();
         try {
+            Common::beginTransaction($this->pdo);
+
             $stmt = $this->pdo->prepare($sql);
 
             $stmt->bindValue(':user_name', $user_name, \PDO::PARAM_STR);
@@ -76,13 +76,16 @@ class Users
             $stmt->bindValue(':family_name', $family_name, \PDO::PARAM_STR);
             $stmt->bindValue(':first_name', $first_name, \PDO::PARAM_STR);
 
-            $stmt->execute();
-            $result = $this->pdo->commit();
-
-            return $result;
+            if ($stmt->execute()) {
+                return Common::commit($this->pdo);
+            }
+            return false;
         } catch (\PDOException $e) {
-            $this->pdo->rollBack();
-            return $result;
+            Common::rollBack($this->pdo);
+            return false;
+        } catch (\Exception $e) {
+            Logger::errorLog($e->getMessage(), ['file' => __FILE__, 'line' => __LINE__]);
+            return false;
         }
     }
 
@@ -329,14 +332,12 @@ class Users
      */
     public function deleteUserById(int $id): bool
     {
-        $result = false;
-
         if (!is_numeric($id)) {
-            return $result;
+            return false;
         }
 
         if ($id <= 0) {
-            return $result;
+            return false;
         }
 
         $sql = "UPDATE users SET
@@ -344,15 +345,21 @@ class Users
                 WHERE id = :id";
 
         try {
+            Common::beginTransaction($this->pdo);
+
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
 
-            $this->pdo->beginTransaction();
-            $stmt->execute();
-            return $this->pdo->commit();
+            if ($stmt->execute()) {
+                return Common::commit($this->pdo);
+            }
+            return false;
         } catch (\PDOException $e) {
-            $this->pdo->rollBack();
-            return $result;
+            Common::rollBack($this->pdo);
+            return false;
+        } catch (\Exception $e) {
+            Logger::errorLog($e->getMessage(), ['file' => __FILE__, 'line' => __LINE__]);
+            return false;
         }
     }
 
@@ -382,8 +389,6 @@ class Users
      */
     private function resetErrorCount(array $user_row): bool
     {
-        $result = false;
-
         // エラーカウントが0でない場合
         if ($user_row['error_count'] > 0) {
             $sql = "UPDATE users SET
@@ -391,20 +396,24 @@ class Users
                     WHERE id = :id";
 
             try {
+                Common::beginTransaction($this->pdo);
+
                 $stmt = $this->pdo->prepare($sql);
                 $stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
 
-                $this->pdo->beginTransaction();
-                $stmt->execute();
-                return $this->pdo->commit();
+                if ($stmt->execute()) {
+                    return Common::commit($this->pdo);
+                }
+                return false;
             } catch (\PDOException $e) {
-                $this->pdo->rollBack();
-                return $result;
+                Common::rollBack($this->pdo);
+                return false;
+            } catch (\Exception $e) {
+                Logger::errorLog($e->getMessage(), ['file' => __FILE__, 'line' => __LINE__]);
+                return false;
             }
         }
-
-        $result = true;
-        return $result;
+        return true;
     }
 
     /**
@@ -415,8 +424,6 @@ class Users
      */
     private function addErrorCount(array $user_row): bool
     {
-        $result = false;
-
         $error_count = $user_row['error_count'] + 1;
 
         $sql = "UPDATE users SET
@@ -424,16 +431,22 @@ class Users
                     WHERE id = :id";
 
         try {
+            Common::beginTransaction($this->pdo);
+
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindValue(':error_count', $error_count, \PDO::PARAM_INT);
             $stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
 
-            $this->pdo->beginTransaction();
-            $stmt->execute();
-            return $this->pdo->commit();
+            if ($stmt->execute()) {
+                return Common::commit($this->pdo);
+            }
+            return false;
         } catch (\PDOException $e) {
-            $this->pdo->rollBack();
-            return $result;
+            Common::rollBack($this->pdo);
+            return false;
+        } catch (\Exception $e) {
+            Logger::errorLog($e->getMessage(), ['file' => __FILE__, 'line' => __LINE__]);
+            return false;
         }
     }
 
@@ -445,24 +458,28 @@ class Users
      */
     private function lockAccount(array $user_row): bool
     {
-        $result = false;
-
-        if ($user_row['error_count'] > 5) {
+        if ($user_row['error_count'] >= Config::ACCOUNT_ROCK_THRESHOLD) {
             $sql = "UPDATE users SET
                     locked_flg = 1
                     WHERE id = :id";
             try {
+                Common::beginTransaction($this->pdo);
+
                 $stmt = $this->pdo->prepare($sql);
                 $stmt->bindValue(':id', $user_row['id'], \PDO::PARAM_INT);
 
-                $this->pdo->beginTransaction();
-                $stmt->execute();
-                return $this->pdo->commit();
+                if ($stmt->execute()) {
+                    return Common::commit($this->pdo);
+                }
+                return false;
             } catch (\PDOException $e) {
-                $this->pdo->rollBack();
-                return $result;
+                Common::rollBack($this->pdo);
+                return false;
+            } catch (\Exception $e) {
+                Logger::errorLog($e->getMessage(), ['file' => __FILE__, 'line' => __LINE__]);
+                return false;
             }
         }
-        return $result;
+        return false;
     }
 }

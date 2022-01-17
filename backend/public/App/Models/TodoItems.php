@@ -225,8 +225,6 @@ class TodoItems
      */
     public function updateTodoItemById(array $data): bool
     {
-        $result = false;
-
         $staff_id = $data['staff_id']; // 担当者ID
         $item_id = $data['item_id']; // 作業ID
         $client_id = $data['client_id']; // 作成者ID
@@ -239,17 +237,17 @@ class TodoItems
 
         // $item_idが存在しなかったら、falseを返却
         if (!isset($item_id)) {
-            return $result;
+            return false;
         }
 
         // $item_idが数字でなかったら、falseを返却する。
         if (!is_numeric($item_id)) {
-            return $result;
+            return false;
         }
 
         // $item_idが0以下はありえないので、falseを返却
         if ($item_id <= 0) {
-            return $result;
+            return false;
         }
 
         // 現状の仕様では「削除フラグ」をアップデートする必要はないが、今後の仕様追加のために実装しておく。
@@ -265,6 +263,8 @@ class TodoItems
                 WHERE id = :id";
 
         try {
+            Common::beginTransaction($this->pdo);
+
             $stmt = $this->pdo->prepare($sql);
 
             $stmt->bindValue(':staff_id', $staff_id, \PDO::PARAM_INT);
@@ -277,12 +277,16 @@ class TodoItems
             $stmt->bindValue(':is_deleted', $is_deleted, \PDO::PARAM_INT);
             $stmt->bindValue(':id', $item_id, \PDO::PARAM_INT);
 
-            $this->pdo->beginTransaction();
-            $stmt->execute();
-            return $this->pdo->commit();
+            if ($stmt->execute()) {
+                return Common::commit($this->pdo);
+            }
+            return false;
         } catch (\PDOException $e) {
-            $this->pdo->rollBack();
-            return $result;
+            Common::rollBack($this->pdo);
+            return false;
+        } catch (\Exception $e) {
+            Logger::errorLog($e->getMessage(), ['file' => __FILE__, 'line' => __LINE__]);
+            return false;
         }
     }
 
@@ -295,14 +299,12 @@ class TodoItems
      */
     public function makeTodoItemComplete(int $id, ?string $date = null): bool
     {
-        $result = false;
-
         if (!is_numeric($id)) {
-            return $result;
+            return false;
         }
 
         if ($id <= 0) {
-            return $result;
+            return false;
         }
 
         // $dateがnullだったら、今日の日付を設定する。
@@ -315,16 +317,22 @@ class TodoItems
                 WHERE id = :id";
 
         try {
+            Common::beginTransaction($this->pdo);
+
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
             $stmt->bindValue(':finished_date', $date, \PDO::PARAM_STR);
 
-            $this->pdo->beginTransaction();
-            $stmt->execute();
-            return $this->pdo->commit();
+            if ($stmt->execute()) {
+                return Common::commit($this->pdo);
+            }
+            return false;
         } catch (\PDOException $e) {
-            $this->pdo->rollBack();
-            return $result;
+            Common::rollBack($this->pdo);
+            return false;
+        } catch (\Exception $e) {
+            Logger::errorLog($e->getMessage(), ['file' => __FILE__, 'line' => __LINE__]);
+            return false;
         }
     }
 
@@ -338,14 +346,12 @@ class TodoItems
      */
     public function deleteTodoItemById(int $id): bool
     {
-        $result = false;
-
         if (!is_numeric($id)) {
-            return $result;
+            return false;
         }
 
         if ($id <= 0) {
-            return $result;
+            return false;
         }
 
         $sql = "UPDATE todo_items SET
@@ -353,15 +359,21 @@ class TodoItems
                 WHERE id = :id";
 
         try {
+            Common::beginTransaction($this->pdo);
+
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
 
-            $this->pdo->beginTransaction();
-            $stmt->execute();
-            return $this->pdo->commit();
+            if ($stmt->execute()) {
+                return Common::commit($this->pdo);
+            }
+            return false;
         } catch (\PDOException $e) {
-            $this->pdo->rollBack();
-            return $result;
+            Common::rollBack($this->pdo);
+            return false;
+        } catch (\Exception $e) {
+            Logger::errorLog($e->getMessage(), ['file' => __FILE__, 'line' => __LINE__]);
+            return false;
         }
     }
 
