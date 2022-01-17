@@ -59,15 +59,17 @@ unset($_SESSION['err']);
 // ワンタイムトークン生成
 $token = Common::generateToken();
 
-
 ?>
 
-<!-- head箇所 -->
 <?php
+
+/**
+ * headとヘッダー(ナビバー)部分
+ *
+ */
 
 $title = "詳細確認";
 $active = "top";
-$message = "作業の詳細";
 $search = "";
 include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
 
@@ -80,48 +82,62 @@ include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
     }
 </style>
 
-<!-- エラメッセージアラート -->
-<?php include_once dirname(__FILE__, 3) . '/components/alert/auth/alert_err_msg.php' ?>
+<!-- コンテナ -->
+<div class="container">
 
-<!-- 入力フォーム -->
-<div class="row my-2">
-    <div class="col-sm-3"></div>
-    <div class="col-sm-6">
-        <div class="form-group">
-            <label for="item_name">項目名</label>
-            <p name="item_name" id="item_name" class="form-control"><?= Common::h($item['item_name']) ?></p>
+    <?php
+
+    /**
+     * インフォメーション部分
+     */
+
+    $message = "作業の詳細";
+    include_once dirname(__FILE__, 3) . '/components/info/auth/info.php';
+
+    ?>
+
+    <!-- エラメッセージアラート -->
+    <?php include_once dirname(__FILE__, 3) . '/components/alert/auth/alert_err_msg.php' ?>
+
+    <!-- 入力フォーム -->
+    <div class="row my-2">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="item_name">項目名</label>
+                <p name="item_name" id="item_name" class="form-control"><?= Common::h($item['item_name']) ?></p>
+            </div>
+            <div class="form-group">
+                <label for="staff_id">担当者</label>
+                <p name="staff_id" id="staff_id" class="form-control"><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></p>
+            </div>
+            <div class="form-group">
+                <label for="content">作業内容</label>
+                <textarea name="content" id="content" class="form-control" cols="30" rows="10" disabled style="background-color: white;"><?= Common::h($item['content']) ?></textarea>
+            </div>
+            <div class="form-group">
+                <label for="expiration_date">期限</label>
+                <p class="form-control" id="expiration_date" name="expiration_date"><?= Common::h($item['expiration_date']) ?></p>
+            </div>
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="finished" name="finished" value="1" <?php if (!is_null($item['finished_date'])) echo 'checked' ?> disabled>
+                <label for="finished">完了</label>
+            </div>
+            <!-- フォーム -->
+            <form action="./complete_action.php" method="post" class="my-sm-1">
+                <!-- トークン送信 -->
+                <input type="hidden" name="token" value="<?= Common::h($token) ?>">
+                <!-- 作業ID送信 -->
+                <input type="hidden" name="item_id" value="<?= Common::h($item['id']) ?>">
+                <button class="btn btn-primary my-0" type="submit">完了</button>
+            </form>
+            <a href="./edit.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-success">修正</a>
+            <a href="./delete.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-danger">削除</a>
+            <a href="./top.php" class="btn btn-outline-primary">もどる</a>
         </div>
-        <div class="form-group">
-            <label for="staff_id">担当者</label>
-            <p name="staff_id" id="staff_id" class="form-control"><?= Common::h($user['family_name'] . " " . $user['first_name']) ?></p>
-        </div>
-        <div class="form-group">
-            <label for="content">作業内容</label>
-            <textarea name="content" id="content" class="form-control" cols="30" rows="10" disabled style="background-color: white;"><?= Common::h($item['content']) ?></textarea>
-        </div>
-        <div class="form-group">
-            <label for="expiration_date">期限</label>
-            <p class="form-control" id="expiration_date" name="expiration_date"><?= Common::h($item['expiration_date']) ?></p>
-        </div>
-        <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="finished" name="finished" value="1" <?php if (!is_null($item['finished_date'])) echo 'checked' ?> disabled>
-            <label for="finished">完了</label>
-        </div>
-        <!-- フォーム -->
-        <form action="./complete_action.php" method="post" class="my-sm-1">
-            <!-- トークン送信 -->
-            <input type="hidden" name="token" value="<?= Common::h($token) ?>">
-            <!-- 作業ID送信 -->
-            <input type="hidden" name="item_id" value="<?= Common::h($item['id']) ?>">
-            <button class="btn btn-primary my-0" type="submit">完了</button>
-        </form>
-        <a href="./edit.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-success">修正</a>
-        <a href="./delete.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-danger">削除</a>
-        <a href="./top.php" class="btn btn-outline-primary">もどる</a>
+        <div class="col-sm-3"></div>
     </div>
-    <div class="col-sm-3"></div>
-</div>
-<!-- 入力フォーム ここまで -->
+    <!-- 入力フォーム ここまで -->
 
 </div>
 <!-- コンテナ ここまで -->
@@ -136,10 +152,12 @@ include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
     }
 </script>
 
-<!-- 必要なJavascriptを読み込む -->
-<script src="../js/jquery-3.4.1.min.js"></script>
-<script src="../js/bootstrap.bundle.min.js"></script>
+<?php
 
-</body>
+/**
+ * フッター部分
+ */
 
-</html>
+include_once dirname(__FILE__, 3) . '/components/foot/auth/foot.php';
+
+?>
