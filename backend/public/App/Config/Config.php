@@ -23,6 +23,7 @@ class Config
     /** メッセージ関連 */
     const MSG_EXCEPTION_ERROR = "申し訳ございません。エラーが発生しました。";
     const MSG_PDOEXCEPTION_ERROR = "データベース接続に失敗しました。";
+    const MSG_INVALID_REQUEST = "不正なリクエストです。";
 
     // パスワードの正規表現
     const DEFAULT_PASSWORD_REGEXP = "/\A[a-z\d]{8,255}+\z/i";

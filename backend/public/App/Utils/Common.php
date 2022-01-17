@@ -167,4 +167,27 @@ class Common
 
         $dbh->rollBack();
     }
+
+    /**
+     * 正しいリクエストかチェック
+     *
+     * @param string $method
+     * @return bool
+     */
+    public static function isValidRequest(string $method): bool
+    {
+        return $_SERVER['REQUEST_METHOD'] === $method;
+    }
+
+    /**
+     * URLの取得
+     *
+     * @param string $path
+     * @return string
+     */
+    
+    public static function getUrl($path)
+    {
+        return (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . '/' . $path;
+    }
 }

@@ -160,7 +160,6 @@ class Validation
         if (!$user_name = self::filterInput('user_name')) {
             $err['user_name'] = Config::MSG_USER_NAME_ERROR;
             $post['user_name'] = "";
-            Logger::errorLog(Config::MSG_USER_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
         /**
          * 文字数制限
@@ -169,7 +168,6 @@ class Validation
         if (!self::isValidStringLength($user_name, 50)) {
             $err['user_name'] = Config::MSG_USER_NAME_STRLEN_ERROR;
             $post['user_name'] = "";
-            Logger::errorLog(Config::MSG_USER_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
 
         $result['err'] = $err;
@@ -189,13 +187,11 @@ class Validation
         if (!$email = self::filterInput('email')) {
             $err['email'] = Config::MSG_EMAIL_ERROR;
             $post['email'] = "";
-            Logger::errorLog(Config::MSG_EMAIL_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
         // メールアドレスの形式チェック
         if (!self::isValidEmail($email)) {
             $err['email'] = Config::MSG_EMAIL_INCORRECT_ERROR;
             $post['email'] = "";
-            Logger::errorLog(Config::MSG_EMAIL_INCORRECT_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
         /**
          * 文字数制限
@@ -204,7 +200,6 @@ class Validation
         if (!self::isValidStringLength($email, 255)) {
             $err['email'] = Config::MSG_EMAIL_STRLEN_ERROR;
             $post['email'] = "";
-            Logger::errorLog(Config::MSG_EMAIL_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
 
         $result['err'] = $err;
@@ -224,7 +219,6 @@ class Validation
         if (!$family_name = self::filterInput('family_name')) {
             $err['family_name'] = Config::MSG_FAMILY_NAME_ERROR;
             $post['family_name'] = "";
-            Logger::errorLog(Config::MSG_FAMILY_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
         /**
          * 文字数制限
@@ -233,7 +227,6 @@ class Validation
         if (!self::isValidStringLength($family_name, 50)) {
             $err['family_name'] = Config::MSG_FAMILY_NAME_STRLEN_ERROR;
             $post['family_name'] = "";
-            Logger::errorLog(Config::MSG_FAMILY_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
 
         $result['err'] = $err;
@@ -253,7 +246,6 @@ class Validation
         if (!$first_name = self::filterInput('first_name')) {
             $err['first_name'] = Config::MSG_FIRST_NAME_ERROR;
             $post['first_name'] = "";
-            Logger::errorLog(Config::MSG_FIRST_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
         /**
          * 文字数制限
@@ -262,7 +254,6 @@ class Validation
         if (!self::isValidStringLength($first_name, 50)) {
             $err['first_name'] = Config::MSG_FIRST_NAME_STRLEN_ERROR;
             $post['first_name'] = "";
-            Logger::errorLog(Config::MSG_FIRST_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
 
         $result['err'] = $err;
@@ -281,7 +272,6 @@ class Validation
 
         if (!$password = self::filterInput('password')) {
             $err['password'] = Config::MSG_PASSWORD_ERROR;
-            Logger::errorLog(Config::MSG_PASSWORD_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
 
         // 正規表現
@@ -291,7 +281,6 @@ class Validation
          */
         if (!self::isValidPassword($password)) {
             $err['password'] = Config::MSG_PASSWORD_REGEX_ERROR;
-            Logger::errorLog(Config::MSG_PASSWORD_REGEX_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
 
         $result['err'] = $err;
@@ -310,11 +299,9 @@ class Validation
 
         if (!$password_confirm = self::filterInput('password_confirm')) {
             $err['password_confirm'] = Config::MSG_PASSWORD_CONFIRM_ERROR;
-            Logger::errorLog(Config::MSG_PASSWORD_CONFIRM_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
         if (!self::isValidConfirmedPassword($password, $password_confirm)) {
             $err['password_confirm'] = Config::MSG_PASSWORD_CONFIRM_MISMATCH_ERROR;
-            Logger::errorLog(Config::MSG_PASSWORD_CONFIRM_MISMATCH_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
 
         $result['err'] = $err;
@@ -333,7 +320,6 @@ class Validation
         if (!$item_name = self::filterInput('item_name')) {
             $err['item_name'] = Config::MSG_ITEM_NAME_ERROR;
             $post['item_name'] = "";
-            Logger::errorLog(Config::MSG_ITEM_NAME_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
         /**
          * 文字数制限
@@ -342,7 +328,6 @@ class Validation
         if (!self::isValidStringLength($item_name, 100)) {
             $err['item_name'] = Config::MSG_ITEM_NAME_STRLEN_ERROR;
             $post['item_name'] = "";
-            Logger::errorLog(Config::MSG_ITEM_NAME_STRLEN_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
 
         $result['err'] = $err;
@@ -363,7 +348,6 @@ class Validation
         // 担当者がいるかどうか
         if (!self::isValidUserId($post['staff_id'])) {
             $err['staff_id'] = Config::MSG_NOT_EXISTS_STAFF_ID_ERROR;
-            Logger::errorLog(Config::MSG_NOT_EXISTS_STAFF_ID_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
 
         $result['err'] = $err;
@@ -382,7 +366,6 @@ class Validation
         if (!self::filterInput('content', false)) {
             $err['content'] = Config::MSG_CONTENT_ERROR;
             $post['content'] = "";
-            Logger::errorLog(Config::MSG_CONTENT_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
 
         $result['err'] = $err;
@@ -403,7 +386,6 @@ class Validation
         // 正しい日付かどうか判定
         if (!self::isValidDate($post['expiration_date'])) {
             $err['expiration_date'] = Config::MSG_INVAID_DATE_ERROR;
-            Logger::errorLog(Config::MSG_INVAID_DATE_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
 
         $result['err'] = $err;
@@ -423,7 +405,6 @@ class Validation
         // 0 null "" [] じゃない
         if (!empty($post['finished']) && $post['finished'] !== 1) {
             $err['finished'] = Config::MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR;
-            Logger::errorLog(Config::MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
         }
 
         $result['err'] = $err;
@@ -464,7 +445,6 @@ class Validation
         } catch (\Exception $e) {
 
             $_SESSION['err']['msg'] = Config::MSG_EXCEPTION_ERROR;
-            Logger::errorLog(Config::MSG_EXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
             header('Location: ../../public/error/error.php', true, 301);
             exit;
         }

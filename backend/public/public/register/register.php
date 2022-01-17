@@ -23,6 +23,18 @@ use App\Utils\Logger;
 // セッション開始
 SessionUtil::sessionStart();
 
+// リダイレクト先のURL取得
+$url = Common::getUrl('register/signup_form.php');
+$success_url = Common::getUrl('login/login.php');
+$err_url = Common::getUrl('error/error.php');
+
+// 正しいリクエストかチェック
+if (!Common::isValidRequest('POST')) {
+    $_SESSION['err']['msg'] = Config::MSG_INVALID_REQUEST;
+    header("Location: $url", true, 301);
+    exit;
+}
+
 // サニタイズ
 $post = Common::sanitize($_POST);
 
@@ -32,9 +44,10 @@ $post = Common::sanitize($_POST);
 if (!isset($post['token']) || !Common::isValidToken($post['token'])) {
     $_SESSION['err']['msg'] = Config::MSG_INVALID_PROCESS;
     Logger::errorLog(Config::MSG_INVALID_PROCESS, ['file' => __FILE__, 'line' => __LINE__]);
-    header('Location: ../login/login_form.php', true, 301);
+    header("Location: $url", true, 301);
     exit;
 }
+
 
 // バリデーション
 $result = Validation::validateSignUpFormRequest($post);
@@ -77,7 +90,7 @@ try {
          */
         $_SESSION['err']['msg'] = Config::MSG_USER_DUPLICATE;
         Logger::errorLog(Config::MSG_USER_DUPLICATE, ['file' => __FILE__, 'line' => __LINE__]);
-        header('Location: ./signup_form.php', true, 301);
+        header("Location: $url", true, 301);
         exit;
     }
 
@@ -91,17 +104,16 @@ try {
 
     // 新規登録に成功した旨のメッセージをログイン画面にセッションで渡して、リダイレクト
     $_SESSION['success']['msg'] = Config::MSG_NEW_REGISTRATION_SUCCESSFUL;
-
-    header('Location: ../login/login_form.php', true, 301);
+    header("Location: $success_url", true, 301);
     exit;
 } catch (\PDOException $e) {
     $_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
     Logger::errorLog(Config::MSG_PDOEXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-    header('Location: ../error/error.php', true, 301);
+    header("Location: $err_url", true, 301);
     exit;
 } catch (\Exception $e) {
     $_SESSION['err']['msg'] = Config::MSG_EXCEPTION_ERROR;
     Logger::errorLog(Config::MSG_EXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-    header('Location: ../error/error.php', true, 301);
+    header("Location: $err_url", true, 301);
     exit;
 }
