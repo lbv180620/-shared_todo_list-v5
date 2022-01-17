@@ -43,11 +43,9 @@ $post = Common::sanitize($_POST);
 // ログインフォームにリダイレクト
 if (!isset($post['token']) || !Common::isValidToken($post['token'])) {
     $_SESSION['err']['msg'] = Config::MSG_INVALID_PROCESS;
-    Logger::errorLog(Config::MSG_INVALID_PROCESS, ['file' => __FILE__, 'line' => __LINE__]);
     header("Location: $url", true, 301);
     exit;
 }
-
 
 // バリデーション
 $result = Validation::validateSignUpFormRequest($post);
@@ -89,7 +87,6 @@ try {
          * エラーメッセージをセッションに登録して、新規登録画面にリダイレクト
          */
         $_SESSION['err']['msg'] = Config::MSG_USER_DUPLICATE;
-        Logger::errorLog(Config::MSG_USER_DUPLICATE, ['file' => __FILE__, 'line' => __LINE__]);
         header("Location: $url", true, 301);
         exit;
     }
