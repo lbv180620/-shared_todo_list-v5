@@ -16,6 +16,8 @@ class TodoItems
     /** @var \PDO $pdo PDOクラスインスタンス*/
     private \PDO $pdo;
 
+    private int $lastInsertedItemId;
+
     /**
      * コンストラクタ
      * @param \PDO $pdo PDOクラスインスタンス
@@ -207,6 +209,7 @@ class TodoItems
             $stmt->bindValue(':finished_date', $finished_date, \PDO::PARAM_STR);
 
             if ($stmt->execute()) {
+                $this->lastInsertedItemId = (int) $this->pdo->lastInsertId();
                 return Common::commit($this->pdo);
             }
             return false;
@@ -284,7 +287,6 @@ class TodoItems
             if ($stmt->execute()) {
                 return Common::commit($this->pdo);
             }
-            // if ($stmt->execute() && Common::commit($this->pdo)) $lastInsertedId = $this->pdo->lastInsertId();
             return false;
         } catch (\PDOException $e) {
             Common::rollBack($this->pdo);
@@ -429,5 +431,26 @@ class TodoItems
         $stmt->execute();
 
         return $stmt->fetchAll();
+    }
+
+
+    /**
+     *
+     */
+    public function getItemNameById($item_id)
+    {
+        $sql = "SELECT item_name FROM todo_items WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':id', $item_id, \PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetch()['item_name'];
+    }
+
+    /**
+     *
+     */
+    public function getLastInsertedItemName()
+    {
+        return $this->getItemNameById($this->lastInsertedItemId);
     }
 }
