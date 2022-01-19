@@ -28,6 +28,7 @@ $url = Common::getUrl('register/signup_form.php');
 $success_url = Common::getUrl('login/login.php');
 $err_url = Common::getUrl('error/error.php');
 
+
 // 正しいリクエストかチェック
 if (!Common::isValidRequest('POST')) {
     $_SESSION['err']['msg'] = Config::MSG_INVALID_REQUEST;
