@@ -116,7 +116,7 @@ include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
      * インフォメーション部分
      */
 
-    $message = "作業一覧";
+    $message = "作業一覧 " . count($items) . "件";
     include_once dirname(__FILE__, 3) . '/components/info/auth/info.php';
 
     ?>
