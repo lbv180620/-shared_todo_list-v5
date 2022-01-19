@@ -54,7 +54,7 @@ try {
     unset($_SESSION['err']);
 
     // 修正に成功した旨のメッセージをTOP画面にセッションで渡して、リダイレクト
-    $_SESSION['success']['msg'] = Config::MSG_TASK_COMPLETE_SUCCESSFUL;
+    $_SESSION['success']['msg'] = Config::MSG_TASK_COMPLETE_SUCCESSFUL . $dbh->getItemNameById($item_id);
 
     header('Location: ./top.php', true, 301);
     exit;

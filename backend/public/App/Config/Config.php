@@ -67,16 +67,16 @@ class Config
     const MSG_INVAID_DATE_ERROR = "期限日の日付が正しくありません。";
     const MSG_INVAID_FINISHED_CHECKBOX_VALUE_ERROR = "完了のチェックボックスの値が正しくありません。";
     // entry
-    const MSG_TASK_REGISTRATION_SUCCESSFUL = "作業登録しました。";
+    const MSG_TASK_REGISTRATION_SUCCESSFUL = "次の作業を登録しました。" . PHP_EOL . "項目名: ";
     const MSG_TASK_REGISTRATION_FAILURE = "作業登録に失敗しました。";
     // edit
-    const MSG_TASK_UPDATE_SUCCESSFUL = "作業を更新しました。";
+    const MSG_TASK_UPDATE_SUCCESSFUL = "次の作業を更新しました。" . PHP_EOL . "項目名: ";
     const MSG_TASK_UPDATE_FAILURE = "作業を更新できませんでした。";
     // delete
-    const MSG_TASK_DELETE_SUCCESSFUL = "作業を削除しました。";
+    const MSG_TASK_DELETE_SUCCESSFUL = "次の作業を削除しました。" . PHP_EOL . "項目名: ";
     const MSG_TASK_DELETE_FAILURE = "作業を削除できませんでした。";
     // complete
-    const MSG_TASK_COMPLETE_SUCCESSFUL = "作業を完了しました。";
+    const MSG_TASK_COMPLETE_SUCCESSFUL = "次の作業を完了しました。" . PHP_EOL . "項目名: ";
     const MSG_TASK_COMPLETE_FAILURE = "作業を完了できませんでした。";
     // cancel
     const MSG_USER_DELETE_SUCCESSFUL = "アカウントを削除しました。";
