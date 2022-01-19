@@ -9,12 +9,12 @@ use App\Utils\Logger;
 
 /**
  * todo_itemsテーブルクラス
- * todo_itemsテーブルのCUID処理
+ * todo_itemsテーブルのCRUD処理
  */
 class TodoItems
 {
     /** @var \PDO $pdo PDOクラスインスタンス*/
-    private $pdo;
+    private \PDO $pdo;
 
     /**
      * コンストラクタ
@@ -164,13 +164,15 @@ class TodoItems
      */
     public function registerTodoItem(array $data): bool
     {
-        $staff_id = $data['staff_id'];
-        $client_id = $data['client_id'];
-        $item_name = $data['item_name'];
-        $content = $data['content'];
-        $registration_date = $data['registration_date'];
-        $expiration_date = $data['expiration_date'];
-        $finished_date = $data['finished_date'];
+        [
+            'staff_id' => $staff_id,
+            'client_id' => $client_id,
+            'item_name' => $item_name,
+            'content' => $content,
+            'registration_date' => $registration_date,
+            'expiration_date' => $expiration_date,
+            'finished_date' => $finished_date,
+        ] = $data;
 
         $sql = "INSERT INTO todo_items (
                 staff_id,
@@ -225,15 +227,17 @@ class TodoItems
      */
     public function updateTodoItemById(array $data): bool
     {
-        $staff_id = $data['staff_id']; // 担当者ID
-        $item_id = $data['item_id']; // 作業ID
-        $client_id = $data['client_id']; // 作成者ID
-        $item_name = $data['item_name']; // 作業項目名
-        $content = $data['content']; // 作業内容
-        $registration_date = $data['registration_date']; // 登録日
-        $expiration_date = $data['expiration_date']; // 期限日
-        $finished_date = $data['finished_date']; // 完了日
-        $is_deleted = $data['is_deleted'];
+        [
+            'staff_id' => $staff_id,
+            'item_id' => $item_id,
+            'client_id' => $client_id,
+            'item_name' => $item_name,
+            'content' => $content,
+            'registration_date' => $registration_date,
+            'expiration_date' => $expiration_date,
+            'finished_date' => $finished_date,
+            'is_deleted' => $is_deleted
+        ] = $data;
 
         // $item_idが存在しなかったら、falseを返却
         if (!isset($item_id)) {
@@ -280,6 +284,7 @@ class TodoItems
             if ($stmt->execute()) {
                 return Common::commit($this->pdo);
             }
+            // if ($stmt->execute() && Common::commit($this->pdo)) $lastInsertedId = $this->pdo->lastInsertId();
             return false;
         } catch (\PDOException $e) {
             Common::rollBack($this->pdo);

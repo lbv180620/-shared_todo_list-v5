@@ -9,12 +9,12 @@ use App\Utils\Common;
 
 /**
  * ユーザーテーブルクラス
- * ユーザテーブルのCUID処理
+ * ユーザテーブルのCRUD処理
  */
 class Users
 {
     /** @var \PDO $pdo PDOクラスインスタンス*/
-    private $pdo;
+    private \PDO $pdo;
 
     /**
      * コンストラクタ
@@ -35,11 +35,13 @@ class Users
      */
     public function addUser(array $post): bool
     {
-        $user_name = $post['user_name'];
-        $family_name = $post['family_name'];
-        $first_name = $post['first_name'];
-        $email = $post['email'];
-        $password = $post['password'];
+        [
+            'user_name' => $user_name,
+            'family_name' => $family_name,
+            'first_name' => $first_name,
+            'email' => $email,
+            'password' => $password,
+        ] = $post;
 
         // 同じメールアドレスのユーザーがいないか調べる
         if (!empty($this->findUserByEmail($email))) {
@@ -205,8 +207,7 @@ class Users
     {
         $result = false;
 
-        $email = $post['email'];
-        $password = $post['password'];
+        ['email' => $email, 'password' => $password] = $post;
 
         // メールアドレスとパスワードが一致するユーザーを取得する
         $user = $this->getUser($email, $password);
