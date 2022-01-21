@@ -4,30 +4,40 @@
 
 require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
 
-use App\Utils\SessionUtil;
-use App\Utils\Common;
+/** URL */
+require_once dirname(__FILE__, 3) . '/App/Config/url_list.php';
+
+/** DB操作関連で使用 */
+
 use App\Models\Base;
 use App\Models\TodoItems;
 use App\Models\Users;
-use App\Config\Config;
-use App\Utils\Logger;
 
+/** メッセージ関連で使用 */
+
+use App\Config\Config;
+
+use App\Utils\Common;
+use App\Utils\Logger;
+use App\Utils\SessionUtil;
+
+// セッション開始
 SessionUtil::sessionStart();
 
 // ログインチェック
 if (!Common::isAuthUser()) {
-    header('Location: ../login/login_form.php', true, 301);
+    header("Location: " . LOGIN_PAGE_URL, true, 301);
     exit;
 }
 
-// ログイン情報取得
+// ログインユーザ情報取得
 $login = isset($_SESSION['login']) ? $_SESSION['login'] : null;
 
 // GET送信の値を取得
 $item_id = $_GET['item_id'];
 
 try {
-
+    // DB接続
     $base = Base::getPDOInstance();
 
     // GET送信で送られてきたIDに合致するtodo_itemsのレコードを1件取得
@@ -36,7 +46,7 @@ try {
 
     // ログインユーザのIDと依頼者のIDが一致しない場合リダイレクトでアクセス制限
     if ($login['is_admin'] === 0 && $login['id'] !== $item['client_id']) {
-        header('Location: ./top.php', true, 301);
+        header("Location: " . TOP_PAGE_URL, true, 301);
         exit;
     }
 
@@ -48,13 +58,12 @@ try {
 
     $_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
     Logger::errorLog(Config::MSG_PDOEXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-    header('Location: ../error/error.php', true, 301);
+    header("Location: " . ERROR_PAGE_URL, true, 301);
     exit;
 } catch (\Exception $e) {
 
     $_SESSION['err']['msg'] = Config::MSG_EXCEPTION_ERROR;
-    Logger::errorLog(Config::MSG_EXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-    header('Location: ../error/error.php', true, 301);
+    header("Location: " . ERROR_PAGE_URL, true, 301);
     exit;
 }
 

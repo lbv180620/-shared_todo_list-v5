@@ -4,8 +4,14 @@
 
 require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
 
-use App\Utils\Common;
+/** URL */
+require_once dirname(__FILE__, 3) . '/App/Config/url_list.php';
+
+/** メッセージ関連で使用 */
+
 use App\Config\Config;
+
+use App\Utils\Common;
 
 // 共通処理
 require_once dirname(__FILE__, 3) . '/components/php/guest/overhead.php';
@@ -18,8 +24,7 @@ require_once dirname(__FILE__, 3) . '/components/php/guest/overhead.php';
 $title = "新規登録";
 $page = "ログイン";
 $message = "新規登録してください";
-$login_form_dir = "../login";
-$page_transition_path = "../login/login_form.php";
+$page_transition_url = LOGIN_PAGE_URL;
 include_once dirname(__FILE__, 3) . '/components/head/guest/head.php';
 
 ?>
@@ -67,7 +72,6 @@ include_once dirname(__FILE__, 3) . '/components/head/guest/head.php';
             </div>
             <button type="submit" class="btn btn-primary" id="btn">新規登録</button>
         </form>
-
     </div>
     <div class="col-sm-3"></div>
 </div>

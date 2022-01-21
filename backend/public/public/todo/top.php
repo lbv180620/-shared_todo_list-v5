@@ -4,38 +4,34 @@
 
 require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
 
-use App\Utils\SessionUtil;
-use App\Utils\Common;
-use App\Models\Base;
-use App\Models\TodoItems;
-use App\Models\Users;
-use App\Config\Config;
-use App\Utils\Logger;
+/** URL */
+require_once dirname(__FILE__, 3) . '/App/Config/url_list.php';
 
+/** DB操作関連で使用 */
+
+use App\Models\Base;
+use App\Models\Users;
+use App\Models\TodoItems;
+
+/** メッセージ関連で使用 */
+
+use App\Config\Config;
+
+use App\Utils\Common;
+use App\Utils\Logger;
+use App\Utils\SessionUtil;
+
+// セッション開始
 SessionUtil::sessionStart();
 
 // ログインチェック
 if (!Common::isAuthUser()) {
-    header('Location: ../login/login_form.php', true, 301);
+    header("Location: " . LOGIN_PAGE_URL, true, 301);
     exit;
 }
 
 // ログインユーザ情報取得
 $login = isset($_SESSION['login']) ? $_SESSION['login'] : null;
-
-# 成功メッセージの初期化
-$success_msg = isset($_SESSION['success']) ? $_SESSION['success']['msg'] : null;
-unset($_SESSION['success']);
-
-# 失敗メーセージの初期化
-$err_msg = isset($_SESSION['err']) ? $_SESSION['err'] : null;
-unset($_SESSION['err']);
-
-
-// 検索キーワード
-// ここで初期化される
-$search = "";
-$isSearch = false;
 
 try {
     // DB接続
@@ -56,15 +52,27 @@ try {
 
     $_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
     Logger::errorLog(Config::MSG_PDOEXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-    header('Location: ../error/error.php', true, 301);
+    header("Location: " . ERROR_PAGE_URL, true, 301);
     exit;
 } catch (\Exception $e) {
 
     $_SESSION['err']['msg'] = Config::MSG_EXCEPTION_ERROR;
-    Logger::errorLog(Config::MSG_EXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-    header('Location: ../error/error.php', true, 301);
+    header("Location: " . ERROR_PAGE_URL, true, 301);
     exit;
 }
+
+# 成功メッセージの初期化
+$success_msg = isset($_SESSION['success']) ? $_SESSION['success']['msg'] : null;
+unset($_SESSION['success']);
+
+# 失敗メーセージの初期化
+$err_msg = isset($_SESSION['err']) ? $_SESSION['err'] : null;
+unset($_SESSION['err']);
+
+// 検索キーワード
+// ここで初期化される
+$search = "";
+$isSearch = false;
 
 // ワンタイムトークン生成
 $token = Common::generateToken();
@@ -250,7 +258,7 @@ include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
                 <div class="col-sm-6">
                     <form>
                         <div class="goback">
-                            <input type="button" value="もどる" class="btn btn-primary my-0" onclick="location.href='./top.php'">
+                            <input type="button" value="もどる" class="btn btn-primary my-0" onclick="location.href='<? Common::h(TOP_PAGE_URL) ?>'">
                         </div>
                     </form>
                 </div>

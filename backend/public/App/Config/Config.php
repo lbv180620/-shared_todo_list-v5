@@ -137,7 +137,7 @@ class Config
     ];
 
     /** ワンタイムトークン */
-    /** @var int openssl_random_pseudo_bytes()で使用する文字列の長さ */
+    /** @var int random_bytes()で使用する文字列の長さ */
     const RAMDOM_PSEUDO_STRING_LENGTH = 32;
 
     /** @var string ワンタイムトークンが一致しないとき */

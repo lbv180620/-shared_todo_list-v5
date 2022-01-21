@@ -7,14 +7,12 @@
  * $title = "ログイン";
  * $page = "新規登録";
  * $message = "ログインしてください";
- * $login_form_dir = ".";
  * $$page_transition_path = "../register/signup_form.php";
  *
  * signup_form.php
  * $title = "新規登録";
  * $page = "ログイン";
  * $message = "新規登録してください";
- * $login_form_dir = "../login";
  * $$page_transition_path = "../login/login_form.php";
  */
 
@@ -49,8 +47,8 @@ use App\Utils\Common;
 <body>
     <!-- ナビゲーション -->
     <nav class="navbar navbar-expand-md navbar-dark bg-primary">
-        <span class="navbar-brand"><a href="<?= Common::h($login_form_dir) ?>/login_form.php" id="a-conf">TODOリスト</a></span>
-        <a href="<?= Common::h($page_transition_path) ?>" class="btn btn-success"><?= Common::h($page) ?>へ</a>
+        <span class="navbar-brand"><a href="<?= Common::h(LOGIN_PAGE_URL) ?>" id="a-conf">TODOリスト</a></span>
+        <a href="<?= Common::h($page_transition_url) ?>" class="btn btn-success"><?= Common::h($page) ?>へ</a>
     </nav>
     <!-- ナビゲーション ここまで -->
 

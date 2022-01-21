@@ -20,16 +20,6 @@ class Logger extends \Monolog\Logger
 
     private static $logger;
 
-    /**
-     * インスタンスを生成
-     */
-    private static function getInstance()
-    {
-        if (!isset(self::$logger)) {
-            self::$logger = new Logger();
-        }
-        return self::$logger;
-    }
 
     private function __construct($logfile = Config::DEFAULT_LOG_FILEPATH, $level = Config::DEFAULT_LOG_LEVEL, $channel = Config::DEFAULT_CHANNEL_NAME)
     {
@@ -47,6 +37,17 @@ class Logger extends \Monolog\Logger
         parent::__construct($channel);
         $this->pushHandler($stream);
         $this->pushHandler($rotatingFile);
+    }
+
+    /**
+     * インスタンスを生成
+     */
+    private static function getInstance()
+    {
+        if (!isset(self::$logger)) {
+            self::$logger = new Logger();
+        }
+        return self::$logger;
     }
 
     /**
