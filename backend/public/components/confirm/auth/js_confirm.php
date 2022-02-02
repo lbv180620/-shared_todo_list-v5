@@ -5,7 +5,8 @@ use App\Utils\Common;
 ?>
 
 <script>
-    'use strict';
+    // 'use strict';
+    // 厳格モードにすると呼び出し元のファイルに以下の関数が定義されていないので引っかかる
 
     {
         function checkSubmit() {

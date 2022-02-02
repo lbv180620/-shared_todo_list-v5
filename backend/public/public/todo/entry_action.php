@@ -89,6 +89,8 @@ try {
 
     // 作業登録に成功した旨のメッセージをTOP画面にセッションで渡して、リダイレクト
     $_SESSION['success']['msg'] = Config::MSG_TASK_REGISTRATION_SUCCESSFUL . $dbh->getLastInsertedItemName();
+    $_SESSION['success']['updated_item_id'] = $dbh->getLastInsertedItemId();
+
 
     header('Location: ./top.php', true, 301);
     exit;

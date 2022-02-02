@@ -112,7 +112,7 @@ include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
     }
 
     tr.spot>td {
-        background-color: yellow;
+        background-color: #FFFF66;
     }
 
     #item-conf {
@@ -176,15 +176,18 @@ include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
                     <?php elseif (!is_null($item['finished_date'])) : ?>
                         <!-- 完了日に値があるときは、完了したレコードの文字に打消し線を入れる -->
                         <?php $class = 'class="del"' ?>
-                    <?php elseif (!is_null($updated_item_id) && ($updated_item_id === $item['id'])) : ?>
+                    <?php else : ?>
+                        <?php $class = '' ?>
+                    <?php endif ?>
+
+                    <?php if (!is_null($updated_item_id) && ($updated_item_id === $item['id'])) : ?>
                         <?php if (!empty($class)) : ?>
                             <?php $class = preg_replace('/"\z/',  ' spot"', $class) ?>
                         <?php else : ?>
                             <?php $class = 'class="spot"' ?>
                         <?php endif ?>
-                    <?php else : ?>
-                        <?php $class = '' ?>
                     <?php endif ?>
+
                     <?php
                     $users_table = new Users($base);
                     // 担当者のレコードを取得

@@ -61,7 +61,6 @@ try {
     exit;
 } catch (\PDOException $e) {
     $_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
-    // $_SESSION['err']['msg'] = $e->getMessage();
     Logger::errorLog(Config::MSG_PDOEXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
     header('Location: ../error/error.php', true, 301);
     exit;

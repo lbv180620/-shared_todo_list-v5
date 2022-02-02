@@ -464,4 +464,12 @@ class TodoItems
     {
         return $this->getItemNameById($this->lastInsertedItemId);
     }
+
+    /**
+     * 最後に作成した作業のID取得
+     */
+    public function getLastInsertedItemId()
+    {
+        return $this->lastInsertedItemId;
+    }
 }
