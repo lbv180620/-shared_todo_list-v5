@@ -167,7 +167,7 @@ include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
                 </div>
 
                 <input type="submit" value="更新" class="btn btn-primary" id="btn">
-                <input type="button" value="キャンセル" class="btn btn-outline-primary" onclick="location.href='./top.php';">
+                <input type="button" value="キャンセル" class="btn btn-outline-primary" onclick="location.href='<?= Common::h(TOP_PAGE_URL) ?>';">
             </form>
         </div>
         <div class="col-sm-3"></div>

@@ -140,9 +140,9 @@ include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
                 <input type="hidden" name="item_id" value="<?= Common::h($item['id']) ?>">
                 <button class="btn btn-primary my-0" type="submit">完了</button>
             </form>
-            <a href="./edit.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-success">修正</a>
-            <a href="./delete.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-danger">削除</a>
-            <a href="./top.php" class="btn btn-outline-primary">もどる</a>
+            <a href="<?= Common::h(EDIT_PAGE_URL) ?>?item_id=<?= Common::h($item['id']) ?>" class="btn btn-success">修正</a>
+            <a href="<?= Common::h(DELETE_PAGE_URL) ?>?item_id=<?= Common::h($item['id']) ?>" class="btn btn-danger">削除</a>
+            <a href="<?= Common::h(TOP_PAGE_URL) ?>" class="btn btn-outline-primary">もどる</a>
         </div>
         <div class="col-sm-3"></div>
     </div>
