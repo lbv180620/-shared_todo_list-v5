@@ -134,8 +134,8 @@ include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
                     <select name="staff_id" id="staff" class="form-control">
                         <option value="0">--選択してください--</option>
                         <?php foreach ($users as $user) : ?>
-                            <!-- 退会済みのユーザは選択しから消える -->
-                            <?php if ($user['is_deleted'] === 1) : ?>
+                            <!-- 退会済みのユーザとログインユーザは選択しから消える -->
+                            <?php if ($user['is_deleted'] === 1 || $user['id'] === $login['id']) : ?>
                                 <?php continue ?>
                             <?php endif ?>
                             <?php if (!empty($fill)) : ?>
