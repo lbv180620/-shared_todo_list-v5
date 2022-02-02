@@ -1,44 +1,6 @@
 <?php
 
-/**
- * auth
- *
- * top.php
- * $title = "作業一覧";
- * $active = "top";
- * $message = "作業一覧";
- *
- * entry.php
- * $title = "作業登録";
- * $active = "entry";
- * $message = "作業を登録してください";
- *
- * edit.php
- * $title = "修正確認";
- * $active = "top";
- * $message = "作業を修正してください";
- *
- * delete.php
- * $title = "削除確認";
- * $active = "top";
- * $message = "下記の項目を削除します。よろしいですか？";
- *
- * show.php
- * $title = "マイページ";
- * $active = "show";
- * $message = $login['user_name'] . "さんが担当の作業一覧";
- *
- * detail.php
- * $title = "詳細確認";
- * $active = "top";
- * $message = "作業の詳細";
- *
- * cancel.php
- * $title = "退会確認";
- * $active = "show";
- * $message = "";
- *
- */
+/** auth */
 
 use App\Utils\Common;
 
@@ -88,6 +50,7 @@ use App\Utils\Common;
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="./show.php?login_id=<?= Common::h($login['id']) ?>">マイページ</a></li>
+                        <li><a class="dropdown-item" href="../memo/memo.php?login_id=<?= Common::h($login['id']) ?>">メモ</a></li>
                         <li>
                             <form action="../login/logout.php" method="post" onsubmit="return checkLogout()" style="display: inline;">
                                 <button type="submit" class="btn btn-danger dropdown-item">ログアウト</button>

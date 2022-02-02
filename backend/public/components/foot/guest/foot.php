@@ -1,20 +1,5 @@
 <?php
 
-/**
- * guest
- *
- * login_form.php
- * $title = "ログイン";
- * $js_validation_path = "/validate_login_form.js";
- * $validation_list = Config::JS_LOGIN_FORM_VALIDATION_ERROR_MSG_LIST;
- *
- * signup_form.php
- * $title = "新規登録";
- * $js_validation_path = "/validate_signup_form.js";
- * $validation_list = Config::JS_SIGNUP_FORM_VALIDATION_ERROR_MSG_LIST;
- *
- */
-
 use App\Utils\Common;
 
 ?>
