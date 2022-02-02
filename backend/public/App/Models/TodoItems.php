@@ -209,6 +209,7 @@ class TodoItems
             $stmt->bindValue(':finished_date', $finished_date, \PDO::PARAM_STR);
 
             if ($stmt->execute()) {
+                // 最後にDBに登録したIDを保持
                 $this->lastInsertedItemId = (int) $this->pdo->lastInsertId();
                 return Common::commit($this->pdo);
             }
@@ -435,19 +436,29 @@ class TodoItems
 
 
     /**
+     * 作業項目の取得(CRUDのUD用)
      *
+     * @param int $id
      */
-    public function getItemNameById($item_id)
+    public function getItemNameById(int $id)
     {
+        if (!is_numeric($id)) {
+            return false;
+        }
+
+        if ($id <= 0) {
+            return false;
+        }
+
         $sql = "SELECT item_name FROM todo_items WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':id', $item_id, \PDO::PARAM_STR);
+        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch()['item_name'];
     }
 
     /**
-     *
+     * 最後に作成した作業項目の取得(CRUDのC用)
      */
     public function getLastInsertedItemName()
     {

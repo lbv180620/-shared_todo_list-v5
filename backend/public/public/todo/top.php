@@ -63,6 +63,7 @@ try {
 
 # 成功メッセージの初期化
 $success_msg = isset($_SESSION['success']) ? $_SESSION['success']['msg'] : null;
+$updated_item_id = isset($_SESSION['success']['updated_item_id']) ? (int) $_SESSION['success']['updated_item_id'] : null;
 unset($_SESSION['success']);
 
 # 失敗メーセージの初期化
@@ -108,6 +109,10 @@ include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
     /* ボタンのセルは打消し線を入れない */
     tr.del>td.button {
         text-decoration: none;
+    }
+
+    tr.spot>td {
+        background-color: yellow;
     }
 
     #item-conf {
@@ -171,6 +176,12 @@ include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
                     <?php elseif (!is_null($item['finished_date'])) : ?>
                         <!-- 完了日に値があるときは、完了したレコードの文字に打消し線を入れる -->
                         <?php $class = 'class="del"' ?>
+                    <?php elseif (!is_null($updated_item_id) && ($updated_item_id === $item['id'])) : ?>
+                        <?php if (!empty($class)) : ?>
+                            <?php $class = preg_replace('/"\z/',  ' spot"', $class) ?>
+                        <?php else : ?>
+                            <?php $class = 'class="spot"' ?>
+                        <?php endif ?>
                     <?php else : ?>
                         <?php $class = '' ?>
                     <?php endif ?>

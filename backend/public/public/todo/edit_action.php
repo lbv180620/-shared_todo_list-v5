@@ -95,6 +95,7 @@ try {
 
     // 修正に成功した旨のメッセージをTOP画面にセッションで渡して、リダイレクト
     $_SESSION['success']['msg'] = Config::MSG_TASK_UPDATE_SUCCESSFUL . $dbh->getItemNameById($post['item_id']);
+    $_SESSION['success']['updated_item_id'] = $post['item_id'];
 
     header('Location: ./top.php', true, 301);
     exit;
