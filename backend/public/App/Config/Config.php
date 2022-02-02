@@ -159,11 +159,18 @@ class Config
     const DEFAULT_DELAY_TIME = 10;
     // ログアウトの遅延処理
     const LOGOUT_SCRIPT = '<script type="text/javascript" async>
+        let count = ' . self::DEFAULT_DELAY_TIME . ';
         const deferredLogout = () => {
-            location.href = "../login/logout.php";
+            document.getElementById("timer").textContent = `${count}秒後ログアウトします。`;
+            const timeoutId = setTimeout(deferredLogout, 1000);
+            count--;
+            if (count <= 0) {
+                location.href = "../login/logout.php";
+                clearTimeout(timeoutId);
+            }
         }
 
-        setTimeout(deferredLogout, ' . self::DEFAULT_DELAY_TIME * 1000 . ');
+        deferredLogout();
     </script>';
 
     /** アカウントロック */

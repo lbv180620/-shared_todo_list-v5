@@ -1,6 +1,7 @@
 <?php
 
 use App\Utils\Common;
+use App\Config\Config;
 
 ?>
 
@@ -12,7 +13,7 @@ use App\Utils\Common;
             <button class="close" data-dismiss="alert">&times;</button>
             <p><?= nl2br(Common::h($success_msg)) ?></p>
             <?php if (Common::checkStringForLogout($success_msg)) : ?>
-                <p><?= Config::DEFAULT_DELAY_TIME ?>秒後ログアウトします。</p>
+                <p id="timer"></p>
                 <?= Config::LOGOUT_SCRIPT ?>
             <?php endif ?>
         </div>
