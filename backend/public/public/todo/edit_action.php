@@ -1,14 +1,25 @@
 <?php
 
+/** auth */
+
 require_once dirname(__FILE__, 4) . '/vendor/autoload.php';
 
+/** URL */
+require_once dirname(__FILE__, 3) . '/App/Config/url_list.php';
+
+/** DB操作関連で使用 */
+
 use App\Models\Base;
-use App\Config\Config;
 use App\Models\TodoItems;
+
+/** メッセージ関連で使用 */
+
+use App\Config\Config;
+
 use App\Utils\Common;
+use App\Utils\Logger;
 use App\Utils\SessionUtil;
 use App\Utils\Validation;
-use App\Utils\Logger;
 
 // セッション開始
 SessionUtil::sessionStart();
@@ -16,9 +27,8 @@ SessionUtil::sessionStart();
 $post = Common::sanitize($_POST);
 $post['finished'] = !empty($post['finished']) ? 1 : null; // "1" -> 1 に変換
 
-
 // リダイレクト先のURL
-$url = "./edit.php?item_id=" . $post['item_id'];
+$url = EDIT_PAGE_URL . "?item_id=" . $post['item_id'];
 
 // ワンタイムトークンチェック
 // 「フォームからトークンから送信されていない」または「トークンが一致しない」場合
@@ -36,7 +46,6 @@ $result = Validation::validateTodoFormRequest($post);
 
 // 記入情報をサニタイズしてセッションに保存する
 $fill['finished'] = !empty($fill['finished']) ? "1" : null; // 1 -> "1" に変換
-
 if (!empty($fill)) {
     $_SESSION['fill'] = Common::sanitize($fill);
 }
@@ -83,7 +92,7 @@ try {
 
         $_SESSION['err']['msg'] = Config::MSG_TASK_UPDATE_FAILURE;
         Logger::errorLog(Config::MSG_TASK_UPDATE_FAILURE, ['file' => __FILE__, 'line' => __LINE__]);
-        header('Location: ./top.php', true, 301);
+        header("Location: " . TOP_PAGE_URL, true, 301);
         exit;
     }
 
@@ -97,17 +106,16 @@ try {
     $_SESSION['success']['msg'] = Config::MSG_TASK_UPDATE_SUCCESSFUL . $dbh->getItemNameById($post['item_id']);
     $_SESSION['success']['updated_item_id'] = $post['item_id'];
 
-    header('Location: ./top.php', true, 301);
+    header("Location: " . SUCCESS_MSG_DISPLAY_URL_FOR_AUTH, true, 301);
     exit;
 } catch (\PDOException $e) {
     $_SESSION['err']['msg'] = Config::MSG_PDOEXCEPTION_ERROR;
-    // $_SESSION['err']['msg'] = $e->getMessage();
     Logger::errorLog(Config::MSG_PDOEXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-    header('Location: ../error/error.php', true, 301);
+    header("Location: " . ERROR_PAGE_URL, true, 301);
     exit;
 } catch (\Exception $e) {
     $_SESSION['err']['msg'] = Config::MSG_EXCEPTION_ERROR;
     Logger::errorLog(Config::MSG_EXCEPTION_ERROR, ['file' => __FILE__, 'line' => __LINE__]);
-    header('Location: ../error/error.php', true, 301);
+    header("Location: " . ERROR_PAGE_URL, true, 301);
     exit;
 }

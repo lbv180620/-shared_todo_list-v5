@@ -145,7 +145,7 @@ include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
 
                 <input type="submit" value="登録" class="btn btn-primary" id="btn">
                 <input type="reset" value="リセット" class="btn btn-outline-primary">
-                <input type="button" value="キャンセル" class="btn btn-outline-primary" onclick="location.href='./top.php';">
+                <input type="button" value="キャンセル" class="btn btn-outline-primary" onclick="location.href='<?= TOP_PAGE_URL ?>';">
             </form>
         </div>
         <div class="col-sm-3"></div>

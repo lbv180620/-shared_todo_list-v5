@@ -186,8 +186,8 @@ include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
                                 <!-- すでに完了している場合、完了ボタンが押せないように修正 -->
                                 <button class="btn btn-primary my-0" type="submit" <?= !is_null($item['finished_date']) ? 'disabled' : '' ?>>完了</button>
                             </form>
-                            <a href="./edit.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-success">修正</a>
-                            <a href="./delete.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-danger">削除</a>
+                            <a href="<?= EDIT_PAGE_URL ?>?item_id=<?= Common::h($item['id']) ?>" class="btn btn-success">修正</a>
+                            <a href="<?= DELETE_PAGE_URL ?>?item_id=<?= Common::h($item['id']) ?>" class="btn btn-danger">削除</a>
                         </td>
                     </tr>
                 <?php endforeach ?>
