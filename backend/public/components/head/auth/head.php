@@ -28,7 +28,7 @@ use App\Utils\Common;
 <body>
     <!-- ナビゲーション -->
     <nav class="navbar navbar-expand-md navbar-dark bg-primary">
-        <span class="navbar-brand"><a href="./top.php" id="a-conf">TODOリスト</a></span>
+        <span class="navbar-brand"><a href="<?= TOP_PAGE_URL ?>" id="a-conf">TODOリスト</a></span>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -36,10 +36,10 @@ use App\Utils\Common;
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item <?= $active === 'top' ? 'active' : '' ?>">
-                    <a class="nav-link" href="./top.php">作業一覧 <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="<?= TOP_PAGE_URL ?>">作業一覧 <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item <?= $active === 'entry' ? 'active' : '' ?>">
-                    <a class="nav-link" href="./entry.php">作業登録</a>
+                    <a class="nav-link" href="<?= ENTRY_PAGE_URL ?>">作業登録</a>
                 </li>
                 <li class="nav-item dropdown <?= $active === 'show' ? 'active' : '' ?>">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -49,18 +49,18 @@ use App\Utils\Common;
                         <?= Common::h($login['user_name']) ?>さん
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="./show.php?login_id=<?= Common::h($login['id']) ?>">マイページ</a></li>
-                        <li><a class="dropdown-item" href="../memo/memo.php?login_id=<?= Common::h($login['id']) ?>">メモ</a></li>
+                        <li><a class="dropdown-item" href="<?= SHOW_PAGE_URL ?>?login_id=<?= Common::h($login['id']) ?>">マイページ</a></li>
+                        <li><a class="dropdown-item" href="<?= MEMO_PAGE_URL ?>?login_id=<?= Common::h($login['id']) ?>">メモ</a></li>
                         <li>
-                            <form action="../login/logout.php" method="post" onsubmit="return checkLogout()" style="display: inline;">
+                            <form action="<?= LOGOUT_PAGE_URL ?>" method="post" onsubmit="return checkLogout()" style="display: inline;">
                                 <button type="submit" class="btn btn-danger dropdown-item">ログアウト</button>
                             </form>
                         </li>
-                        <li><a class="dropdown-item" href="./cancel.php?login_id=<?= Common::h($login['id']) ?>">退会</a></li>
+                        <li><a class="dropdown-item" href="<?= CANCEL_PAGE_URL ?>?login_id=<?= Common::h($login['id']) ?>">退会</a></li>
                     </ul>
                 </li>
             </ul>
-            <form class="form-inline my-2 my-lg-0" action="./top.php" method="get">
+            <form class="form-inline my-2 my-lg-0" action="<?= TOP_PAGE_URL ?>" method="get">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" value="<?= Common::h($search) ?>">
                 <button class="btn btn-outline-light my-2 my-sm-0" type="submit">検索</button>
             </form>

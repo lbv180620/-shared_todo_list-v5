@@ -206,7 +206,7 @@ include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
                     <tr <?= $class ?>>
                         <!-- 作業項目名 -->
                         <td class="align-middle">
-                            <a id="item-conf" href="./detail.php?item_id=<?= Common::h($item['id']) ?>"><?= Common::h($item['item_name']) ?></a>
+                            <a id="item-conf" href="<?= DETAIL_PAGE_URL ?>?item_id=<?= Common::h($item['id']) ?>"><?= Common::h($item['item_name']) ?></a>
                         </td>
                         <!-- 担当者 -->
                         <td class="align-middle" <?= $user['is_deleted'] === 1 ? 'style="color: green;"' : '' ?>>
@@ -244,8 +244,8 @@ include_once dirname(__FILE__, 3) . '/components/head/auth/head.php';
                                 </form>
                             <?php endif ?>
                             <?php if ($login['is_admin'] === 1 || $login['id'] === $client['id']) : ?>
-                                <a href="./edit.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-success">修正</a>
-                                <a href="./delete.php?item_id=<?= Common::h($item['id']) ?>" class="btn btn-danger">削除</a>
+                                <a href="<?= EDIT_PAGE_URL ?>?item_id=<?= Common::h($item['id']) ?>" class="btn btn-success">修正</a>
+                                <a href="<?= DELETE_PAGE_URL ?>?item_id=<?= Common::h($item['id']) ?>" class="btn btn-danger">削除</a>
                             <?php endif ?>
                         </td>
                     </tr>
