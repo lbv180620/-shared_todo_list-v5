@@ -156,7 +156,7 @@ class Config
 
     /** 遅延ログアウト */
     // ログアウトの遅延時間
-    const DEFAULT_DELAY_TIME = 10;
+    const DEFAULT_DELAY_TIME = 30;
     // ログアウトの遅延処理
     const LOGOUT_SCRIPT = '<script type="text/javascript" async>
         let count = ' . self::DEFAULT_DELAY_TIME . ';
